@@ -1,0 +1,11 @@
+array_relationships:
+- name: competencies
+  using:
+    foreign_key_constraint_on:
+      column: template_id
+      table:
+        name: eval_observation_template_competency
+        schema: public
+table:
+  name: eval_observation_template
+  schema: public

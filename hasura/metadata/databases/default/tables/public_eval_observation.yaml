@@ -1,0 +1,18 @@
+array_relationships:
+- name: competencies
+  using:
+    foreign_key_constraint_on:
+      column: observation_id
+      table:
+        name: eval_observation_competency
+        schema: public
+- name: students
+  using:
+    foreign_key_constraint_on:
+      column: observation_id
+      table:
+        name: eval_observation_student
+        schema: public
+table:
+  name: eval_observation
+  schema: public

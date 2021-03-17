@@ -1,0 +1,63 @@
+array_relationships:
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: eval_comment
+        schema: public
+- name: evaluations
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: eval_evaluation
+        schema: public
+- name: logins
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: user_login
+        schema: public
+- name: navigations
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: user_navigation
+        schema: public
+object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: group_id
+select_permissions:
+- permission:
+    columns:
+    - active
+    - email
+    - email_confirmed
+    - id
+    - name
+    - group_id
+    filter:
+      _or:
+      - id:
+          _eq: X-Hasura-User-Id
+      - group:
+          users:
+            id:
+              _eq: X-Hasura-User-Id
+  role: user
+table:
+  name: user
+  schema: public
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - name
+    filter:
+      id:
+        _eq: X-Hasura-User-Id
+  role: user

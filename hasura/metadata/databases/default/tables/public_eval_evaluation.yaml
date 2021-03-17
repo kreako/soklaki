@@ -1,0 +1,13 @@
+object_relationships:
+- name: competency
+  using:
+    foreign_key_constraint_on: competency_id
+- name: student
+  using:
+    foreign_key_constraint_on: student_id
+- name: user
+  using:
+    foreign_key_constraint_on: user_id
+table:
+  name: eval_evaluation
+  schema: public

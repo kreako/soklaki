@@ -1,0 +1,3 @@
+table:
+  name: competency_subject
+  schema: public

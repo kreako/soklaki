@@ -1,0 +1,47 @@
+object_relationships:
+- name: group
+  using:
+    manual_configuration:
+      column_mapping:
+        group_id: id
+      insertion_order: null
+      remote_table:
+        name: group
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - active
+    - email
+    - id
+    - manager
+    - name
+    - user_group_id
+    filter:
+      _and:
+      - manager:
+          _eq: true
+      - group:
+          users:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user
+table:
+  name: user_manager
+  schema: public
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - active
+    - manager
+    - name
+    filter:
+      _and:
+      - manager:
+          _eq: true
+      - group:
+          users:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user

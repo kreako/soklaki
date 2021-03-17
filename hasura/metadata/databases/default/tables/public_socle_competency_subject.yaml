@@ -1,0 +1,10 @@
+object_relationships:
+- name: competency
+  using:
+    foreign_key_constraint_on: competency_id
+- name: subject
+  using:
+    foreign_key_constraint_on: subject_id
+table:
+  name: socle_competency_subject
+  schema: public

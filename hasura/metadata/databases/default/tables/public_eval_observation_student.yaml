@@ -1,0 +1,10 @@
+object_relationships:
+- name: observation
+  using:
+    foreign_key_constraint_on: observation_id
+- name: student
+  using:
+    foreign_key_constraint_on: student_id
+table:
+  name: eval_observation_student
+  schema: public

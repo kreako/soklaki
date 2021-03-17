@@ -1,0 +1,10 @@
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: users
+  url: users
+  methods:
+  - GET
+  - POST
+  name: users
+  comment: Get all users

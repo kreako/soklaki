@@ -1,0 +1,19 @@
+- name: allowed-queries
+  definition:
+    queries:
+    - name: users
+      query: |-
+        query MyQuery {
+          user(where: {active: {_eq: true}}) {
+            email
+            email_confirmed
+            group {
+              id
+              is_school
+              name
+            }
+            id
+            manager
+            name
+          }
+        }

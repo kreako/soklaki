@@ -1,0 +1,11 @@
+array_relationships:
+- name: competencies
+  using:
+    foreign_key_constraint_on:
+      column: subject_id
+      table:
+        name: socle_competency_subject
+        schema: public
+table:
+  name: socle_subject
+  schema: public

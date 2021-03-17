@@ -1,0 +1,36 @@
+array_relationships:
+- name: evaluations
+  using:
+    foreign_key_constraint_on:
+      column: competency_id
+      table:
+        name: eval_evaluation
+        schema: public
+- name: observations
+  using:
+    foreign_key_constraint_on:
+      column: competency_id
+      table:
+        name: eval_observation_competency
+        schema: public
+- name: subjects
+  using:
+    foreign_key_constraint_on:
+      column: competency_id
+      table:
+        name: socle_competency_subject
+        schema: public
+- name: templates
+  using:
+    foreign_key_constraint_on:
+      column: competency_id
+      table:
+        name: eval_observation_template_competency
+        schema: public
+object_relationships:
+- name: component
+  using:
+    foreign_key_constraint_on: component_id
+table:
+  name: socle_competency
+  schema: public

@@ -1,0 +1,36 @@
+array_relationships:
+- name: comments
+  using:
+    foreign_key_constraint_on:
+      column: student_id
+      table:
+        name: eval_comment
+        schema: public
+- name: evaluations
+  using:
+    foreign_key_constraint_on:
+      column: student_id
+      table:
+        name: eval_evaluation
+        schema: public
+- name: observations
+  using:
+    foreign_key_constraint_on:
+      column: student_id
+      table:
+        name: eval_observation_student
+        schema: public
+- name: reports
+  using:
+    foreign_key_constraint_on:
+      column: student_id
+      table:
+        name: report
+        schema: public
+object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: group_id
+table:
+  name: student
+  schema: public
