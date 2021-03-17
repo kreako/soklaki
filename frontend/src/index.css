@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .input {
+        @apply w-full rounded-md border-gray-300 shadow-sm;
+        @apply focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50;
+    }
+    .button-main-action {
+        @apply w-full text-xl rounded-md px-4 py-2 font-bold;
+        @apply text-white shadow-sm;
+        @apply bg-teal-700;
+    }
+}
