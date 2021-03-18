@@ -1,3 +1,3 @@
 #!/bin/bash
 
-podman build -t sokakli-companion -f ./Dockerfile .
+podman build -t soklaki-companion -f ./Dockerfile .
