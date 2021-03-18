@@ -8,24 +8,6 @@ object_relationships:
       remote_table:
         name: group
         schema: public
-select_permissions:
-- permission:
-    columns:
-    - active
-    - email
-    - id
-    - manager
-    - name
-    - group_id
-    filter:
-      _and:
-      - manager:
-          _eq: true
-      - group:
-          users:
-            group_id:
-              _eq: X-Hasura-User-Group
-  role: user
 table:
   name: user_manager
   schema: public
