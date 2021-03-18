@@ -16,7 +16,7 @@ select_permissions:
     - id
     - manager
     - name
-    - user_group_id
+    - group_id
     filter:
       _and:
       - manager:
