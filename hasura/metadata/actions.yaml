@@ -1,6 +1,15 @@
-actions: []
+actions:
+- name: signup
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/signup
+    forward_client_headers: true
+  permissions:
+  - role: user
+  - role: anonymous
 custom_types:
   enums: []
   input_objects: []
-  objects: []
+  objects:
+  - name: SignupOutput
   scalars: []

@@ -1,6 +1,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: Signup
+  url: signup
+  methods:
+  - POST
+  name: Signup
+  comment: Signup a new user
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: users
   url: users
   methods:

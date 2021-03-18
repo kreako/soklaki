@@ -17,3 +17,12 @@
             name
           }
         }
+    - name: Signup
+      query: |-
+        mutation Signup($email: String!, $password: String!) {
+          signup(email: $email, password: $password) {
+            group
+            id
+            token
+          }
+        }

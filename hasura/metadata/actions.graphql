@@ -1,2 +1,18 @@
+type Mutation {
+  signup (
+    email: String!
+    password: String!
+  ): SignupOutput!
+}
 
+
+
+
+type SignupOutput {
+  errorKnownEmail : Boolean!
+  errorWeakPassword : Boolean!
+  token : String
+  id : Int
+  group : Int
+}
 
