@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center h-screen">
+    <div class="flex items-center">
         <div class="flex-grow"></div>
         <div class="px-2 w-full sm:max-w-screen-sm">
             <MascotteTip>
@@ -9,17 +9,23 @@
                 >Donnez-moi votre email, votre mot de passe et on est reparti.</template>
             </MascotteTip>
             <div class="mt-10 sm:mt-16">
-                <div class="text-gray-800">Adresse e-mail</div>
-                <input
-                    @change="email = $event.target.value"
-                    class="input mt-2"
-                    type="email"
-                    placeholder="mon-email@example.com"
-                />
+                <MyEmailInput @change="email = $event" :email="email" :error="!emailValid">
+                    <template
+                        v-slot:error
+                    >Oh non ! Il semblerait que votre email ne ressemble pas à un email...</template>
+                </MyEmailInput>
             </div>
             <div class="mt-6">
                 <div class="text-gray-800">Mot de passe</div>
-                <input @change="password = $event.target.value" class="input mt-2" type="password" />
+                <input
+                    @change="password = $event.target.value"
+                    class="input mt-2"
+                    type="password"
+                    autocomplete="new-password"
+                    id="new-password"
+                    required
+                />
+
                 <div class="text-right">
                     <router-link
                         to="/lost-password"
@@ -44,18 +50,31 @@
 <script setup>
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
+import { isEmailValid, isPasswordValid } from '../utils/form-validation.js'
 import MascotteTip from './MascotteTip.vue'
+import MyEmailInput from './MyEmailInput.vue'
 
 const store = useStore()
 
-const loginInProgress = ref(false)
 const email = ref('')
 const password = ref('')
 
+// Validation error
+const emailValid = ref(true)
+const passwordValid = ref(true)
+
 const connect = () => {
+    // Basic validations
+    emailValid.value = isEmailValid(email.value)
+    passwordValid.value = isPasswordValid(password.value)
+
+    if (!emailValid.value || !passwordValid.value) {
+        // First correct inputs
+        return
+    }
+
     window.console.log('email', email.value)
     window.console.log('password', password.value)
-    loginInProgress.value = true
     store.dispatch('login', { email: email.value, password: password.value })
 }
 

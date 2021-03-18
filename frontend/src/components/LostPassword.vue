@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center h-screen">
+    <div class="flex items-center">
         <div class="flex-grow"></div>
         <div class="px-2 w-full sm:max-w-screen-sm">
             <MascotteTip>
@@ -10,13 +10,11 @@
                 >Pas de problèmes ! Renseignez votre email et je vous fais parvenir un lien pour le changer.</template>
             </MascotteTip>
             <div class="mt-8 sm:mt-16">
-                <div class="text-gray-800">Votre adresse e-mail</div>
-                <input
-                    @change="email = $event.target.value"
-                    class="input mt-2"
-                    type="email"
-                    placeholder="mon-email@example.com"
-                />
+                <MyEmailInput @change="email = $event" :email="email" :error="!emailValid">
+                    <template
+                        v-slot:error
+                    >Oh non ! Il semblerait que votre email ne ressemble pas à un email...</template>
+                </MyEmailInput>
             </div>
             <div class="mt-8">
                 <button @click="reset" class="button-main-action">Recevoir un email !</button>
@@ -35,19 +33,28 @@
 <script setup>
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
+import { isEmailValid } from '../utils/form-validation.js'
 import MascotteTip from './MascotteTip.vue'
+import MyEmailInput from './MyEmailInput.vue'
 
 const store = useStore()
 
-const loginInProgress = ref(false)
 const email = ref('')
-const password = ref('')
 
-const connect = () => {
+// Validation error
+const emailValid = ref(true)
+
+const reset = () => {
+    // Basic validations
+    emailValid.value = isEmailValid(email.value)
+
+    if (!emailValid.value) {
+        // First correct inputs
+        return
+    }
+
     window.console.log('email', email.value)
-    window.console.log('password', password.value)
-    loginInProgress.value = true
-    store.dispatch('login', { email: email.value, password: password.value })
+    store.dispatch('resetPassword', { email: email.value })
 }
 
 </script>

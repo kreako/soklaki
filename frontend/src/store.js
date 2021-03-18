@@ -26,7 +26,18 @@ const actions = {
         window.console.log('url', import.meta.env.VITE_API_URL)
         let answer = await axios.get(url('users'))
         window.console.log('answer', answer)
-    }
+    },
+
+    async signup({ commit }, { email, password }) {
+        commit('setLoginEmail', email)
+        window.console.log('dev', import.meta.env.DEV)
+        window.console.log('url', import.meta.env.VITE_API_URL)
+    },
+
+    async resetPassword({ commit }, { email }) {
+        window.console.log('dev', import.meta.env.DEV)
+        window.console.log('url', import.meta.env.VITE_API_URL)
+    },
 }
 
 export const store = createStore({
