@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Login from './components/Login.vue'
-import Signup from './components/Signup.vue'
-import LostPassword from './components/LostPassword.vue'
+import Login from './pages/Login.vue'
+import Signup from './pages/Signup.vue'
+import LostPassword from './pages/LostPassword.vue'
 import Home from './pages/Home.vue'
 
 const routes = [
