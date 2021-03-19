@@ -21,45 +21,53 @@ npm install vue-router@4
 
 ### Creation
 
-podman pod create -p 8080:8080 -p 5432:5432 -p 8000:8000 --name sokakli
+podman pod create -p 8080:8080 -p 5432:5432 -p 8000:8000 --name soklaki
 
 podman run -d \
     --restart=always \
-    --pod sokakli \
+    --pod soklaki \
     -e POSTGRES_PASSWORD="password" \
     -v ./pgdata/:/var/lib/postgresql/data:z \
-    --name sokakli-db \
+    --name soklaki-db \
     postgres
 
 podman run -d \
     --restart=always \
-    --pod sokakli \
+    --pod soklaki \
     -e HASURA_GRAPHQL_DATABASE_URL="postgres://postgres:password@127.0.0.1:5432/postgres" \
     -e HASURA_GRAPHQL_ENABLE_CONSOLE="false" \
     -e HASURA_GRAPHQL_DEV_MODE="true" \
     -e HASURA_GRAPHQL_ENABLED_LOG_TYPES="startup, http-log, webhook-log, websocket-log, query-log" \
     -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE="anonymous" \
     -e HASURA_GRAPHQL_ADMIN_SECRET="hasura admin secret - keep in sync with hasura deployment" \
-    --name sokakli-hasura \
-    hasura/graphql-engine:v2.0.0-alpha.4
+    -e HASURA_GRAPHQL_JWT_SECRET='{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}' \
+    --name soklaki-hasura \
+    hasura/graphql-engine:v2.0.0-alpha.5
 
 podman run -d \
     --restart=always \
-    --pod sokakli \
-    --name sokakli-companion \
-    sokakli-companion
+    --pod soklaki \
+    --name soklaki-companion \
+    soklaki-companion
 
 ### Start the pod
 
-$ podman pod start sokakli
+$ podman pod start soklaki
 
 
-### Restart individually
+### Run the companion for debug
 
-podman stop sokakli-db && podman rm sokakli-db
+podman run -it  --rm \
+    --pod soklaki \
+    --name soklaki-companion \
+    soklaki-companion
 
-podman stop sokakli-hasura && podman rm sokakli-hasura
+### Stop/Delete individually
+
+podman stop soklaki-db && podman rm soklaki-db
+
+podman stop soklaki-hasura && podman rm soklaki-hasura
 
 ### Run inside the container
 
-podman exec -it sokakli-hasura /bin/bash
+podman exec -it soklaki-hasura /bin/bash
