@@ -62,6 +62,12 @@ podman run -it  --rm \
     --name soklaki-companion \
     soklaki-companion
 
+
+or copy file to the running container :
+
+podman cp src/main.py soklaki-companion:/app/
+
+
 ### Stop/Delete individually
 
 podman stop soklaki-db && podman rm soklaki-db
