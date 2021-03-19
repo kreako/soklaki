@@ -17,10 +17,12 @@
             name
           }
         }
-    - name: Signup
+    - name: signup
       query: |-
         mutation Signup($email: String!, $password: String!) {
           signup(email: $email, password: $password) {
+            errorKnownEmail
+            errorWeakPassword
             group
             id
             token

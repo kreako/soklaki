@@ -4,21 +4,35 @@
         <div class="px-2 w-full sm:max-w-screen-sm">
             <MascotteTip>
                 <template v-slot:title>Bienvenue ! 👋</template>
-                <template v-slot:default>
-                    Donnez-moi un email et un mot de passe.
-                </template>
+                <template v-slot:default>Donnez-moi un email et un mot de passe.</template>
             </MascotteTip>
             <div class="mt-6 sm:mt-12">
-                <MyEmailInput @change="email = $event" :email="email" :error="!emailValid">
-                    <template
-                        v-slot:error
-                    >Oh non ! Il semblerait que votre email ne ressemble pas à un email...</template>
+                <MyEmailInput
+                    @change="email = $event"
+                    :email="email"
+                    :error="((!emailValid) || errorKnownEmail)"
+                >
+                    <template v-slot:error>
+                        <span
+                            v-if="!emailValid"
+                        >Oh non ! Il semblerait que votre email ne ressemble pas à un email...</span>
+                        <div v-if="errorKnownEmail">
+                            <div>Il semblerait que je connaisse déjà votre email !</div>
+                            <div>
+                                <router-link
+                                    to="/login"
+                                    class="underline text-xl text-blue-600"
+                                >Je vous propose de plutôt vous identifier.</router-link>
+                            </div>
+                        </div>
+                    </template>
                 </MyEmailInput>
             </div>
             <div class="mt-6">
                 <div class="text-gray-800">Votre mot de passe</div>
                 <input
                     @change="password = $event.target.value"
+                    @keyup.enter="signup"
                     class="input mt-2"
                     :class="{ 'input-error': !passwordValid }"
                     type="password"
@@ -40,6 +54,8 @@
                     <br />Identifiez-vous !
                 </router-link>
             </div>
+            <div>{{ errorKnownEmail }}</div>
+            <div>{{ errorWeakPassword }}</div>
         </div>
         <div class="flex-grow"></div>
     </div>
@@ -47,12 +63,14 @@
 
 <script setup>
 import { useStore } from 'vuex'
-import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
 import MascotteTip from './MascotteTip.vue'
 import { isEmailValid, isPasswordValid } from '../utils/form-validation.js'
 import MyEmailInput from './MyEmailInput.vue'
 
 const store = useStore()
+const router = useRouter()
 
 // values
 const email = ref('')
@@ -63,6 +81,18 @@ const emailValid = ref(true)
 const passwordValid = ref(true)
 
 const emailRe = /[^@]+@[^@]+\.[^@]+/
+
+const errorKnownEmail = computed(() => store.state.login.error.knownEmail)
+const errorWeakPassword = computed(() => store.state.login.error.weakPassword)
+const token = computed(() => store.state.login.token)
+
+watch(
+    () => store.state.login.token,
+    (token, prevToken) => {
+        window.console.log("token is now", token)
+        router.push("/")
+    }
+)
 
 const signup = () => {
     // Basic validations

@@ -1,12 +1,12 @@
 - definition:
     query:
       collection_name: allowed-queries
-      query_name: Signup
+      query_name: signup
   url: signup
   methods:
   - POST
-  name: Signup
-  comment: Signup a new user
+  name: signup
+  comment: Signup one user creating a new group
 - definition:
     query:
       collection_name: allowed-queries

@@ -5,8 +5,9 @@ from typing import Optional
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from pydantic import BaseModel
+import jwt
 
-from gql_client import GqlClient
+from gql_client import GqlClient, GqlClientException
 
 load_dotenv()
 # Secret to hash password
@@ -14,7 +15,7 @@ ARGON2_SECRET = os.getenv("ARGON2_SECRET")
 # Hasura admin Secret
 HASURA_GRAPHQL_ADMIN_SECRET = os.getenv("HASURA_GRAPHQL_ADMIN_SECRET")
 # JWT key encryption
-HASURA_GRAPHQL_JWT_SECRET_KEY = os.getenv("HASURA_GRAPHQL_JWT_SECRET_KEY")
+HASURA_GRAPHQL_JWT_SECRET = os.getenv("HASURA_GRAPHQL_JWT_SECRET")
 # Graphql endpoint
 HASURA_GRAPHQL_ENDPOINT = os.getenv("HASURA_GRAPHQL_ENDPOINT")
 
@@ -24,7 +25,7 @@ Password = PasswordHasher()
 gql_client = GqlClient(HASURA_GRAPHQL_ENDPOINT, HASURA_GRAPHQL_ADMIN_SECRET)
 
 
-def generate_token(user) -> str:
+def generate_token(user_id, group_id) -> str:
     """
     Generates a JWT compliant with the Hasura spec, given a User object with field "id"
     """
@@ -32,11 +33,12 @@ def generate_token(user) -> str:
         "https://hasura.io/jwt/claims": {
             "x-hasura-allowed-roles": ["user"],
             "x-hasura-default-role": "user",
-            "x-hasura-user-id": user["id"],
+            "x-hasura-user-id": user_id,
+            "x-hasura-user-group": group_id,
         }
     }
-    token = jwt.encode(payload, HASURA_JWT_SECRET, "HS256")
-    return token.decode("utf-8")
+    token = jwt.encode(payload, HASURA_GRAPHQL_JWT_SECRET, "HS256")
+    return token
 
 
 def rehash_and_save_password_if_needed(user, plaintext_password):
@@ -53,10 +55,45 @@ class SignupInput(BaseModel):
     input: SignupData
 
 
+class SignupOutput(BaseModel):
+    errorKnownEmail: bool
+    errorWeakPassword: bool
+    token: Optional[str]
+    id: Optional[int]
+    group: Optional[int]
+
+
 @app.post("/signup")
 async def signup(signup: SignupInput):
     print("signup", signup)
-    return {"Hello": "big world"}
+    # hash of the password
+    h = Password.hash(signup.input.password)
+    # Create a group for the new user
+    group_id = await gql_client.insert_group_one("", True)
+    # Now create the user
+    try:
+        user_id = await gql_client.insert_user_one(group_id, signup.input.email, h)
+    except GqlClientException:
+        # TODO is it safe to assume that this is a known email address ?
+        # Delete the created - for nothing - group
+        await gql_client.delete_group(group_id)
+        # Return the error
+        return SignupOutput(
+            errorKnownEmail=True,
+            errorWeakPassword=False,
+            token=None,
+            id=None,
+            group=None,
+        )
+    # Now compute jwt
+    token = generate_token(user_id, group_id)
+    return SignupOutput(
+        errorKnownEmail=False,
+        errorWeakPassword=False,
+        token=token,
+        id=user_id,
+        group=group_id,
+    )
 
 
 @app.get("/items/{item_id}")
