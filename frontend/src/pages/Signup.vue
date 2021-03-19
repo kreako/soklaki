@@ -84,6 +84,7 @@ const emailRe = /[^@]+@[^@]+\.[^@]+/
 
 const errorKnownEmail = computed(() => store.state.login.error.knownEmail)
 const errorWeakPassword = computed(() => store.state.login.error.weakPassword)
+
 const token = computed(() => store.state.login.token)
 
 watch(
@@ -104,8 +105,6 @@ const signup = () => {
         return
     }
 
-    window.console.log('email', email.value)
-    window.console.log('password', password.value)
     store.dispatch('signup', { email: email.value, password: password.value })
 }
 
