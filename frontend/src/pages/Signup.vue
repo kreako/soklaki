@@ -65,9 +65,9 @@
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { computed, ref, watch } from 'vue'
-import MascotteTip from './MascotteTip.vue'
 import { isEmailValid, isPasswordValid } from '../utils/form-validation.js'
-import MyEmailInput from './MyEmailInput.vue'
+import MascotteTip from '../components/MascotteTip.vue'
+import MyEmailInput from '../components/MyEmailInput.vue'
 
 const store = useStore()
 const router = useRouter()

@@ -34,8 +34,8 @@
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
 import { isEmailValid } from '../utils/form-validation.js'
-import MascotteTip from './MascotteTip.vue'
-import MyEmailInput from './MyEmailInput.vue'
+import MascotteTip from '../components/MascotteTip.vue'
+import MyEmailInput from '../components/MyEmailInput.vue'
 
 const store = useStore()
 
