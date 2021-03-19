@@ -1,12 +1,12 @@
 import os
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-import httpx
 from typing import Optional
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
+from gql_client import GqlClient
 
 load_dotenv()
 # Secret to hash password
@@ -21,6 +21,7 @@ HASURA_GRAPHQL_ENDPOINT = os.getenv("HASURA_GRAPHQL_ENDPOINT")
 
 app = FastAPI()
 Password = PasswordHasher()
+gql_client = GqlClient(HASURA_GRAPHQL_ENDPOINT, HASURA_GRAPHQL_ADMIN_SECRET)
 
 
 def generate_token(user) -> str:
@@ -43,61 +44,7 @@ def rehash_and_save_password_if_needed(user, plaintext_password):
         client.update_password(user["id"], Password.hash(plaintext_password))
 
 
-class GqlClient(object):
-    def __init__(self):
-        self.headers = {"X-Hasura-Admin-Secret": HASURA_GRAPHQL_ADMIN_SECRET}
-
-    async def run_query(self, query, variables):
-        async with httpx.AsyncClient() as client:
-            r = await client.post(
-                HASURA_GRAPHQL_ENDPOINT,
-                headers=self.headers,
-                json={
-                    "query": query,
-                    "variables": variables,
-                },
-            )
-            return r.json()
-
-    async def find_user_by_name(self, name):
-        await self.run_query(
-            """query UsersByName($name: String!) {
-                   users(where: {name: {_eq: $name}}, limit: 1) {
-                       id
-                       name
-                       email
-                       password
-                   }
-               }""",
-            {"name": name},
-        )
-
-    async def insert_users(self, name, email, hash):
-        await self.run_query(
-            """mutation InsertUsers($name: String!, $email: String!, $password: String!) {
-                   insert_users_one(object: {name: $name, email: $email, password: $password}) {
-                       id
-                       name
-                       email
-                       password
-                }
-            }""",
-            {"name": name, "email": email, "password": hash},
-        )
-
-    async def update_password(self, id, password):
-        await self.run_query(
-            """mutation UpdatePassword($id: Int!, $password: String!) {
-                   update_users_by_pk(pk_columns: {id: $id}, _set: {password: $password}) {
-                       password
-                   }
-               }""",
-            {"id": id, "password": password},
-        )
-
-
 class SignupData(BaseModel):
-    name: str
     email: str
     password: str
 
