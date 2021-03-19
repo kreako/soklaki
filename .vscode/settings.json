@@ -2,5 +2,6 @@
     "css.validate": false,
     "files.exclude": {
         "companion/env": true
-    }
+    },
+    "python.formatting.provider": "black"
 }
