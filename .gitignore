@@ -3,3 +3,4 @@ pgdata
 visuals/archives
 private
 companion/src/__pycache__
+companion/.env
