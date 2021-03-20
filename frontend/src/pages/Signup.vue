@@ -90,7 +90,6 @@ const token = computed(() => store.state.login.token)
 watch(
     () => store.state.login.token,
     (token, prevToken) => {
-        window.console.log("token is now", token)
         router.push("/")
     }
 )
