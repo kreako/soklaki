@@ -7,6 +7,7 @@
 <script setup>
 import { useStore } from 'vuex'
 
+// Load maybe previously saved login data from the local storage
 const store = useStore()
 store.commit("loadFromLocalStorage")
 
