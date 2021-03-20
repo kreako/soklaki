@@ -20,7 +20,18 @@ const state = {
 }
 
 const mutations = {
+    loadFromLocalStorage(state) {
+        window.console.log("loadFromLocalStorage")
+        state.login.email = localStorage.getItem("email")
+        state.login.token = localStorage.getItem("token")
+        state.login.userId = localStorage.getItem("userId")
+        state.login.groupId = localStorage.getItem("groupId")
+    },
     setLoginEmail(state, email) {
+        if (state.login.token != null) {
+            // Meaning the login was successful, so store data
+            localStorage.setItem("email", email)
+        }
         state.login.email = email
     },
     setLoginErrorInvalid(state, invalid) {
@@ -35,13 +46,22 @@ const mutations = {
     setLoginToken(state, token) {
         state.login.token = token
         if (token) {
+            localStorage.setItem("token", token)
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         }
     },
     setLoginUserId(state, userId) {
+        if (state.login.token != null) {
+            // Meaning the login was successful, so store data
+            localStorage.setItem("userId", userId)
+        }
         state.login.userId = userId
     },
     setLoginGroupId(state, groupId) {
+        if (state.login.token != null) {
+            // Meaning the login was successful, so store data
+            localStorage.setItem("groupId", groupId)
+        }
         state.login.groupId = groupId
     },
 }
@@ -52,8 +72,8 @@ const actions = {
     async login({ commit }, { email, password }) {
         let answer = await axios.post('login', { email, password })
         window.console.log('answer', answer)
-        commit('setLoginErrorInvalid', answer.data.login.error)
         commit('setLoginToken', answer.data.login.token)
+        commit('setLoginErrorInvalid', answer.data.login.error)
         commit('setLoginUserId', answer.data.login.id)
         commit('setLoginGroupId', answer.data.login.group)
         commit('setLoginEmail', email)
@@ -61,9 +81,9 @@ const actions = {
 
     async signup({ commit }, { email, password }) {
         let answer = await axios.post('signup', { email, password })
+        commit('setLoginToken', answer.data.signup.token)
         commit('setLoginErrorKnownEmail', answer.data.signup.errorKnownEmail)
         commit('setLoginErrorWeakPassword', answer.data.signup.errorWeakPassword)
-        commit('setLoginToken', answer.data.signup.token)
         commit('setLoginUserId', answer.data.signup.id)
         commit('setLoginGroupId', answer.data.signup.group)
         commit('setLoginEmail', email)
