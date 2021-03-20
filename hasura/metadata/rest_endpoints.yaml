@@ -1,6 +1,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: Login
+  url: login
+  methods:
+  - POST
+  name: Login
+  comment: Login a user with email/password
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: signup
   url: signup
   methods:

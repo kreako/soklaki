@@ -21,18 +21,18 @@ class GqlClient(object):
             )
             return r.json()
 
-    async def find_user_by_name(self, name):
-        return await self.run_query(
-            """query UsersByName($name: String!) {
-                   users(where: {name: {_eq: $name}}, limit: 1) {
+    async def find_user_by_email(self, email):
+        r = await self.run_query(
+            """ query UserByEmail($email: String!) {
+                   user(where: {email: {_eq: $email}}, limit: 1) {
                        id
-                       name
-                       email
-                       password
+                       hash
+                       group_id
                    }
                }""",
-            {"name": name},
+            {"email": email},
         )
+        return r["data"]["user"][0]
 
     async def insert_user_one(self, group_id, email, hash):
         r = await self.run_query(
@@ -51,7 +51,6 @@ class GqlClient(object):
         )
         if "errors" in r:
             raise GqlClientException(str(r["errors"]))
-        print("r", r)
         return r["data"]["insert_user_one"]["id"]
 
     async def insert_group_one(self, name, is_school):

@@ -41,11 +41,6 @@ def generate_token(user_id, group_id) -> str:
     return token
 
 
-def rehash_and_save_password_if_needed(user, plaintext_password):
-    if Password.check_needs_rehash(user["password"]):
-        client.update_password(user["id"], Password.hash(plaintext_password))
-
-
 class SignupData(BaseModel):
     email: str
     password: str
@@ -65,7 +60,6 @@ class SignupOutput(BaseModel):
 
 @app.post("/signup")
 async def signup(signup: SignupInput):
-    print("signup", signup)
     # hash of the password
     h = Password.hash(signup.input.password)
     # Create a group for the new user
@@ -96,9 +90,39 @@ async def signup(signup: SignupInput):
     )
 
 
-@app.get("/items/{item_id}")
-async def login(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+class LoginData(BaseModel):
+    email: str
+    password: str
+
+
+class LoginInput(BaseModel):
+    input: SignupData
+
+
+class LoginOutput(BaseModel):
+    error: bool
+    token: Optional[str]
+    id: Optional[int]
+    group_id: Optional[int]
+
+
+def rehash_and_save_password_if_needed(user, plaintext_password):
+    if Password.check_needs_rehash(user["password"]):
+        client.update_password(user["id"], Password.hash(plaintext_password))
+
+
+@app.post("/login")
+async def login(login: LoginInput):
+    user = await gql_client.find_user_by_email(login.input.email)
+    try:
+        Password.verify(user["hash"], login.input.password)
+        # TODO rehash if needed
+        token = generate_token(user["id"], user["group_id"])
+        return LoginOutput(
+            error=False, token=token, id=user["id"], group_id=user["group_id"]
+        )
+    except VerifyMismatchError:
+        return LoginOutput(error=True)
 
 
 # For email confirmation

@@ -28,3 +28,13 @@
             token
           }
         }
+    - name: Login
+      query: |-
+        mutation Login($email: String!, $password: String!) {
+          login(email: $email, password: $password) {
+            id
+            token
+            group_id
+            error
+          }
+        }

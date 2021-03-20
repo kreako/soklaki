@@ -1,4 +1,12 @@
 type Mutation {
+  login (
+    email: String!
+    password: String!
+  ): LoginOutput
+}
+
+
+type Mutation {
   signup (
     email: String!
     password: String!
@@ -14,5 +22,12 @@ type SignupOutput {
   token : String
   id : Int
   group : Int
+}
+
+type LoginOutput {
+  error : Boolean!
+  token : String
+  id : Int
+  group_id : Int
 }
 
