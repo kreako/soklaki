@@ -13,6 +13,49 @@ array_relationships:
       table:
         name: eval_observation_student
         schema: public
+delete_permissions:
+- permission:
+    filter:
+      students:
+        student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      students:
+        student:
+          group_id:
+            _eq: X-Hasura-User-Group
+    columns:
+    - text
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - id
+    - text
+    - created_at
+    - updated_at
+    filter:
+      students:
+        student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
 table:
   name: eval_observation
   schema: public
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - text
+    filter:
+      students:
+        student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user

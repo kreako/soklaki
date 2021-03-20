@@ -6,6 +6,13 @@ array_relationships:
       table:
         name: socle_competency_subject
         schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - title
+    filter: {}
+  role: user
 table:
   name: socle_subject
   schema: public

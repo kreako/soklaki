@@ -14,6 +14,12 @@ array_relationships:
         name: group_pricing
         schema: public
 is_enum: true
+select_permissions:
+- permission:
+    columns:
+    - id
+    filter: {}
+  role: user
 table:
   name: pricing_plan
   schema: public

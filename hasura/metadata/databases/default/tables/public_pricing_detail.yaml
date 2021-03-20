@@ -2,6 +2,14 @@ object_relationships:
 - name: plan_enum
   using:
     foreign_key_constraint_on: plan
+select_permissions:
+- permission:
+    columns:
+    - id
+    - plan
+    - price_cent
+    filter: {}
+  role: user
 table:
   name: pricing_detail
   schema: public

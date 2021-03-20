@@ -1,4 +1,5 @@
 
+
 CREATE TABLE "public"."user" ("id" serial NOT NULL, "email" text NOT NULL, "hash" text NOT NULL, PRIMARY KEY ("id") , UNIQUE ("email"));
 
 CREATE TABLE "public"."user_login" ("id" serial NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "user_id" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON UPDATE cascade ON DELETE cascade);
@@ -172,3 +173,26 @@ alter table "public"."group" add column "paid" boolean
 CREATE TABLE "public"."group_pricing" ("id" serial NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "start" date NOT NULL, "end" date NOT NULL, "plan" text NOT NULL, "price_cent" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("plan") REFERENCES "public"."pricing_plan"("id") ON UPDATE cascade ON DELETE cascade);
 
 alter table "public"."group" rename column "paid" to "payment_ok";
+
+alter table "public"."eval_evaluation" add column "created_at" timestamptz
+ not null default now();
+
+alter table "public"."eval_evaluation" add column "updated_at" timestamptz
+ not null default now();
+
+CREATE OR REPLACE FUNCTION "public"."set_current_timestamp_updated_at"()
+RETURNS TRIGGER AS $$
+DECLARE
+  _new record;
+BEGIN
+  _new := NEW;
+  _new."updated_at" = NOW();
+  RETURN _new;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER "set_public_eval_evaluation_updated_at"
+BEFORE UPDATE ON "public"."eval_evaluation"
+FOR EACH ROW
+EXECUTE PROCEDURE "public"."set_current_timestamp_updated_at"();
+COMMENT ON TRIGGER "set_public_eval_evaluation_updated_at" ON "public"."eval_evaluation" 
+IS 'trigger to set value of column "updated_at" to current timestamp on row update';

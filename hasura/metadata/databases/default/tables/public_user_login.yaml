@@ -1,3 +1,12 @@
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      user_id:
+        _eq: X-Hasura-User-Id
+    columns:
+    - user_id
+  role: user
 object_relationships:
 - name: user
   using:

@@ -6,6 +6,14 @@ array_relationships:
       table:
         name: socle_component
         schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - rank
+    - title
+    filter: {}
+  role: user
 table:
   name: socle_domain
   schema: public

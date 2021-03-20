@@ -2,6 +2,22 @@ object_relationships:
 - name: student
   using:
     foreign_key_constraint_on: student_id
+select_permissions:
+- permission:
+    columns:
+    - id
+    - created_at
+    - start
+    - end
+    - cycle
+    - json_path
+    - pdf_path
+    - student_id
+    filter:
+      student:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
 table:
   name: report
   schema: public

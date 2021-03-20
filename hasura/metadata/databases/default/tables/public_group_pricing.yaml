@@ -1,7 +1,37 @@
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      group_id:
+        _eq: X-Hasura-User-Group
+    columns:
+    - end
+    - group_id
+    - plan
+    - price_cent
+    - start
+  role: user
 object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: group_id
 - name: plan_enum
   using:
     foreign_key_constraint_on: plan
+select_permissions:
+- permission:
+    columns:
+    - group_id
+    - end
+    - start
+    - id
+    - price_cent
+    - plan
+    - created_at
+    filter:
+      group_id:
+        _eq: X-Hasura-User-Group
+  role: user
 table:
   name: group_pricing
   schema: public

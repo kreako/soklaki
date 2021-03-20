@@ -37,9 +37,10 @@ select_permissions:
     - active
     - email
     - email_confirmed
-    - id
-    - name
     - group_id
+    - id
+    - manager
+    - name
     filter:
       _or:
       - id:
