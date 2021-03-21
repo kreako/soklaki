@@ -5,3 +5,4 @@ private
 companion/src/__pycache__
 companion/.env
 scripts/env
+scripts/__pycache__
