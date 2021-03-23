@@ -6,3 +6,4 @@ companion/src/__pycache__
 companion/.env
 scripts/env
 scripts/__pycache__
+companion/.pytest_cache
