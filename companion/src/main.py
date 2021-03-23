@@ -33,8 +33,8 @@ def generate_token(user_id, group_id) -> str:
         "https://hasura.io/jwt/claims": {
             "x-hasura-allowed-roles": ["user"],
             "x-hasura-default-role": "user",
-            "x-hasura-user-id": user_id,
-            "x-hasura-user-group": group_id,
+            "x-hasura-user-id": str(user_id),
+            "x-hasura-user-group": str(group_id),
         }
     }
     token = jwt.encode(payload, HASURA_GRAPHQL_JWT_SECRET, "HS256")
