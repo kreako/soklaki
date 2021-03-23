@@ -21,7 +21,7 @@ class Group(BaseModel):
 class Student(BaseModel):
     active = BooleanField(constraints=[SQL("DEFAULT true")])
     birthdate = DateField()
-    cycle = UnknownField()  # USER-DEFINED
+    cycle = TextField()  # USER-DEFINED
     firstname = TextField()
     group = ForeignKeyField(column_name='group_id', field='id', model=Group)
     id = BigAutoField()
