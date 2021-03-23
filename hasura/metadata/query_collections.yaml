@@ -41,7 +41,7 @@
     - name: Students
       query: |-
         query Student {
-          student(order_by: {firstname: asc, lastname: asc}, where: {active: {_eq: true}, group_id: {}}) {
+          student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
             birthdate
             cycle
             firstname

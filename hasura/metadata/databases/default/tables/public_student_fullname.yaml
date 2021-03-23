@@ -1,0 +1,32 @@
+object_relationships:
+- name: group
+  using:
+    manual_configuration:
+      column_mapping:
+        group_id: id
+      insertion_order: null
+      remote_table:
+        name: group
+        schema: public
+- name: student
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: student
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - group_id
+    - fullname
+    filter:
+      group_id:
+        _eq: X-Hasura-User-Group
+  role: user
+table:
+  name: student_fullname
+  schema: public

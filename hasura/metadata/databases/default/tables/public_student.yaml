@@ -43,6 +43,15 @@ insert_permissions:
     - school_entry
   role: user
 object_relationships:
+- name: fullname
+  using:
+    manual_configuration:
+      column_mapping:
+        id: id
+      insertion_order: null
+      remote_table:
+        name: student_fullname
+        schema: public
 - name: group
   using:
     foreign_key_constraint_on: group_id
