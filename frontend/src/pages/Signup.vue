@@ -33,7 +33,7 @@
                 <input
                     @change="password = $event.target.value"
                     @keyup.enter="signup"
-                    class="input mt-2"
+                    class="input w-full mt-2"
                     :class="{ 'input-error': !passwordValid }"
                     type="password"
                     autocomplete="new-password"

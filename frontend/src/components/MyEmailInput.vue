@@ -3,7 +3,7 @@
         <div class="text-gray-800">Votre adresse email</div>
         <input
             @change="$emit('change', $event.target.value)"
-            class="input mt-2"
+            class="input w-full mt-2"
             :class="{ 'input-error': error }"
             type="email"
             placeholder="mon-email@example.com"

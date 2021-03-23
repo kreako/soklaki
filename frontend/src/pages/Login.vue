@@ -26,7 +26,7 @@
                 <input
                     @change="password = $event.target.value"
                     @keyup.enter = "connect"
-                    class="input mt-2"
+                    class="input w-full mt-2"
                     type="password"
                     autocomplete="new-password"
                     id="new-password"
