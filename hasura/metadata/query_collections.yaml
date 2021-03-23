@@ -38,3 +38,16 @@
             error
           }
         }
+    - name: Students
+      query: |-
+        query Student {
+          student(order_by: {firstname: asc, lastname: asc}, where: {active: {_eq: true}, group_id: {}}) {
+            birthdate
+            cycle
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+          }
+        }

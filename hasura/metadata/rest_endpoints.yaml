@@ -19,6 +19,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: Students
+  url: students
+  methods:
+  - GET
+  name: Students
+  comment: List of students
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: users
   url: users
   methods:
