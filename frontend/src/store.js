@@ -26,6 +26,9 @@ const mutations = {
         state.login.token = localStorage.getItem("token")
         state.login.userId = localStorage.getItem("userId")
         state.login.groupId = localStorage.getItem("groupId")
+        if (state.login.token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${state.login.token}`
+        }
     },
     setLoginEmail(state, email) {
         if (state.login.token != null) {
