@@ -15,6 +15,9 @@ module.exports = {
         blue: colors.blue,
       },
     extend: {
+      maxHeight: {
+        46: '11.5rem',
+      }
     },
   },
   variants: {
