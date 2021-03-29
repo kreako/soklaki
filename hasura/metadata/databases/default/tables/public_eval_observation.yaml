@@ -1,3 +1,6 @@
+table:
+  name: eval_observation
+  schema: public
 array_relationships:
 - name: competencies
   using:
@@ -13,14 +16,6 @@ array_relationships:
       table:
         name: eval_observation_student
         schema: public
-delete_permissions:
-- permission:
-    filter:
-      students:
-        student:
-          group_id:
-            _eq: X-Hasura-User-Group
-  role: user
 insert_permissions:
 - permission:
     backend_only: false
@@ -45,14 +40,19 @@ select_permissions:
           group_id:
             _eq: X-Hasura-User-Group
   role: user
-table:
-  name: eval_observation
-  schema: public
 update_permissions:
 - permission:
     check: null
     columns:
     - text
+    filter:
+      students:
+        student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
+delete_permissions:
+- permission:
     filter:
       students:
         student:

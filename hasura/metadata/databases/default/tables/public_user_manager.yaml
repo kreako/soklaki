@@ -1,3 +1,6 @@
+table:
+  name: user_manager
+  schema: public
 object_relationships:
 - name: group
   using:
@@ -8,9 +11,6 @@ object_relationships:
       remote_table:
         name: group
         schema: public
-table:
-  name: user_manager
-  schema: public
 update_permissions:
 - permission:
     check: null

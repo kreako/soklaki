@@ -1,3 +1,6 @@
+table:
+  name: eval_observation_template
+  schema: public
 array_relationships:
 - name: competencies
   using:
@@ -15,6 +18,3 @@ select_permissions:
     - updated_at
     filter: {}
   role: user
-table:
-  name: eval_observation_template
-  schema: public

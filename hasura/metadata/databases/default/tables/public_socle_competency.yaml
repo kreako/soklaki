@@ -1,3 +1,10 @@
+table:
+  name: socle_competency
+  schema: public
+object_relationships:
+- name: component
+  using:
+    foreign_key_constraint_on: component_id
 array_relationships:
 - name: evaluations
   using:
@@ -27,10 +34,6 @@ array_relationships:
       table:
         name: eval_observation_template_competency
         schema: public
-object_relationships:
-- name: component
-  using:
-    foreign_key_constraint_on: component_id
 select_permissions:
 - permission:
     columns:
@@ -41,6 +44,3 @@ select_permissions:
     - cycle
     filter: {}
   role: user
-table:
-  name: socle_competency
-  schema: public

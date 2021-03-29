@@ -1,3 +1,6 @@
+table:
+  name: pricing_detail
+  schema: public
 object_relationships:
 - name: plan_enum
   using:
@@ -10,6 +13,3 @@ select_permissions:
     - price_cent
     filter: {}
   role: user
-table:
-  name: pricing_detail
-  schema: public

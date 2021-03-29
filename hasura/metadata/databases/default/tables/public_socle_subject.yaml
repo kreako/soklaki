@@ -1,3 +1,6 @@
+table:
+  name: socle_subject
+  schema: public
 array_relationships:
 - name: competencies
   using:
@@ -13,6 +16,3 @@ select_permissions:
     - title
     filter: {}
   role: user
-table:
-  name: socle_subject
-  schema: public

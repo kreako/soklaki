@@ -28,7 +28,7 @@
             token
           }
         }
-    - name: Login
+    - name: login
       query: |-
         mutation Login($email: String!, $password: String!) {
           login(email: $email, password: $password) {
@@ -38,7 +38,7 @@
             error
           }
         }
-    - name: Students
+    - name: students
       query: |-
         query Student {
           student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
@@ -49,5 +49,85 @@
             id
             lastname
             school_entry
+          }
+        }
+    - name: socle
+      query: |-
+        query Socle {
+          domains: socle_domain {
+            id
+            rank
+            title
+          }
+          components: socle_component {
+            id
+            rank
+            title
+          }
+          competencies: socle_competency {
+            text
+            rank
+            id
+            cycle
+          }
+          subjects: socle_subject {
+            id
+            title
+          }
+          c1: socle_domain(order_by: {rank: asc}) {
+            id
+            components(order_by: {rank: asc}) {
+              id
+              competencies(where: {cycle: {_eq: "c1"}}, order_by: {rank: asc}) {
+                id
+                subjects {
+                  subject {
+                    id
+                  }
+                }
+              }
+            }
+          }
+          c2: socle_domain(order_by: {rank: asc}) {
+            id
+            components(order_by: {rank: asc}) {
+              id
+              competencies(where: {cycle: {_eq: "c2"}}, order_by: {rank: asc}) {
+                id
+                subjects {
+                  subject {
+                    id
+                  }
+                }
+              }
+            }
+          }
+          c3: socle_domain(order_by: {rank: asc}) {
+            id
+            components(order_by: {rank: asc}) {
+              id
+              competencies(where: {cycle: {_eq: "c3"}}, order_by: {rank: asc}) {
+                id
+                subjects {
+                  subject {
+                    id
+                  }
+                }
+              }
+            }
+          }
+          c4: socle_domain(order_by: {rank: asc}) {
+            id
+            components(order_by: {rank: asc}) {
+              id
+              competencies(where: {cycle: {_eq: "c4"}}, order_by: {rank: asc}) {
+                id
+                subjects {
+                  subject {
+                    id
+                  }
+                }
+              }
+            }
           }
         }

@@ -1,3 +1,6 @@
+table:
+  name: student_fullname
+  schema: public
 object_relationships:
 - name: group
   using:
@@ -27,6 +30,3 @@ select_permissions:
       group_id:
         _eq: X-Hasura-User-Group
   role: user
-table:
-  name: student_fullname
-  schema: public

@@ -1,3 +1,6 @@
+table:
+  name: group
+  schema: public
 array_relationships:
 - name: pricings
   using:
@@ -31,9 +34,6 @@ select_permissions:
       id:
         _eq: X-Hasura-User-Group
   role: user
-table:
-  name: group
-  schema: public
 update_permissions:
 - permission:
     check: null

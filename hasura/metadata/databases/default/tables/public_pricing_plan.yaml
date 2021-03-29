@@ -1,3 +1,7 @@
+table:
+  name: pricing_plan
+  schema: public
+is_enum: true
 array_relationships:
 - name: details
   using:
@@ -13,13 +17,9 @@ array_relationships:
       table:
         name: group_pricing
         schema: public
-is_enum: true
 select_permissions:
 - permission:
     columns:
     - id
     filter: {}
   role: user
-table:
-  name: pricing_plan
-  schema: public

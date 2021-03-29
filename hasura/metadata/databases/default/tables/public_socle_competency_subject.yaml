@@ -1,3 +1,6 @@
+table:
+  name: socle_competency_subject
+  schema: public
 object_relationships:
 - name: competency
   using:
@@ -13,6 +16,3 @@ select_permissions:
     - subject_id
     filter: {}
   role: user
-table:
-  name: socle_competency_subject
-  schema: public

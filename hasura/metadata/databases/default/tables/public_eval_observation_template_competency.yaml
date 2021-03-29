@@ -1,3 +1,6 @@
+table:
+  name: eval_observation_template_competency
+  schema: public
 object_relationships:
 - name: competency
   using:
@@ -13,6 +16,3 @@ select_permissions:
     - competency_id
     filter: {}
   role: user
-table:
-  name: eval_observation_template_competency
-  schema: public

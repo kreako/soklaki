@@ -1,3 +1,10 @@
+table:
+  name: socle_component
+  schema: public
+object_relationships:
+- name: domain
+  using:
+    foreign_key_constraint_on: domain_id
 array_relationships:
 - name: competencies
   using:
@@ -6,10 +13,6 @@ array_relationships:
       table:
         name: socle_competency
         schema: public
-object_relationships:
-- name: domain
-  using:
-    foreign_key_constraint_on: domain_id
 select_permissions:
 - permission:
     columns:
@@ -19,6 +22,3 @@ select_permissions:
     - domain_id
     filter: {}
   role: user
-table:
-  name: socle_component
-  schema: public

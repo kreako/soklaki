@@ -1,3 +1,13 @@
+table:
+  name: group_pricing
+  schema: public
+object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: group_id
+- name: plan_enum
+  using:
+    foreign_key_constraint_on: plan
 insert_permissions:
 - permission:
     backend_only: false
@@ -11,13 +21,6 @@ insert_permissions:
     - price_cent
     - start
   role: user
-object_relationships:
-- name: group
-  using:
-    foreign_key_constraint_on: group_id
-- name: plan_enum
-  using:
-    foreign_key_constraint_on: plan
 select_permissions:
 - permission:
     columns:
@@ -32,6 +35,3 @@ select_permissions:
       group_id:
         _eq: X-Hasura-User-Group
   role: user
-table:
-  name: group_pricing
-  schema: public
