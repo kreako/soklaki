@@ -7,3 +7,5 @@ companion/.env
 scripts/env
 scripts/__pycache__
 companion/.pytest_cache
+frontend/.env.development
+frontend/.env.production
