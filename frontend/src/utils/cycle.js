@@ -1,0 +1,1 @@
+export const cycleNb = (cycle) => cycle[1]
