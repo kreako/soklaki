@@ -24,42 +24,41 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      students:
-        student:
-          group_id:
-            _eq: X-Hasura-User-Group
+      user_id:
+        _eq: X-Hasura-User-Id
     columns:
     - text
+    - user_id
   role: user
 select_permissions:
 - permission:
     columns:
+    - created_at
     - id
     - text
-    - created_at
     - updated_at
+    - user_id
     filter:
-      students:
-        student:
-          group_id:
-            _eq: X-Hasura-User-Group
+      user:
+        group_id:
+          _eq: X-Hasura-User-Group
   role: user
 update_permissions:
 - permission:
     check: null
     columns:
+    - created_at
     - text
+    - user_id
     filter:
-      students:
-        student:
-          group_id:
-            _eq: X-Hasura-User-Group
+      user:
+        group_id:
+          _eq: X-Hasura-User-Group
   role: user
 delete_permissions:
 - permission:
     filter:
-      students:
-        student:
-          group_id:
-            _eq: X-Hasura-User-Group
+      user:
+        group_id:
+          _eq: X-Hasura-User-Group
   role: user

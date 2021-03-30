@@ -131,3 +131,11 @@
             }
           }
         }
+    - name: insert-observation
+      query: |-
+        mutation InsertEvalObservation($text: String!, $user_id: bigint!) {
+          insert_eval_observation_one(object: {text: $text, user_id: $user_id}) {
+            id
+            created_at
+          }
+        }

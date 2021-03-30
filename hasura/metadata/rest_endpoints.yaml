@@ -1,6 +1,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-observation
+  url: insert-observation
+  methods:
+  - POST
+  name: insert-observation
+  comment: Insert observation with text and user_id params
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: login
   url: login
   methods:
