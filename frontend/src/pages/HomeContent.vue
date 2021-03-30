@@ -1,0 +1,1 @@
+<template>Home content</template>
