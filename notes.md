@@ -1,6 +1,5 @@
 # Notes
 
-
 ## Frontend creation
 
 npm init @vitejs/app frontend
@@ -24,49 +23,47 @@ npm install vue-router@4
 podman pod create -p 8080:8080 -p 5432:5432 -p 8000:8000 --name soklaki
 
 podman run -d \
-    --restart=always \
-    --pod soklaki \
-    -e POSTGRES_PASSWORD="password" \
-    -v ./pgdata/:/var/lib/postgresql/data:z \
-    --name soklaki-db \
-    postgres
+ --restart=always \
+ --pod soklaki \
+ -e POSTGRES_PASSWORD="password" \
+ -v ./pgdata/:/var/lib/postgresql/data:z \
+ --name soklaki-db \
+ postgres
 
 podman run -d \
-    --restart=always \
-    --pod soklaki \
-    -e HASURA_GRAPHQL_DATABASE_URL="postgres://postgres:password@127.0.0.1:5432/postgres" \
-    -e HASURA_GRAPHQL_ENABLE_CONSOLE="false" \
-    -e HASURA_GRAPHQL_DEV_MODE="true" \
-    -e HASURA_GRAPHQL_ENABLED_LOG_TYPES="startup, http-log, webhook-log, websocket-log, query-log" \
-    -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE="anonymous" \
-    -e HASURA_GRAPHQL_ADMIN_SECRET="hasura admin secret - keep in sync with hasura deployment" \
-    -e HASURA_GRAPHQL_JWT_SECRET='{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}' \
-    --name soklaki-hasura \
-    hasura/graphql-engine:v2.0.0-alpha.6
+ --restart=always \
+ --pod soklaki \
+ -e HASURA_GRAPHQL_DATABASE_URL="postgres://postgres:password@127.0.0.1:5432/postgres" \
+ -e HASURA_GRAPHQL_ENABLE_CONSOLE="false" \
+ -e HASURA_GRAPHQL_DEV_MODE="true" \
+ -e HASURA_GRAPHQL_ENABLED_LOG_TYPES="startup, http-log, webhook-log, websocket-log, query-log" \
+ -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE="anonymous" \
+ -e HASURA_GRAPHQL_ADMIN_SECRET="hasura admin secret - keep in sync with hasura deployment" \
+ -e HASURA_GRAPHQL_JWT_SECRET='{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}' \
+ -e HASURA_GRAPHQL_STRINGIFY_NUMERIC_TYPES=true \
+ --name soklaki-hasura \
+ hasura/graphql-engine:v2.0.0-alpha.6
 
 podman run -d \
-    --restart=always \
-    --pod soklaki \
-    --name soklaki-companion \
-    soklaki-companion
+ --restart=always \
+ --pod soklaki \
+ --name soklaki-companion \
+ soklaki-companion
 
 ### Start the pod
 
 $ podman pod start soklaki
 
-
 ### Run the companion for debug
 
-podman run -it  --rm \
-    --pod soklaki \
-    --name soklaki-companion \
-    soklaki-companion
-
+podman run -it --rm \
+ --pod soklaki \
+ --name soklaki-companion \
+ soklaki-companion
 
 or copy file to the running container :
 
 podman cp src/main.py soklaki-companion:/app/
-
 
 ### Stop/Delete individually
 
