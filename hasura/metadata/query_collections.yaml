@@ -38,19 +38,6 @@
             error
           }
         }
-    - name: students
-      query: |-
-        query Student {
-          student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
-            birthdate
-            cycle
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-          }
-        }
     - name: socle
       query: |-
         query Socle {
@@ -137,5 +124,52 @@
           insert_eval_observation_one(object: {text: $text, user_id: $user_id}) {
             id
             created_at
+          }
+        }
+    - name: observation
+      query: |-
+        query ObservationByPk($id: bigint!) {
+          eval_observation_by_pk(id: $id) {
+            id
+            created_at
+            text
+            updated_at
+            user_id
+            students {
+              student_id
+              id
+            }
+            competencies {
+              id
+              competency_id
+            }
+          }
+        }
+    - name: insert-observation-student
+      query: |-
+        mutation InsertObservationStudent($observation_id: bigint!, $student_id: bigint!) {
+          insert_eval_observation_student_one(object: {observation_id: $observation_id, student_id: $student_id}) {
+            id
+            observation_id
+            student_id
+          }
+        }
+    - name: delete-observation-student
+      query: |-
+        mutation DeleteObservationStudent($id: bigint!) {
+          delete_eval_observation_student_by_pk(id: $id) {
+            id
+          }
+        }
+    - name: students
+      query: |-
+        query Student {
+          student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
           }
         }

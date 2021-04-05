@@ -1,6 +1,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: delete-observation-student
+  url: delete-observation-student
+  methods:
+  - POST
+  name: delete-observation-student
+  comment: Delete observation student
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-observation
   url: insert-observation
   methods:
@@ -10,12 +19,31 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-observation-student
+  url: insert-observation-student
+  methods:
+  - POST
+  name: insert-observation-student
+  comment: Insert an observation <-> student link
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: login
   url: login
   methods:
   - POST
   name: login
   comment: Login a user with email/password
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: observation
+  url: observation
+  methods:
+  - GET
+  - POST
+  name: observation
+  comment: Get observation by primary key
 - definition:
     query:
       collection_name: allowed-queries
