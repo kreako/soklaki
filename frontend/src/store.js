@@ -17,7 +17,9 @@ const state = {
     email: null,
     emailConfirmed: null,
   },
-  students: [],
+  // id -> student
+  students: {},
+  sortedStudents: [],
   socle: {
     // cache id -> object
     domains: {},
@@ -30,11 +32,24 @@ const state = {
     c3: [],
     c4: [],
   },
+  // id -> observation object
+  observations: {},
+};
+
+/// Return an object from an array
+/// Initial array contains object with {id: ...}
+/// Returned object contains a map id -> object
+const fromArrayToIdObjects = (array) => {
+  const obj = {};
+  for (const idx in array) {
+    const o = array[idx];
+    obj[o.id] = o;
+  }
+  return obj;
 };
 
 const mutations = {
   loadFromLocalStorage(state) {
-    window.console.log("loadFromLocalStorage");
     state.login.email = localStorage.getItem("email");
     state.login.token = localStorage.getItem("token");
     state.login.userId = localStorage.getItem("userId");
@@ -83,7 +98,8 @@ const mutations = {
     state.login.groupId = groupId;
   },
   setStudents(state, students) {
-    state.students = students;
+    state.students = fromArrayToIdObjects(students);
+    state.sortedStudents = students.map((s) => s.id);
   },
   setSocle(state, socle) {
     state.socle.c1 = socle.c1;
@@ -91,25 +107,71 @@ const mutations = {
     state.socle.c3 = socle.c3;
     state.socle.c4 = socle.c4;
     // Now update cache
-    state.socle.domains = {};
-    for (const idx in socle.domains) {
-      const domain = socle.domains[idx];
-      state.socle.domains[domain.id] = domain;
+    state.socle.domains = fromArrayToIdObjects(socle.domains);
+    state.socle.components = fromArrayToIdObjects(socle.components);
+    state.socle.competencies = fromArrayToIdObjects(socle.competencies);
+    state.socle.subjects = fromArrayToIdObjects(socle.subjects);
+  },
+  setObservation(
+    state,
+    { id, createdAt, updatedAt, text, userId, students, competencies }
+  ) {
+    state.observations[id] = {
+      id: id,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      userId: userId,
+      text: text,
+      students: students,
+      competencies: competencies,
+    };
+    window.console.log("setObservation", id, state.observations[id]);
+  },
+  insertObservationStudent(state, { id, observationId, studentId }) {
+    state.observations[observationId].students.push({
+      id: id,
+      student_id: studentId,
+    });
+  },
+  deleteObservationStudent(state, { observationId, id }) {
+    window.console.log(
+      "mutation deleteObservationStudent 1",
+      observationId,
+      id
+    );
+    let idx = 0;
+    const length = state.observations[observationId].students.length;
+    window.console.log("mutation deleteObservationStudent 2");
+    for (idx = 0; idx < length; idx++) {
+      if (state.observations[observationId].students[idx].id === id) {
+        window.console.log("mutation deleteObservationStudent 3");
+        break;
+      }
     }
-    state.socle.components = {};
-    for (const idx in socle.components) {
-      const component = socle.components[idx];
-      state.socle.components[component.id] = component;
-    }
-    state.socle.competencies = {};
-    for (const idx in socle.competencies) {
-      const competency = socle.competencies[idx];
-      state.socle.competencies[competency.id] = competency;
-    }
-    state.socle.subjects = {};
-    for (const idx in socle.subjects) {
-      const subject = socle.subjects[idx];
-      state.socle.subjects[subject.id] = subject;
+    window.console.log(
+      "mutation deleteObservationStudent 4",
+      idx,
+      state.observations[observationId].students
+    );
+    state.observations[observationId].students.splice(idx, 1);
+    window.console.log(
+      "mutation deleteObservationStudent 5",
+      state.observations[observationId].students
+    );
+  },
+};
+
+const getters = {
+  student: (state) => (studentId) => {
+    const id = Number(studentId);
+    if (id in state.students) {
+      return state.students[id];
+    } else {
+      return {
+        firstName: "",
+        lastName: "",
+        birthdate: "",
+      };
     }
   },
 };
@@ -159,7 +221,70 @@ const actions = {
       user_id: state.login.userId,
     });
     let data = answer.data.insert_eval_observation_one;
-    window.console.log(data.id, data.created_at);
+    commit("setObservation", {
+      id: data.id,
+      createdAt: data.created_at,
+      updatedAt: data.created_at,
+      text: text,
+      userId: state.login.userId,
+      students: [],
+      competencies: [],
+    });
+    return data.id;
+  },
+
+  async observation({ commit }, id) {
+    let answer = await axios.post("observation", { id: id });
+    let data = answer.data.eval_observation_by_pk;
+    if (data == null) {
+      // TODO
+      commit("setError", "TODO");
+    } else {
+      commit("setObservation", {
+        id: data.id,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+        text: data.text,
+        userId: data.user_id,
+        students: data.students,
+        competencies: data.competencies,
+      });
+    }
+  },
+  async insertObservationStudent({ commit }, { observationId, studentId }) {
+    let answer = await axios.post("insert-observation-student", {
+      observation_id: observationId,
+      student_id: studentId,
+    });
+    if (answer.error) {
+      // TODO
+    }
+    let data = answer.data.insert_eval_observation_student_one;
+    if (data == null) {
+      // TODO
+    } else {
+      commit("insertObservationStudent", {
+        id: data.id,
+        observationId: data.observation_id,
+        studentId: data.student_id,
+      });
+    }
+  },
+  async deleteObservationStudent({ commit }, { id, observationId }) {
+    window.console.log("action deleteObservationStudent 1");
+    let answer = await axios.post("delete-observation-student", {
+      id: id,
+    });
+    window.console.log("action deleteObservationStudent 2");
+    if (answer.error) {
+      // TODO
+    }
+    window.console.log("action deleteObservationStudent 3");
+    commit("deleteObservationStudent", {
+      id: id,
+      observationId: observationId,
+    });
+    window.console.log("action deleteObservationStudent 4");
   },
 };
 
@@ -167,4 +292,5 @@ export const store = createStore({
   state,
   mutations,
   actions,
+  getters,
 });
