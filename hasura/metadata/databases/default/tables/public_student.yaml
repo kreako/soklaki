@@ -52,7 +52,6 @@ insert_permissions:
     columns:
     - active
     - birthdate
-    - cycle
     - firstname
     - group_id
     - lastname
@@ -61,14 +60,13 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - group_id
-    - id
     - active
     - birthdate
-    - school_entry
     - firstname
+    - group_id
+    - id
     - lastname
-    - cycle
+    - school_entry
     filter:
       group_id:
         _eq: X-Hasura-User-Group
@@ -79,7 +77,6 @@ update_permissions:
     columns:
     - active
     - birthdate
-    - cycle
     - firstname
     - lastname
     - school_entry
