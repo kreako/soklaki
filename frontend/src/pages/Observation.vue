@@ -98,8 +98,16 @@ const observation = computed(() => {
 
 const showStudentSelector = ref(false);
 const students = computed(() => store.state.students);
+const isStudentObserved = (studentId) => {
+  for (const s of observation.value.students) {
+    if (s.student_id === studentId) {
+      return true;
+    }
+  }
+  return false;
+};
 const sortedStudents = computed(() =>
-  store.state.sortedStudents.filter((id) => observation.value.students)
+  store.state.sortedStudents.filter((id) => !isStudentObserved(id))
 );
 const studentById = computed(() => store.getters.student);
 const studentCycle = computed(() => (studentId) =>
