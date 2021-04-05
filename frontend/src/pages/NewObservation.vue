@@ -12,14 +12,17 @@
 
 <script setup>
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { ref } from "vue";
 
+const router = useRouter();
 const store = useStore();
 const text = ref("");
 
-const save = () => {
-  store.dispatch("insertObservation", {
+const save = async () => {
+  let id = await store.dispatch("insertObservation", {
     text: text.value,
   });
+  router.push(`/observation/${id}`);
 };
 </script>
