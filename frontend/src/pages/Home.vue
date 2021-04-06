@@ -1,4 +1,48 @@
 <template>
+  <!-- error panel from right -->
+  <div class="relative">
+    <div
+      v-if="inError"
+      class="w-5/6 absolute top-0 right-0 bg-red-700 min-h-screen max-w-screen-sm z-50"
+    >
+      <div>
+        <div class="flex flex-col px-1 text-white py-4">
+          <div class="font-bold text-xl">
+            Une erreur est survenue et j'en suis bien désolé 😭
+          </div>
+          <div class="mt-2">
+            Vous pouvez copier-coller tout ce qui s'affiche en dessous de ce
+            message et me l'envoyer par mail ?
+          </div>
+          <div>Merci 🙏</div>
+          <div
+            class="mt-8 whitespace-pre font-serif bg-red-500 px-1 w-10/12 overflow-y-scroll"
+          >
+            {{ errorMessage }}
+          </div>
+          <div class="mt-8 self-center">
+            <a
+              :href="`mailto:olivier@kreako.fr?subject=${encodeURIComponent(
+                '[Soklaki] error'
+              )}&body=${encodeURIComponent(errorMessage)}`"
+              class="bg-white hover:bg-red-200 text-red-700 hover:text-red-900 font-bold px-4 py-2 rounded-md shadow-sm"
+            >
+              Envoyez-moi un mail !
+            </a>
+          </div>
+          <div class="mt-8 self-center">
+            <button
+              @click="clearError"
+              class="bg-white hover:bg-red-200 text-red-700 hover:text-red-900 font-bold px-4 py-2 rounded-md shadow-sm"
+            >
+              Fermez cette abomination
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Menu panel on left -->
   <div class="relative">
     <div
       v-if="showMobileMenu"
@@ -49,10 +93,7 @@
 
     <div class>
       <router-view></router-view>
-      <!--
-      <NewObservation :students="students" :socle="socle" />
-
-        -->
+      {{ students }}
     </div>
   </div>
 </template>
@@ -74,8 +115,13 @@ const token = computed(() => store.state.login.token);
 const students = computed(() => store.state.students);
 const socle = computed(() => store.state.socle);
 
-const showMobileMenu = ref(false);
+const inError = computed(() => store.state.error.inError);
+const errorMessage = computed(() => store.state.error.message);
+const clearError = () => {
+  store.dispatch("clearError");
+};
 
+const showMobileMenu = ref(false);
 onBeforeRouteUpdate((updateGuard) => {
   // Close the menu on navigation
   showMobileMenu.value = false;
