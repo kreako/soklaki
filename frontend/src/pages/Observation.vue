@@ -4,7 +4,7 @@
       <div class="text-gray-800">
         <div class="flex flex-row items-center space-x-3">
           <div>Description de l'observation</div>
-          <button v-if="observationInEdit" @click="saveObservation">
+          <button v-if="observationTextInEdit" @click="saveObservation">
             <IconCheck class="h-4 text-gray-600 hover:text-teal-500" />
           </button>
           <button v-else @click="editObservation">
@@ -12,7 +12,7 @@
           </button>
         </div>
       </div>
-      <div v-if="observationInEdit">
+      <div v-if="observationTextInEdit">
         <textarea
           v-model="observationEditText"
           class="mt-2 input w-full"
@@ -114,12 +114,12 @@ const observation = computed(() => {
   );
 });
 
-const observationInEdit = ref(false);
+const observationTextInEdit = ref(false);
 const observationEditText = ref("");
 const editObservation = () => {
   observationEditText.value = observation.value.text;
   window.console.log(observationEditText.value);
-  observationInEdit.value = true;
+  observationTextInEdit.value = true;
 };
 const saveObservation = async () => {
   // TODO store dispatch
@@ -127,7 +127,7 @@ const saveObservation = async () => {
     id: observation.value.id,
     text: observationEditText.value,
   });
-  observationInEdit.value = false;
+  observationTextInEdit.value = false;
 };
 
 const showStudentSelector = ref(false);
