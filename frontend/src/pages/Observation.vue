@@ -4,10 +4,26 @@
       <div class="text-gray-800">
         <div class="flex flex-row items-center space-x-3">
           <div>Description de l'observation</div>
-          <div><IconPencil class="h-4 text-gray-600" /></div>
+          <button v-if="observationInEdit" @click="saveObservation">
+            <IconCheck class="h-4 text-gray-600 hover:text-teal-500" />
+          </button>
+          <button v-else @click="editObservation">
+            <IconPencil class="h-4 text-gray-600 hover:text-teal-500" />
+          </button>
         </div>
       </div>
-      <div class="font-serif">{{ observation.text }}</div>
+      <div v-if="observationInEdit">
+        <textarea
+          v-model="observationEditText"
+          class="mt-2 input w-full"
+          rows="5"
+        >
+        </textarea>
+        <button @click="saveObservation" class="button-main-action mt-2">
+          Sauvegarder
+        </button>
+      </div>
+      <div v-else class="font-serif whitespace-pre">{{ observation.text }}</div>
     </div>
     <div class="mt-8">
       <div class="text-gray-800">La date de l'observation</div>
@@ -75,6 +91,7 @@ import { computed, ref, onMounted, watch } from "vue";
 import { dateFromString } from "../utils/date";
 import { estimateCycle } from "../utils/cycle";
 import IconPencil from "../icons/IconPencil.vue";
+import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
 import StudentSelector from "../components/StudentSelector.vue";
 import CompetencySelector from "../components/CompetencySelector.vue";
@@ -96,6 +113,22 @@ const observation = computed(() => {
     }
   );
 });
+
+const observationInEdit = ref(false);
+const observationEditText = ref("");
+const editObservation = () => {
+  observationEditText.value = observation.value.text;
+  window.console.log(observationEditText.value);
+  observationInEdit.value = true;
+};
+const saveObservation = async () => {
+  // TODO store dispatch
+  await store.dispatch("updateObservationText", {
+    id: observation.value.id,
+    text: observationEditText.value,
+  });
+  observationInEdit.value = false;
+};
 
 const showStudentSelector = ref(false);
 const students = computed(() => store.state.students);
