@@ -34,3 +34,16 @@ export const dateDiffInDays = (d1, d2) => {
   // In days
   return h / 24;
 };
+
+/// Return today date in string format
+/// like 2021-04-06
+export const today = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+
+  return `${year}-${month
+    .toString()
+    .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+};
