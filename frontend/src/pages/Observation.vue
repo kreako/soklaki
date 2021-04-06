@@ -4,10 +4,10 @@
       <div class="text-gray-800">
         <div class="flex flex-row items-center space-x-3">
           <div>Description de l'observation</div>
-          <button v-if="observationTextInEdit" @click="saveObservation">
+          <button v-if="observationTextInEdit" @click="saveObservationText">
             <IconCheck class="h-4 text-gray-600 hover:text-teal-500" />
           </button>
-          <button v-else @click="editObservation">
+          <button v-else @click="editObservationText">
             <IconPencil class="h-4 text-gray-600 hover:text-teal-500" />
           </button>
         </div>
@@ -19,7 +19,7 @@
           rows="5"
         >
         </textarea>
-        <button @click="saveObservation" class="button-main-action mt-2">
+        <button @click="saveObservationText" class="button-main-action mt-2">
           Sauvegarder
         </button>
       </div>
@@ -116,11 +116,11 @@ const observation = computed(() => {
 
 const observationTextInEdit = ref(false);
 const observationEditText = ref("");
-const editObservation = () => {
+const editObservationText = () => {
   observationEditText.value = observation.value.text;
   observationTextInEdit.value = true;
 };
-const saveObservation = async () => {
+const saveObservationText = async () => {
   // TODO store dispatch
   await store.dispatch("updateObservationText", {
     id: observation.value.id,
