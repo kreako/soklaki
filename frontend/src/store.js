@@ -131,6 +131,9 @@ const mutations = {
   setObservationText(state, { id, text }) {
     state.observations[id].text = text;
   },
+  setObservationDate(state, { id, date }) {
+    state.observations[id].date = date;
+  },
   insertObservationStudent(state, { id, observationId, studentId }) {
     state.observations[observationId].students.push({
       id: id,
@@ -254,6 +257,30 @@ const actions = {
       commit("setObservationText", {
         id: id,
         text: text,
+      });
+    }
+  },
+
+  async updateObservationDate({ commit }, { id, date }) {
+    try {
+      const answer = await axios.post("update-observation-date", {
+        id: id,
+        date: date,
+      });
+    } catch (error) {
+      // TODO use error.response.data ?
+      commit("setError", "TODO");
+      return;
+    }
+
+    let data = answer.data.update_eval_observation_by_pk;
+    if (data == null) {
+      // TODO
+      commit("setError", "TODO");
+    } else {
+      commit("setObservationDate", {
+        id: id,
+        date: date,
       });
     }
   },
