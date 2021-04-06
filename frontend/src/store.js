@@ -127,6 +127,9 @@ const mutations = {
     };
     window.console.log("setObservation", id, state.observations[id]);
   },
+  setObservationText(state, { id, text }) {
+    state.observations[id].text = text;
+  },
   insertObservationStudent(state, { id, observationId, studentId }) {
     state.observations[observationId].students.push({
       id: id,
@@ -234,7 +237,7 @@ const actions = {
   },
 
   async observation({ commit }, id) {
-    let answer = await axios.post("observation", { id: id });
+    const answer = await axios.post("observation", { id: id });
     let data = answer.data.eval_observation_by_pk;
     if (data == null) {
       // TODO
@@ -251,6 +254,24 @@ const actions = {
       });
     }
   },
+
+  async updateObservationText({ commit }, { id, text }) {
+    const answer = await axios.post("update-observation-text", {
+      id: id,
+      text: text,
+    });
+    let data = answer.data.update_eval_observation_by_pk;
+    if (data == null) {
+      // TODO
+      commit("setError", "TODO");
+    } else {
+      commit("setObservationText", {
+        id: id,
+        text: text,
+      });
+    }
+  },
+
   async insertObservationStudent({ commit }, { observationId, studentId }) {
     let answer = await axios.post("insert-observation-student", {
       observation_id: observationId,
@@ -270,6 +291,7 @@ const actions = {
       });
     }
   },
+
   async deleteObservationStudent({ commit }, { id, observationId }) {
     window.console.log("action deleteObservationStudent 1");
     let answer = await axios.post("delete-observation-student", {
