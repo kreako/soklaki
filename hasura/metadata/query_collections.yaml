@@ -173,3 +173,10 @@
             school_entry
           }
         }
+    - name: update-observation-text
+      query: |-
+        mutation UpdateObservationText($id: bigint!, $text: String!) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {text: $text}) {
+            id
+          }
+        }
