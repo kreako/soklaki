@@ -74,6 +74,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: update-observation-date
+  url: update-observation-date
+  methods:
+  - POST
+  name: update-observation-date
+  comment: update-observation-date
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: update-observation-text
   url: update-observation-text
   methods:

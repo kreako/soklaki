@@ -181,3 +181,10 @@
             }
           }
         }
+    - name: update-observation-date
+      query: |-
+        mutation UpdatebservationDate($id: bigint!, $date: date!) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date}) {
+            id
+          }
+        }
