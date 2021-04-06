@@ -34,6 +34,7 @@
       <div v-if="showStudentSelector">
         <StudentSelector
           @select="addStudent"
+          @cancel="showStudentSelector = false"
           :sortedStudents="sortedStudents"
           :students="students"
         />
