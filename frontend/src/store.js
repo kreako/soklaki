@@ -3,6 +3,10 @@ import axios from "axios";
 import { today } from "./utils/date";
 
 const state = {
+  error: {
+    inError: false,
+    message: "",
+  },
   login: {
     error: {
       invalid: false,
@@ -50,6 +54,12 @@ const fromArrayToIdObjects = (array) => {
 };
 
 const mutations = {
+  setInError(state, error) {
+    state.error.inError = error;
+  },
+  setErrorMessage(state, message) {
+    state.error.message = message;
+  },
   loadFromLocalStorage(state) {
     state.login.email = localStorage.getItem("email");
     state.login.token = localStorage.getItem("token");
@@ -170,6 +180,14 @@ const getters = {
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 const actions = {
+  setError({ commit }, message) {
+    commit("setInError", true);
+    commit("setErrorMessage", message);
+  },
+  clearError({ commit }) {
+    commit("setInError", false);
+    commit("setErrorMessage", "");
+  },
   async login({ commit }, { email, password }) {
     let answer = await axios.post("login", { email, password });
     commit("setLoginToken", answer.data.login.token);
@@ -228,8 +246,9 @@ const actions = {
     const answer = await axios.post("observation", { id: id });
     let data = answer.data.eval_observation_by_pk;
     if (data == null) {
-      // TODO
-      commit("setError", "TODO");
+      throw new Error(
+        `Apparemment, je ne trouve pas cette observation : ${id}`
+      );
     } else {
       commit("setObservation", {
         id: data.id,
@@ -251,8 +270,9 @@ const actions = {
     });
     let data = answer.data.update_eval_observation_by_pk;
     if (data == null) {
-      // TODO
-      commit("setError", "TODO");
+      throw new Error(`Quelque chose s'est mal passé dans la mise à jour du texte de l'observation. :(\n
+        id: ${id}\n
+        text: ${text}`);
     } else {
       commit("setObservationText", {
         id: id,
@@ -262,21 +282,16 @@ const actions = {
   },
 
   async updateObservationDate({ commit }, { id, date }) {
-    try {
-      const answer = await axios.post("update-observation-date", {
-        id: id,
-        date: date,
-      });
-    } catch (error) {
-      // TODO use error.response.data ?
-      commit("setError", "TODO");
-      return;
-    }
+    const answer = await axios.post("update-observation-date", {
+      id: id,
+      date: date,
+    });
 
     let data = answer.data.update_eval_observation_by_pk;
     if (data == null) {
-      // TODO
-      commit("setError", "TODO");
+      throw new Error(`Quelque chose s'est mal passé dans la mise à jour de la date de l'observation. :(\n
+        id: ${id}\n
+        date: ${date}`);
     } else {
       commit("setObservationDate", {
         id: id,
@@ -319,9 +334,33 @@ const actions = {
   },
 };
 
-export const store = createStore({
-  state,
-  mutations,
-  actions,
-  getters,
-});
+const buildStore = () => {
+  const store = createStore({
+    state,
+    mutations,
+    actions,
+    getters,
+  });
+
+  // Set error handler
+  store.subscribeAction({
+    error: (action, state, error) => {
+      console.log(`error action ${action.type}`);
+      console.log("error", action);
+      console.error(error);
+      console.error("response", error.response);
+      store.dispatch(
+        "setError",
+        `Action: ${JSON.stringify(action, null, 2)}\nError: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}\nResponse: ${JSON.stringify(error.response, null, 2)}`
+      );
+    },
+  });
+
+  return store;
+};
+
+export const store = buildStore();
