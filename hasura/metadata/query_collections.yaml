@@ -126,25 +126,6 @@
             created_at
           }
         }
-    - name: observation
-      query: |-
-        query ObservationByPk($id: bigint!) {
-          eval_observation_by_pk(id: $id) {
-            id
-            created_at
-            text
-            updated_at
-            user_id
-            students {
-              student_id
-              id
-            }
-            competencies {
-              id
-              competency_id
-            }
-          }
-        }
     - name: insert-observation-student
       query: |-
         mutation InsertObservationStudent($observation_id: bigint!, $student_id: bigint!) {
@@ -178,5 +159,25 @@
         mutation UpdateObservationText($id: bigint!, $text: String!) {
           update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {text: $text}) {
             id
+          }
+        }
+    - name: observation
+      query: |-
+        query ObservationByPk($id: bigint!) {
+          eval_observation_by_pk(id: $id) {
+            id
+            created_at
+            text
+            date
+            updated_at
+            user_id
+            students {
+              student_id
+              id
+            }
+            competencies {
+              id
+              competency_id
+            }
           }
         }
