@@ -125,7 +125,6 @@ const mutations = {
       students: students,
       competencies: competencies,
     };
-    window.console.log("setObservation", id, state.observations[id]);
   },
   setObservationText(state, { id, text }) {
     state.observations[id].text = text;
@@ -137,30 +136,14 @@ const mutations = {
     });
   },
   deleteObservationStudent(state, { observationId, id }) {
-    window.console.log(
-      "mutation deleteObservationStudent 1",
-      observationId,
-      id
-    );
     let idx = 0;
     const length = state.observations[observationId].students.length;
-    window.console.log("mutation deleteObservationStudent 2");
     for (idx = 0; idx < length; idx++) {
       if (state.observations[observationId].students[idx].id === id) {
-        window.console.log("mutation deleteObservationStudent 3");
         break;
       }
     }
-    window.console.log(
-      "mutation deleteObservationStudent 4",
-      idx,
-      state.observations[observationId].students
-    );
     state.observations[observationId].students.splice(idx, 1);
-    window.console.log(
-      "mutation deleteObservationStudent 5",
-      state.observations[observationId].students
-    );
   },
 };
 
@@ -184,7 +167,6 @@ axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 const actions = {
   async login({ commit }, { email, password }) {
     let answer = await axios.post("login", { email, password });
-    window.console.log("answer", answer);
     commit("setLoginToken", answer.data.login.token);
     commit("setLoginErrorInvalid", answer.data.login.error);
     commit("setLoginUserId", answer.data.login.id);
@@ -293,20 +275,16 @@ const actions = {
   },
 
   async deleteObservationStudent({ commit }, { id, observationId }) {
-    window.console.log("action deleteObservationStudent 1");
     let answer = await axios.post("delete-observation-student", {
       id: id,
     });
-    window.console.log("action deleteObservationStudent 2");
     if (answer.error) {
       // TODO
     }
-    window.console.log("action deleteObservationStudent 3");
     commit("deleteObservationStudent", {
       id: id,
       observationId: observationId,
     });
-    window.console.log("action deleteObservationStudent 4");
   },
 };
 

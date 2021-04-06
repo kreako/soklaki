@@ -118,7 +118,6 @@ const observationTextInEdit = ref(false);
 const observationEditText = ref("");
 const editObservation = () => {
   observationEditText.value = observation.value.text;
-  window.console.log(observationEditText.value);
   observationTextInEdit.value = true;
 };
 const saveObservation = async () => {
@@ -158,12 +157,10 @@ const addStudent = async (id) => {
   showStudentSelector.value = false;
 };
 const removeStudent = async (id) => {
-  window.console.log("removeStudent");
   await store.dispatch("deleteObservationStudent", {
     observationId: observation.value.id,
     id: id,
   });
-  window.console.log("removeStudent done");
 };
 
 const showCompetencySelector = ref(false);
