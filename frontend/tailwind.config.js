@@ -1,29 +1,29 @@
-const colors = require('tailwindcss/colors')
+const colors = require("tailwindcss/colors");
 
 module.exports = {
   purge: [],
   darkMode: false, // or 'media' or 'class'
   theme: {
-      colors: {
-        black: colors.black,
-        white: colors.white,
-        red: colors.red,
-        green: colors.emerald,
-        gray: colors.coolGray,
-        teal: colors.teal,
-        rose: colors.rose,
-        blue: colors.blue,
-      },
+    colors: {
+      black: colors.black,
+      white: colors.white,
+      red: colors.red,
+      green: colors.emerald,
+      gray: colors.coolGray,
+      teal: colors.teal,
+      rose: colors.rose,
+      blue: colors.blue,
+    },
     extend: {
       maxHeight: {
-        46: '11.5rem',
-      }
+        46: "11.5rem",
+      },
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      textColor: ["group-hover"],
+    },
   },
-  plugins: [
-    require('./tailwindcss-plugins/forms'),
-  ],
-}
+  plugins: [require("./tailwindcss-plugins/forms")],
+};
