@@ -26,8 +26,26 @@
       <div v-else class="font-serif whitespace-pre">{{ observation.text }}</div>
     </div>
     <div class="mt-8">
-      <div class="text-gray-800">La date de l'observation</div>
-      <div class="font-serif">{{ observation.date }}</div>
+      <div class="flex flex-row items-center space-x-3">
+        <div class="text-gray-800">La date de l'observation</div>
+        <button v-if="observationDateInEdit" @click="saveObservationDate">
+          <IconCheck class="h-4 text-gray-600 hover:text-teal-500" />
+        </button>
+        <button v-else @click="editObservationDate">
+          <IconPencil class="h-4 text-gray-600 hover:text-teal-500" />
+        </button>
+      </div>
+      <div v-if="observationDateInEdit">
+        <input
+          type="text"
+          v-model="observationEditDate"
+          class="mt-2 input w-full"
+        />
+        <button @click="saveObservationDate" class="button-main-action mt-2">
+          Sauvegarder
+        </button>
+      </div>
+      <div v-else class="font-serif">{{ observation.date }}</div>
     </div>
     <div class="mt-8">
       <div class="text-gray-800">Les élèves concernés</div>
@@ -127,6 +145,21 @@ const saveObservationText = async () => {
     text: observationEditText.value,
   });
   observationTextInEdit.value = false;
+};
+
+const observationDateInEdit = ref(false);
+const observationEditDate = ref("");
+const editObservationDate = () => {
+  observationEditDate.value = observation.value.date;
+  observationDateInEdit.value = true;
+};
+const saveObservationDate = async () => {
+  // TODO store dispatch
+  await store.dispatch("updateObservationDate", {
+    id: observation.value.id,
+    date: observationEditDate.value,
+  });
+  observationDateInEdit.value = false;
 };
 
 const showStudentSelector = ref(false);
