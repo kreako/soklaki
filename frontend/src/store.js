@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import { today } from "./utils/date";
 
 const state = {
   login: {
@@ -114,13 +115,14 @@ const mutations = {
   },
   setObservation(
     state,
-    { id, createdAt, updatedAt, text, userId, students, competencies }
+    { id, createdAt, updatedAt, date, text, userId, students, competencies }
   ) {
     state.observations[id] = {
       id: id,
       createdAt: createdAt,
       updatedAt: updatedAt,
       userId: userId,
+      date: date,
       text: text,
       students: students,
       competencies: competencies,
@@ -208,6 +210,7 @@ const actions = {
     let data = answer.data.insert_eval_observation_one;
     commit("setObservation", {
       id: data.id,
+      date: today(),
       createdAt: data.created_at,
       updatedAt: data.created_at,
       text: text,
@@ -229,6 +232,7 @@ const actions = {
         id: data.id,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
+        date: data.date,
         text: data.text,
         userId: data.user_id,
         students: data.students,

@@ -27,7 +27,7 @@
     </div>
     <div class="mt-8">
       <div class="text-gray-800">La date de l'observation</div>
-      <div class="font-serif">{{ dateFromString(observation.createdAt) }}</div>
+      <div class="font-serif">{{ observation.date }}</div>
     </div>
     <div class="mt-8">
       <div class="text-gray-800">Les élèves concernés</div>
@@ -88,7 +88,6 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
-import { dateFromString } from "../utils/date";
 import { estimateCycle } from "../utils/cycle";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
@@ -107,6 +106,7 @@ const observation = computed(() => {
       createdAt: null,
       updatedAt: null,
       userId: null,
+      date: null,
       text: null,
       students: [],
       competencies: [],
