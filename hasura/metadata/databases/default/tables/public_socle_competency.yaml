@@ -5,6 +5,15 @@ object_relationships:
 - name: component
   using:
     foreign_key_constraint_on: component_id
+- name: full_rank
+  using:
+    manual_configuration:
+      column_mapping:
+        id: competency_id
+      insertion_order: null
+      remote_table:
+        name: socle_competency_full_rank
+        schema: public
 array_relationships:
 - name: evaluations
   using:

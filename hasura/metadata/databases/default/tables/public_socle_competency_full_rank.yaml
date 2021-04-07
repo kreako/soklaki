@@ -1,0 +1,21 @@
+table:
+  name: socle_competency_full_rank
+  schema: public
+object_relationships:
+- name: competency
+  using:
+    manual_configuration:
+      column_mapping:
+        competency_id: id
+      insertion_order: null
+      remote_table:
+        name: socle_competency
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - competency_id
+    - alpha_full_rank
+    - full_rank
+    filter: {}
+  role: user
