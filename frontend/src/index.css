@@ -15,6 +15,11 @@
     @apply text-white shadow-sm;
     @apply bg-teal-700;
   }
+  .button-minor-action {
+    @apply rounded-md px-3 py-1 shadow-sm;
+    @apply text-gray-600 hover:text-gray-800;
+    @apply border border-gray-300 hover:border-gray-500;
+  }
   .form-label {
     @apply uppercase text-sm tracking-wide text-gray-700;
   }
