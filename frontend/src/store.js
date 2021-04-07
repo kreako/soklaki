@@ -349,14 +349,21 @@ const buildStore = () => {
       console.log("error", action);
       console.error(error);
       console.error("response", error.response);
-      store.dispatch(
-        "setError",
-        `Action: ${JSON.stringify(action, null, 2)}\nError: ${JSON.stringify(
-          error,
-          null,
-          2
-        )}\nResponse: ${JSON.stringify(error.response, null, 2)}`
-      );
+      const actionStr = JSON.stringify(action, null, 2);
+      const errorStr = JSON.stringify(error, null, 2);
+      const responseStr = JSON.stringify(error.response, null, 2);
+      const message = `Action: ${actionStr}\nError: ${errorStr}\nResponse: ${responseStr}`;
+      store.dispatch("setError", message);
+      try {
+        axios.post("insert-frontend-store-error", {
+          user_id: state.login.userId,
+          error: errorStr,
+          action: actionStr,
+          response: responseStr,
+        });
+      } catch (error) {
+        // Not even able to post the error in backend :(
+      }
     },
   });
 
