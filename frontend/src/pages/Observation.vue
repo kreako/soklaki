@@ -98,8 +98,21 @@
           <span v-else> élève </span>
         </span>
       </div>
-      <div v-for="competencyId in observation.competencies">
-        {{ competencyId }}
+      <div v-for="competencyId in competenciesByCycle[cycle]">
+        <div class="flex flex-row items-center">
+          <span>
+            {{ socle.competencies[competencyId].full_rank.full_rank }}
+          </span>
+          <span class="ml-1 truncate">
+            {{ socle.competencies[competencyId].text }}
+          </span>
+          <button
+            @click="removeCompetency(competencyId)"
+            class="text-gray-300 hover:text-gray-600 mx-2"
+          >
+            <IconXCircle class="h-4" />
+          </button>
+        </div>
       </div>
       <div v-if="showCompetencySelector[cycle]">
         <CompetencySelector
@@ -255,6 +268,30 @@ const selectCompetency = async (cycle, competencyId) => {
   });
   showCompetencySelector.value[cycle] = false;
 };
+const removeCompetency = async (competencyId) => {
+  await store.dispatch("deleteObservationCompetency", {
+    observationId: observation.value.id,
+    competencyId: competencyId,
+  });
+};
+const competenciesByCycle = computed(() => {
+  const competencies = {
+    c1: [],
+    c2: [],
+    c3: [],
+    c4: [],
+  };
+  for (const c of observation.value.competencies) {
+    const competencyId = c.competency_id;
+    const competency = store.state.socle.competencies[competencyId];
+    if (competency == null) {
+      // Could happen when the store is not yet full
+      continue;
+    }
+    competencies[competency.cycle].push(competencyId);
+  }
+  return competencies;
+});
 
 const getObservation = (id) => {
   if (!(id in store.state.observations)) {
