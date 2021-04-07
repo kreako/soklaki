@@ -3,16 +3,22 @@
 @tailwind utilities;
 
 @layer utilities {
-    .input {
-        @apply rounded-md border-gray-300 shadow-sm;
-        @apply focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50;
-    }
-    .input-error {
-        @apply border-red-600 focus:border-red-600 focus:ring-red-400 focus:ring-opacity-50;
-    }
-    .button-main-action {
-        @apply w-full text-xl rounded-md px-4 py-2 font-bold;
-        @apply text-white shadow-sm;
-        @apply bg-teal-700;
-    }
+  .input {
+    @apply rounded-md border-gray-300 shadow-sm;
+    @apply focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50;
+  }
+  .input-error {
+    @apply border-red-600 focus:border-red-600 focus:ring-red-400 focus:ring-opacity-50;
+  }
+  .button-main-action {
+    @apply w-full text-xl rounded-md px-4 py-2 font-bold;
+    @apply text-white shadow-sm;
+    @apply bg-teal-700;
+  }
+  .form-label {
+    @apply uppercase text-sm tracking-wide text-gray-700;
+  }
+  .form-sub-label {
+    @apply text-sm text-gray-700;
+  }
 }
