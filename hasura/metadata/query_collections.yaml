@@ -195,3 +195,12 @@
             id
           }
         }
+    - name: insert-observation-competency
+      query: |-
+        mutation InsertObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
+          insert_eval_observation_competency_one(object: {competency_id: $competency_id, observation_id: $observation_id}) {
+              id
+              observation_id
+              competency_id
+          }
+        }

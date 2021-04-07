@@ -28,6 +28,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-observation-competency
+  url: insert-observation-competency
+  methods:
+  - POST
+  name: insert-observation-competency
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-observation-student
   url: insert-observation-student
   methods:
