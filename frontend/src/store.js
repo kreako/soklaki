@@ -376,11 +376,13 @@ const buildStore = () => {
   store.subscribeAction({
     error: (action, state, error) => {
       console.log(`error action ${action.type}`);
-      console.log("error", action);
-      console.error(error);
+      console.log("action", action);
+      console.error("error", error);
       console.error("response", error.response);
       const actionStr = JSON.stringify(action, null, 2);
-      const errorStr = JSON.stringify(error, null, 2);
+      const errorProperties = Object.getOwnPropertyNames(error);
+      errorProperties.push("stack");
+      const errorStr = JSON.stringify(error, errorProperties, 2);
       const responseStr = JSON.stringify(error.response, null, 2);
       const message = `Action: ${actionStr}\nError: ${errorStr}\nResponse: ${responseStr}`;
       store.dispatch("setError", message);
