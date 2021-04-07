@@ -1,10 +1,10 @@
 <template>
   <div class="mt-4 px-2">
     <!-- observation text -->
-    <div class="">
-      <div class="text-gray-800">
+    <div>
+      <div>
         <div class="flex flex-row items-center space-x-3">
-          <div>Description de l'observation</div>
+          <div class="form-label">Description de l'observation</div>
           <button v-if="observationTextInEdit" @click="saveObservationText">
             <IconCheck class="h-4 text-gray-600 hover:text-teal-500" />
           </button>
@@ -29,7 +29,7 @@
     <!-- observation date -->
     <div class="mt-8">
       <div class="flex flex-row items-center space-x-3">
-        <div class="text-gray-800">La date de l'observation</div>
+        <div class="form-label">La date de l'observation</div>
         <button v-if="observationDateInEdit" @click="saveObservationDate">
           <IconCheck class="h-4 text-gray-600 hover:text-teal-500" />
         </button>
@@ -51,7 +51,7 @@
     </div>
     <!-- students -->
     <div class="mt-8">
-      <div class="text-gray-800">Les élèves concernés</div>
+      <div class="form-label">Les élèves concernés</div>
       <div
         v-for="student in observation.students"
         class="font-serif flex flex-row space-x-2"
@@ -86,8 +86,18 @@
       </div>
     </div>
     <!-- competencies -->
-    <div class="mt-8">
-      <div class="text-gray-800">Les compétences liées</div>
+    <div v-for="(cycleStudents, cycle) in studentByCycle" class="mt-8">
+      <div>
+        <span class="form-label">Les compétences liées </span>
+        <span
+          v-if="Object.keys(studentByCycle).length > 1"
+          class="form-sub-label"
+        >
+          cycle {{ cycleNb(cycle) }} - {{ cycleStudents.length }}
+          <span v-if="cycleStudents.length > 1"> élèves </span>
+          <span v-else> élève </span>
+        </span>
+      </div>
       <div v-for="competencyId in observation.competencies">
         {{ competencyId }}
       </div>
@@ -110,7 +120,7 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
-import { estimateCycle } from "../utils/cycle";
+import { estimateCycle, cycleNb } from "../utils/cycle";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -183,7 +193,7 @@ const studentById = computed(() => store.getters.student);
 const studentCycle = computed(() => (studentId) =>
   estimateCycle(
     store.getters.student(studentId).birthdate,
-    observation.value.createdAt
+    observation.value.date
   )
 );
 const addStudent = async (id) => {
@@ -199,6 +209,24 @@ const removeStudent = async (id) => {
     id: id,
   });
 };
+
+const studentByCycle = computed(() => {
+  const cycles = {};
+  for (const s of observation.value.students) {
+    const id = s.student_id;
+    const student = store.state.students[id];
+    if (student == null) {
+      // May happens when store is not full at app startup
+      continue;
+    }
+    const cycle = estimateCycle(student.birthdate, observation.value.date);
+    if (!(cycle in cycles)) {
+      cycles[cycle] = [];
+    }
+    cycles[cycle].push(id);
+  }
+  return cycles;
+});
 
 const showCompetencySelector = ref(false);
 const socle = computed(() => store.state.socle);
