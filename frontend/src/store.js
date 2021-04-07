@@ -161,7 +161,6 @@ const mutations = {
     state.observations[observationId].students.splice(idx, 1);
   },
   insertObservationCompetency(state, { id, observationId, competencyId }) {
-    console.log("insertObservationCompetency", id, observationId, competencyId);
     state.observations[observationId].competencies.push({
       id: id,
       competency_id: competencyId,
