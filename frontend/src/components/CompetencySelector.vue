@@ -113,8 +113,11 @@
           </div>
         </div>
       </div>
-      <!--
-            -->
+      <div class="mt-4 text-right pr-2">
+        <button @click="$emit('cancel')" class="button-minor-action text-sm">
+          Annuler
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -170,7 +173,7 @@ const deselectComponent = () => {
   selectedComponent.value = null;
 };
 
-const emit = defineEmit(["selected"]);
+const emit = defineEmit(["selected", "cancel"]);
 
 const selectCompetency = (competencyId) => {
   emit("selected", competencyId);
