@@ -93,7 +93,6 @@
 
     <div class>
       <router-view></router-view>
-      {{ students }}
     </div>
   </div>
 </template>
