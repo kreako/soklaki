@@ -160,6 +160,13 @@ const mutations = {
     }
     state.observations[observationId].students.splice(idx, 1);
   },
+  insertObservationCompetency(state, { id, observationId, competencyId }) {
+    console.log("insertObservationCompetency", id, observationId, competencyId);
+    state.observations[observationId].competencies.push({
+      id: id,
+      competency_id: competencyId,
+    });
+  },
 };
 
 const getters = {
@@ -331,6 +338,29 @@ const actions = {
       id: id,
       observationId: observationId,
     });
+  },
+
+  async insertObservationCompetency(
+    { commit },
+    { observationId, competencyId }
+  ) {
+    let answer = await axios.post("insert-observation-competency", {
+      observation_id: observationId,
+      competency_id: competencyId,
+    });
+    if (answer.error) {
+      // TODO
+    }
+    let data = answer.data.insert_eval_observation_competency_one;
+    if (data == null) {
+      // TODO
+    } else {
+      commit("insertObservationCompetency", {
+        id: data.id,
+        observationId: data.observation_id,
+        competencyId: data.competency_id,
+      });
+    }
   },
 };
 
