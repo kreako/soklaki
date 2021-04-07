@@ -1,5 +1,6 @@
 <template>
   <div class="mt-4 px-2">
+    <!-- observation text -->
     <div class="">
       <div class="text-gray-800">
         <div class="flex flex-row items-center space-x-3">
@@ -25,6 +26,7 @@
       </div>
       <div v-else class="font-serif whitespace-pre">{{ observation.text }}</div>
     </div>
+    <!-- observation date -->
     <div class="mt-8">
       <div class="flex flex-row items-center space-x-3">
         <div class="text-gray-800">La date de l'observation</div>
@@ -47,6 +49,7 @@
       </div>
       <div v-else class="font-serif">{{ observation.date }}</div>
     </div>
+    <!-- students -->
     <div class="mt-8">
       <div class="text-gray-800">Les élèves concernés</div>
       <div
@@ -82,6 +85,7 @@
         </button>
       </div>
     </div>
+    <!-- competencies -->
     <div class="mt-8">
       <div class="text-gray-800">Les compétences liées</div>
       <div v-for="competencyId in observation.competencies">
