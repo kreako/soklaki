@@ -5,6 +5,7 @@
 - "!include public_eval_observation_student.yaml"
 - "!include public_eval_observation_template.yaml"
 - "!include public_eval_observation_template_competency.yaml"
+- "!include public_frontend_store_error.yaml"
 - "!include public_group.yaml"
 - "!include public_group_pricing.yaml"
 - "!include public_pricing_detail.yaml"

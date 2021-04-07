@@ -1,0 +1,1 @@
+CREATE TABLE "public"."frontend_store_errors" ("id" serial NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), "user_id" integer NOT NULL, "action" Text NOT NULL, "error" Text NOT NULL, "response" text NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON UPDATE cascade ON DELETE cascade);

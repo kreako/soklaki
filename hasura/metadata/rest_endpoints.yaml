@@ -10,6 +10,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-frontend-store-error
+  url: insert-frontend-store-error
+  methods:
+  - POST
+  name: insert-frontend-store-error
+  comment: insert-frontend-store-error
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-observation
   url: insert-observation
   methods:

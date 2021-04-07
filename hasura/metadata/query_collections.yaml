@@ -188,3 +188,10 @@
             id
           }
         }
+    - name: insert-frontend-store-error
+      query: |-
+        mutation InsertFrontendStoreError($user_id: Int!, $error: String!, $action: String!, $response: String!) {
+          insert_frontend_store_error_one(object: {action: $action, error: $error, response: $response, user_id: $user_id}) {
+            id
+          }
+        }
