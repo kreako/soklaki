@@ -101,12 +101,17 @@
       <div v-for="competencyId in observation.competencies">
         {{ competencyId }}
       </div>
-      <div v-if="showCompetencySelector">
-        <CompetencySelector :socle="socle" cycle="c2" />
+      <div v-if="showCompetencySelector[cycle]">
+        <CompetencySelector
+          :socle="socle"
+          :cycle="cycle"
+          @cancel="showCompetencySelector[cycle] = false"
+          @selected="selectCompetency(cycle, $event)"
+        />
       </div>
       <div v-else>
         <button
-          @click="showCompetencySelector = true"
+          @click="showCompetencySelector[cycle] = true"
           class="ml-2 mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
         >
           Lier une compétence
@@ -228,8 +233,22 @@ const studentByCycle = computed(() => {
   return cycles;
 });
 
-const showCompetencySelector = ref(false);
+const showCompetencySelector = ref({
+  c1: false,
+  c2: false,
+  c3: false,
+  c4: false,
+});
 const socle = computed(() => store.state.socle);
+const selectCompetency = async (cycle, competencyId) => {
+  // TODO check this is not already in there
+  await store.dispatch("insertObservationCompetency", {
+    observationId: observation.value.id,
+    competencyId: competencyId,
+  });
+  showCompetencySelector.value[cycle] = false;
+  console.log("selectCompetency", cycle, competencyId);
+};
 
 const getObservation = (id) => {
   if (!(id in store.state.observations)) {
