@@ -38,6 +38,97 @@
             error
           }
         }
+    - name: insert-observation
+      query: |-
+        mutation InsertEvalObservation($text: String!, $user_id: bigint!) {
+          insert_eval_observation_one(object: {text: $text, user_id: $user_id}) {
+            id
+            created_at
+          }
+        }
+    - name: insert-observation-student
+      query: |-
+        mutation InsertObservationStudent($observation_id: bigint!, $student_id: bigint!) {
+          insert_eval_observation_student_one(object: {observation_id: $observation_id, student_id: $student_id}) {
+            id
+            observation_id
+            student_id
+          }
+        }
+    - name: delete-observation-student
+      query: |-
+        mutation DeleteObservationStudent($id: bigint!) {
+          delete_eval_observation_student_by_pk(id: $id) {
+            id
+          }
+        }
+    - name: students
+      query: |-
+        query Student {
+          student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+          }
+        }
+    - name: update-observation-text
+      query: |-
+        mutation UpdateObservationText($id: bigint!, $text: String!) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {text: $text}) {
+            id
+          }
+        }
+    - name: update-observation-date
+      query: |-
+        mutation UpdatebservationDate($id: bigint!, $date: date!) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date}) {
+            id
+          }
+        }
+    - name: insert-frontend-store-error
+      query: |-
+        mutation InsertFrontendStoreError($user_id: Int!, $error: String!, $action: String!, $response: String!) {
+          insert_frontend_store_error_one(object: {action: $action, error: $error, response: $response, user_id: $user_id}) {
+            id
+          }
+        }
+    - name: observation
+      query: |-
+        query ObservationByPk($id: bigint!) {
+          eval_observation_by_pk(id: $id) {
+            id
+            created_at
+            text
+            date
+            updated_at
+            user_id
+            students(order_by: {student: {fullname: {fullname: asc}}}) {
+              student_id
+              id
+            }
+            competencies(order_by: {competency: {full_rank: {alpha_full_rank: asc}}}) {
+              id
+              competency_id
+              competency {
+                full_rank {
+                  full_rank
+                }
+              }
+            }
+          }
+        }
+    - name: insert-observation-competency
+      query: |-
+        mutation InsertObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
+          insert_eval_observation_competency_one(object: {competency_id: $competency_id, observation_id: $observation_id}) {
+            id
+            observation_id
+            competency_id
+          }
+        }
     - name: socle
       query: |-
         query Socle {
@@ -50,12 +141,17 @@
             id
             rank
             title
+            domain_id
           }
           competencies: socle_competency {
             text
             rank
             id
             cycle
+            component_id
+            full_rank {
+              full_rank
+            }
           }
           subjects: socle_subject {
             id
@@ -116,91 +212,5 @@
                 }
               }
             }
-          }
-        }
-    - name: insert-observation
-      query: |-
-        mutation InsertEvalObservation($text: String!, $user_id: bigint!) {
-          insert_eval_observation_one(object: {text: $text, user_id: $user_id}) {
-            id
-            created_at
-          }
-        }
-    - name: insert-observation-student
-      query: |-
-        mutation InsertObservationStudent($observation_id: bigint!, $student_id: bigint!) {
-          insert_eval_observation_student_one(object: {observation_id: $observation_id, student_id: $student_id}) {
-            id
-            observation_id
-            student_id
-          }
-        }
-    - name: delete-observation-student
-      query: |-
-        mutation DeleteObservationStudent($id: bigint!) {
-          delete_eval_observation_student_by_pk(id: $id) {
-            id
-          }
-        }
-    - name: students
-      query: |-
-        query Student {
-          student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
-            birthdate
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-          }
-        }
-    - name: update-observation-text
-      query: |-
-        mutation UpdateObservationText($id: bigint!, $text: String!) {
-          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {text: $text}) {
-            id
-          }
-        }
-    - name: observation
-      query: |-
-        query ObservationByPk($id: bigint!) {
-          eval_observation_by_pk(id: $id) {
-            id
-            created_at
-            text
-            date
-            updated_at
-            user_id
-            students {
-              student_id
-              id
-            }
-            competencies {
-              id
-              competency_id
-            }
-          }
-        }
-    - name: update-observation-date
-      query: |-
-        mutation UpdatebservationDate($id: bigint!, $date: date!) {
-          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date}) {
-            id
-          }
-        }
-    - name: insert-frontend-store-error
-      query: |-
-        mutation InsertFrontendStoreError($user_id: Int!, $error: String!, $action: String!, $response: String!) {
-          insert_frontend_store_error_one(object: {action: $action, error: $error, response: $response, user_id: $user_id}) {
-            id
-          }
-        }
-    - name: insert-observation-competency
-      query: |-
-        mutation InsertObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
-          insert_eval_observation_competency_one(object: {competency_id: $competency_id, observation_id: $observation_id}) {
-              id
-              observation_id
-              competency_id
           }
         }
