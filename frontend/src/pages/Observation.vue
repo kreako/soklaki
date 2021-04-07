@@ -241,13 +241,19 @@ const showCompetencySelector = ref({
 });
 const socle = computed(() => store.state.socle);
 const selectCompetency = async (cycle, competencyId) => {
-  // TODO check this is not already in there
+  // Check if this is not already in there
+  for (const competency of observation.value.competencies) {
+    if (competency.competency_id === competencyId) {
+      // Yes, just ignore
+      showCompetencySelector.value[cycle] = false;
+      return;
+    }
+  }
   await store.dispatch("insertObservationCompetency", {
     observationId: observation.value.id,
     competencyId: competencyId,
   });
   showCompetencySelector.value[cycle] = false;
-  console.log("selectCompetency", cycle, competencyId);
 };
 
 const getObservation = (id) => {
