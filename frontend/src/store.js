@@ -63,8 +63,8 @@ const mutations = {
   loadFromLocalStorage(state) {
     state.login.email = localStorage.getItem("email");
     state.login.token = localStorage.getItem("token");
-    state.login.userId = localStorage.getItem("userId");
-    state.login.groupId = localStorage.getItem("groupId");
+    state.login.userId = Number(localStorage.getItem("userId"));
+    state.login.groupId = Number(localStorage.getItem("groupId"));
     if (state.login.token) {
       axios.defaults.headers.common[
         "Authorization"
