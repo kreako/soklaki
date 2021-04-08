@@ -55,7 +55,9 @@
           <div>
             <router-link to="/"> Accueil </router-link>
           </div>
-          <div>Observations</div>
+          <div>
+            <router-link to="/observations"> Observations </router-link>
+          </div>
           <div>Élèves</div>
           <div>Rapports</div>
           <div>Socle</div>
