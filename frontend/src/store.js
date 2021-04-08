@@ -27,8 +27,7 @@ const state = {
   sortedStudents: [],
   socle: {
     // cache id -> object
-    domains: {},
-    components: {},
+    containers: {},
     competencies: {},
     subjects: {},
     // Contains only id
@@ -118,8 +117,7 @@ const mutations = {
     state.socle.c3 = socle.c3;
     state.socle.c4 = socle.c4;
     // Now update cache
-    state.socle.domains = fromArrayToIdObjects(socle.domains);
-    state.socle.components = fromArrayToIdObjects(socle.components);
+    state.socle.containers = fromArrayToIdObjects(socle.containers);
     state.socle.competencies = fromArrayToIdObjects(socle.competencies);
     state.socle.subjects = fromArrayToIdObjects(socle.subjects);
   },
