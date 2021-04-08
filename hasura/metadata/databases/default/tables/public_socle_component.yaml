@@ -1,18 +1,6 @@
 table:
   name: socle_component
   schema: public
-object_relationships:
-- name: domain
-  using:
-    foreign_key_constraint_on: domain_id
-array_relationships:
-- name: competencies
-  using:
-    foreign_key_constraint_on:
-      column: component_id
-      table:
-        name: socle_competency
-        schema: public
 select_permissions:
 - permission:
     columns:

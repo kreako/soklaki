@@ -1,14 +1,6 @@
 table:
   name: socle_domain
   schema: public
-array_relationships:
-- name: components
-  using:
-    foreign_key_constraint_on:
-      column: domain_id
-      table:
-        name: socle_component
-        schema: public
 select_permissions:
 - permission:
     columns:

@@ -1,0 +1,34 @@
+table:
+  name: socle_container
+  schema: public
+object_relationships:
+- name: parent
+  using:
+    foreign_key_constraint_on: container_id
+array_relationships:
+- name: children
+  using:
+    foreign_key_constraint_on:
+      column: container_id
+      table:
+        name: socle_container
+        schema: public
+- name: competencies
+  using:
+    foreign_key_constraint_on:
+      column: container_id
+      table:
+        name: socle_competency
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - rank
+    - text
+    - container_id
+    - cycle
+    - full_rank
+    - alpha_full_rank
+    filter: {}
+  role: user

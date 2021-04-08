@@ -2,18 +2,9 @@ table:
   name: socle_competency
   schema: public
 object_relationships:
-- name: component
+- name: container
   using:
-    foreign_key_constraint_on: component_id
-- name: full_rank
-  using:
-    manual_configuration:
-      column_mapping:
-        id: competency_id
-      insertion_order: null
-      remote_table:
-        name: socle_competency_full_rank
-        schema: public
+    foreign_key_constraint_on: container_id
 array_relationships:
 - name: evaluations
   using:
@@ -46,10 +37,12 @@ array_relationships:
 select_permissions:
 - permission:
     columns:
+    - alpha_full_rank
+    - container_id
+    - cycle
+    - full_rank
     - id
     - rank
     - text
-    - component_id
-    - cycle
     filter: {}
   role: user
