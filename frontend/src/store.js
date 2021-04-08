@@ -38,6 +38,7 @@ const state = {
   },
   // id -> observation object
   observations: {},
+  sortedCreatedAtObservations: [],
 };
 
 /// Return an object from an array
@@ -163,6 +164,12 @@ const mutations = {
       id: id,
       competency_id: competencyId,
     });
+  },
+  setObservations(state, { data, limit, offset }) {
+    for (const observation of data) {
+      state.observations[observation.id] = observation;
+      state.sortedCreatedAtObservations.push(observation.id);
+    }
   },
 };
 
@@ -357,6 +364,19 @@ const actions = {
         observationId: data.observation_id,
         competencyId: data.competency_id,
       });
+    }
+  },
+
+  async observations({ commit }, { limit, offset }) {
+    const answer = await axios.post("observations-sorted-created-at", {
+      limit: limit,
+      offset: offset,
+    });
+    let data = answer.data.eval_observation;
+    if (data == null) {
+      // No observations maybe
+    } else {
+      commit("setObservations", { data: data, limit: limit, offset: offset });
     }
   },
 };
