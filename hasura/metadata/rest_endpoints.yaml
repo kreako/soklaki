@@ -65,6 +65,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: observations-sorted-created-at
+  url: observations-sorted-created-at
+  methods:
+  - POST
+  name: observations-sorted-created-at
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: signup
   url: signup
   methods:
