@@ -21,7 +21,6 @@ class Group(BaseModel):
 class Student(BaseModel):
     active = BooleanField(constraints=[SQL("DEFAULT true")])
     birthdate = DateField()
-    cycle = TextField()  # USER-DEFINED
     firstname = TextField()
     group = ForeignKeyField(column_name='group_id', field='id', model=Group)
     id = BigAutoField()
@@ -55,24 +54,22 @@ class EvalComment(BaseModel):
     class Meta:
         table_name = 'eval_comment'
 
-class SocleDomain(BaseModel):
+class SocleContainer(BaseModel):
+    container = ForeignKeyField(column_name='container_id', field='id', model='self', null=True)
+    cycle = TextField()  # USER-DEFINED
+    full_rank = TextField()
+    alpha_full_rank = TextField()
     rank = IntegerField()
-    title = TextField()
+    text = TextField()
 
     class Meta:
-        table_name = 'socle_domain'
-
-class SocleComponent(BaseModel):
-    domain = ForeignKeyField(column_name='domain_id', field='id', model=SocleDomain)
-    rank = IntegerField()
-    title = TextField()
-
-    class Meta:
-        table_name = 'socle_component'
+        table_name = 'socle_container'
 
 class SocleCompetency(BaseModel):
-    component = ForeignKeyField(column_name='component_id', field='id', model=SocleComponent)
+    container = ForeignKeyField(column_name='container_id', field='id', model=SocleContainer)
     cycle = TextField()  # USER-DEFINED
+    full_rank = TextField()
+    alpha_full_rank = TextField()
     rank = IntegerField()
     text = TextField()
 
@@ -94,9 +91,11 @@ class EvalEvaluation(BaseModel):
 
 class EvalObservation(BaseModel):
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
+    date = DateField(constraints=[SQL("DEFAULT CURRENT_DATE")])
     id = BigAutoField()
     text = TextField()
     updated_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
+    user = ForeignKeyField(column_name='user_id', field='id', model=User)
 
     class Meta:
         table_name = 'eval_observation'
@@ -108,6 +107,9 @@ class EvalObservationCompetency(BaseModel):
 
     class Meta:
         table_name = 'eval_observation_competency'
+        indexes = (
+            (('observation', 'competency'), True),
+        )
 
 class EvalObservationStudent(BaseModel):
     id = BigAutoField()
@@ -116,6 +118,9 @@ class EvalObservationStudent(BaseModel):
 
     class Meta:
         table_name = 'eval_observation_student'
+        indexes = (
+            (('observation', 'student'), True),
+        )
 
 class EvalObservationTemplate(BaseModel):
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
@@ -131,6 +136,16 @@ class EvalObservationTemplateCompetency(BaseModel):
 
     class Meta:
         table_name = 'eval_observation_template_competency'
+
+class FrontendStoreError(BaseModel):
+    action = TextField(null=True)
+    created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
+    error = TextField(null=True)
+    response = TextField(null=True)
+    user = ForeignKeyField(column_name='user_id', field='id', model=User)
+
+    class Meta:
+        table_name = 'frontend_store_error'
 
 class PricingPlan(BaseModel):
     id = TextField(primary_key=True)
@@ -158,7 +173,7 @@ class PricingDetail(BaseModel):
 
 class Report(BaseModel):
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
-    cycle = UnknownField()  # USER-DEFINED
+    cycle = TextField()  # USER-DEFINED
     end = DateField()
     json_path = TextField()
     pdf_path = TextField()
@@ -183,6 +198,21 @@ class SocleCompetencySubject(BaseModel):
         indexes = (
             (('competency', 'subject'), True),
         )
+
+class SocleComponent(BaseModel):
+    domain_id = IntegerField()
+    rank = IntegerField()
+    title = TextField()
+
+    class Meta:
+        table_name = 'socle_component'
+
+class SocleDomain(BaseModel):
+    rank = IntegerField()
+    title = TextField()
+
+    class Meta:
+        table_name = 'socle_domain'
 
 class UserLogin(BaseModel):
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
