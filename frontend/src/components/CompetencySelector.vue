@@ -26,30 +26,33 @@
     />
     <div class="mt-2">
       <div v-if="filtered">
-        <div v-for="domain in filteredSocle">
+        <div v-for="container1 in filteredSocle">
           <div class="flex flex-row space-x-2">
             <div class="uppercase text-xs tracking-wide text-gray-700">
-              {{ socle.domains[domain.id].rank }}.
-              {{ socle.domains[domain.id].title }}
+              {{ socle.containers[container1.id].rank }}.
+              {{ socle.containers[container1.id].text }}
             </div>
-            <button v-if="domain.id === selectedDomain" @click="deselectDomain">
+            <button
+              v-if="container1.id === selectedContainer1"
+              @click="deselectContainer1"
+            >
               <IconBackSpace class="w-4 text-gray-500" />
             </button>
           </div>
-          <div class="pl-2" v-for="component in domain.components">
+          <div class="pl-2" v-for="container2 in container1.children">
             <div class="flex flex-row space-x-2">
               <div class="text-xs text-gray-700">
-                {{ socle.components[component.id].rank }}.
-                {{ socle.components[component.id].title }}
+                {{ socle.containers[container2.id].rank }}.
+                {{ socle.containers[container2.id].text }}
               </div>
               <button
-                v-if="component.id === selectedComponent"
-                @click="deselectComponent"
+                v-if="container2.id === selectedContainer2"
+                @click="deselectContainer2"
               >
                 <IconBackSpace class="w-4 text-gray-500" />
               </button>
             </div>
-            <div v-for="competency in component.competencies">
+            <div v-for="competency in container2.competencies">
               <button
                 @click="selectCompetency(competency.id)"
                 class="pl-2 text-left border border-white hover:border-teal-500"
@@ -58,6 +61,15 @@
                 {{ socle.competencies[competency.id].text }}
               </button>
             </div>
+          </div>
+          <div v-for="competency in container1.competencies">
+            <button
+              @click="selectCompetency(competency.id)"
+              class="pl-2 text-left border border-white hover:border-teal-500"
+            >
+              {{ socle.competencies[competency.id].rank }}.
+              {{ socle.competencies[competency.id].text }}
+            </button>
           </div>
         </div>
         <div v-if="filteredSocle.length === 0">
@@ -77,38 +89,38 @@
         </div>
       </div>
       <div v-else>
-        <div v-if="selectedDomain == null">
-          <div v-for="domain in socle[cycle]">
+        <div v-if="selectedContainer1 == null">
+          <div v-for="container1 in socle[cycle]">
             <button
-              @click="selectDomain(domain.id)"
+              @click="selectContainer1(container1.id)"
               class="uppercase tracking-wide text-gray-700 text-left border border-white hover:border-teal-500"
             >
-              {{ socle.domains[domain.id].rank }}.
-              {{ socle.domains[domain.id].title }}
+              {{ socle.containers[container1.id].rank }}.
+              {{ socle.containers[container1.id].text }}
             </button>
           </div>
         </div>
         <div v-else>
-          <!-- Here I need to select a component -->
+          <!-- Here I need to select a container2 -->
           <div class="flex flex-row space-x-2">
             <div class="uppercase text-xs tracking-wide text-gray-700">
-              {{ socle.domains[selectedDomain].rank }}.
-              {{ socle.domains[selectedDomain].title }}
+              {{ socle.containers[selectedContainer1].rank }}.
+              {{ socle.containers[selectedContainer1].text }}
             </div>
-            <button @click="deselectDomain">
+            <button @click="selectedContainer1">
               <IconBackSpace class="w-4 text-gray-500" />
             </button>
           </div>
           <div
-            v-for="component in componentsFromDomain(selectedDomain)"
+            v-for="container2 in containers2FromContainer1(selectedContainer1)"
             class="pl-2"
           >
             <button
-              @click="selectComponent(component.id)"
+              @click="selectContainer2(container2.id)"
               class="text-gray-700 text-left border border-white hover:border-teal-500"
             >
-              {{ socle.components[component.id].rank }}.
-              {{ socle.components[component.id].title }}
+              {{ socle.containers[container2.id].rank }}.
+              {{ socle.containers[container2.id].text }}
             </button>
           </div>
         </div>
@@ -147,30 +159,30 @@ const isInSubjects = (competency, subjectId) => {
   return false;
 };
 
-const selectedDomain = ref(null);
-const selectDomain = (id) => {
-  selectedDomain.value = id;
+const selectedContainer1 = ref(null);
+const selectContainer1 = (id) => {
+  selectedContainer1.value = id;
 };
-const deselectDomain = () => {
-  selectedDomain.value = null;
-  selectedComponent.value = null;
+const deselectContainer1 = () => {
+  selectedContainer1.value = null;
+  selectedContainer2.value = null;
 };
-const componentsFromDomain = (domainId) => {
-  for (const domain of props.socle[props.cycle]) {
-    if (domain.id === domainId) {
-      return domain.components;
+const containers2FromContainer1 = (container1Id) => {
+  for (const container1 of props.socle[props.cycle]) {
+    if (container1.id === container1Id) {
+      return container1.children;
     }
   }
   // TODO error ?
   return [];
 };
 
-const selectedComponent = ref(null);
-const selectComponent = (id) => {
-  selectedComponent.value = id;
+const selectedContainer2 = ref(null);
+const selectContainer2 = (id) => {
+  selectedContainer2.value = id;
 };
-const deselectComponent = () => {
-  selectedComponent.value = null;
+const deselectContainer2 = () => {
+  selectedContainer2.value = null;
 };
 
 const emit = defineEmit(["selected", "cancel"]);
@@ -191,37 +203,60 @@ const searchObjectIdInArray = (array, o) => {
   return array[array.length - 1];
 };
 
-const cheatcodeRe = /(\d)[\. ](\d)[\. ](\d{1,2})/;
+const cheatcodeRe = /(\d{1,2})[\. ](\d{1,2})[\. ]?(\d{1,2})?/;
 
 const filteredSocle = computed(() => {
   const cheatSocleAccess = socleFilter.value.match(cheatcodeRe);
   if (cheatSocleAccess != null) {
     // OMG an advanced user typing the direct access to the competency
-    const domainRank = cheatSocleAccess[1];
-    const componentRank = cheatSocleAccess[2];
-    const competencyRank = cheatSocleAccess[3];
-    // Let's find it
-    for (const domain of props.socle[props.cycle]) {
-      if (props.socle.domains[domain.id].rank != domainRank) {
-        continue;
-      }
-      for (const component of domain.components) {
-        if (props.socle.components[component.id].rank != componentRank) {
+    if (cheatSocleAccess[3] == null) {
+      const container1Rank = cheatSocleAccess[1];
+      const competencyRank = cheatSocleAccess[2];
+      // Let's find it
+      for (const container1 of props.socle[props.cycle]) {
+        if (props.socle.containers[container1.id].rank != container1Rank) {
           continue;
         }
-        for (const competency of component.competencies) {
+        for (const competency of container1.competencies) {
           if (props.socle.competencies[competency.id].rank == competencyRank) {
             return [
               {
-                id: domain.id,
-                components: [
-                  {
-                    id: component.id,
-                    competencies: [competency],
-                  },
-                ],
+                id: container1.id,
+                competencies: [competency],
               },
             ];
+          }
+        }
+      }
+    } else {
+      const container1Rank = cheatSocleAccess[1];
+      const container2Rank = cheatSocleAccess[2];
+      const competencyRank = cheatSocleAccess[3];
+      // Let's find it
+      for (const container1 of props.socle[props.cycle]) {
+        if (props.socle.containers[container1.id].rank != container1Rank) {
+          continue;
+        }
+        for (const container2 of container1.children) {
+          if (props.socle.containers[container2.id].rank != container2Rank) {
+            continue;
+          }
+          for (const competency of container2.competencies) {
+            if (
+              props.socle.competencies[competency.id].rank == competencyRank
+            ) {
+              return [
+                {
+                  id: container1.id,
+                  children: [
+                    {
+                      id: container2.id,
+                      competencies: [competency],
+                    },
+                  ],
+                },
+              ];
+            }
           }
         }
       }
@@ -231,20 +266,23 @@ const filteredSocle = computed(() => {
   // of this non advanced user, expecting text filter
   let r = new RegExp(socleFilter.value, "i");
   const socle = [];
-  for (const domain of props.socle[props.cycle]) {
-    if (selectedDomain.value != null && domain.id !== selectedDomain.value) {
-      // Ignore non selected domain
+  for (const container1 of props.socle[props.cycle]) {
+    if (
+      selectedContainer1.value != null &&
+      container1.id !== selectedContainer1.value
+    ) {
+      // Ignore non selected container1
       continue;
     }
-    for (const component of domain.components) {
+    for (const container2 of container1.children) {
       if (
-        selectedComponent.value != null &&
-        component.id !== selectedComponent.value
+        selectedContainer2.value != null &&
+        container2.id !== selectedContainer2.value
       ) {
-        // Ignore non selected component
+        // Ignore non selected container2
         continue;
       }
-      for (const competency of component.competencies) {
+      for (const competency of container2.competencies) {
         if (selectedSubject.value !== -1) {
           if (!isInSubjects(competency, selectedSubject.value)) {
             // Do not select competencies not in selected subject
@@ -252,17 +290,35 @@ const filteredSocle = computed(() => {
           }
         }
         if (r.test(props.socle.competencies[competency.id].text)) {
-          // This is a match so add this competency with the corresponding domain/component
-          const d = searchObjectIdInArray(socle, {
-            id: domain.id,
-            components: [],
-          });
-          const c = searchObjectIdInArray(d.components, {
-            id: component.id,
+          // This is a match so add this competency with the corresponding container1/container2
+          const c1 = searchObjectIdInArray(socle, {
+            id: container1.id,
+            children: [],
             competencies: [],
           });
-          c.competencies.push(competency);
+          const c2 = searchObjectIdInArray(c1.children, {
+            id: container2.id,
+            competencies: [],
+          });
+          c2.competencies.push(competency);
         }
+      }
+    }
+    for (const competency of container1.competencies) {
+      if (selectedSubject.value !== -1) {
+        if (!isInSubjects(competency, selectedSubject.value)) {
+          // Do not select competencies not in selected subject
+          continue;
+        }
+      }
+      if (r.test(props.socle.competencies[competency.id].text)) {
+        // This is a match so add this competency with the corresponding container1/container2
+        const c1 = searchObjectIdInArray(socle, {
+          id: container1.id,
+          children: [],
+          competencies: [],
+        });
+        c1.competencies.push(competency);
       }
     }
   }
@@ -273,13 +329,13 @@ const filtered = computed(
   () =>
     selectedSubject.value !== -1 ||
     socleFilter.value !== "" ||
-    (selectedDomain.value != null && selectedComponent.value != null)
+    (selectedContainer1.value != null && selectedContainer2.value != null)
 );
 
 const resetAllFilters = () => {
   selectedSubject.value = -1;
   socleFilter.value = "";
-  selectedDomain.value = null;
-  selectedComponent.value = null;
+  selectedContainer1.value = null;
+  selectedContainer2.value = null;
 };
 </script>
