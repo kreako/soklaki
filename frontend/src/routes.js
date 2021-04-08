@@ -6,6 +6,7 @@ import Home from "./pages/Home.vue";
 import HomeContent from "./pages/HomeContent.vue";
 import NewObservation from "./pages/NewObservation.vue";
 import Observation from "./pages/Observation.vue";
+import Observations from "./pages/Observations.vue";
 
 const routes = [
   { path: "/login", component: Login },
@@ -26,6 +27,10 @@ const routes = [
       {
         path: "/observation/:id",
         component: Observation,
+      },
+      {
+        path: "/observations",
+        component: Observations,
       },
     ],
   },
