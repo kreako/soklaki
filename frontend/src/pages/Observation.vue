@@ -101,7 +101,7 @@
       <div v-for="competencyId in competenciesByCycle[cycle]">
         <div class="flex flex-row items-center">
           <span>
-            {{ socle.competencies[competencyId].full_rank.full_rank }}
+            {{ socle.competencies[competencyId].full_rank }}
           </span>
           <span class="ml-1 truncate">
             {{ socle.competencies[competencyId].text }}
