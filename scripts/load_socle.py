@@ -99,6 +99,6 @@ def main(cycle, input_filename):
 
 
 if __name__ == "__main__":
-    main("c1", "cycle_1.csv")
-    main("c2", "cycle_2.csv")
-    main("c3", "cycle_3.csv")
+    main("c1", "data/cycle_1.csv")
+    main("c2", "data/cycle_2.csv")
+    main("c3", "data/cycle_3.csv")
