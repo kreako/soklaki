@@ -294,6 +294,11 @@ const competenciesByCycle = computed(() => {
 });
 
 const getObservation = (id) => {
+  id = Number(id);
+  if (!id) {
+    // id is not a number :(
+    return;
+  }
   if (!(id in store.state.observations)) {
     store.dispatch("observation", id);
   }
