@@ -78,7 +78,7 @@
         <IconMenu class="h-10 text-gray-600 hover:text-teal-500" />
       </button>
       <router-link
-        to="new-observation"
+        to="/new-observation"
         class="bg-teal-700 font-bold px-3 py-1 text-white rounded-md"
       >
         <div class="flex flex-row space-x-4">
