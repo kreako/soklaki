@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import axios from "axios";
-import { today } from "./utils/date";
+import { dateJsObj, today } from "./utils/date";
 
 const state = {
   error: {
@@ -16,12 +16,14 @@ const state = {
     userId: null,
     token: null,
     groupId: null,
-    groupName: null,
-    paymentOk: null,
-    name: null,
     email: null,
-    emailConfirmed: null,
   },
+  group: {},
+  users: [],
+  // id -> period
+  periods: {},
+  // id of the current period (refering to today)
+  currentPeriod: null,
   // id -> student
   students: {},
   sortedStudents: [],
@@ -59,6 +61,24 @@ const mutations = {
   },
   setErrorMessage(state, message) {
     state.error.message = message;
+  },
+  setGroup(state, group) {
+    state.group = group;
+  },
+  setUsers(state, users) {
+    state.users = fromArrayToIdObjects(users);
+  },
+  setPeriods(state, periods) {
+    state.periods = fromArrayToIdObjects(periods);
+    const today = new Date().valueOf();
+    for (const period of periods) {
+      const start = dateJsObj(period.start).valueOf();
+      const end = dateJsObj(period.end).valueOf();
+      if (today >= start && today <= end) {
+        state.currentPeriod = period.id;
+        break;
+      }
+    }
   },
   loadFromLocalStorage(state) {
     state.login.email = localStorage.getItem("email");
@@ -201,10 +221,19 @@ const actions = {
     commit("setInError", true);
     commit("setErrorMessage", message);
   },
+
   clearError({ commit }) {
     commit("setInError", false);
     commit("setErrorMessage", "");
   },
+
+  async boot({ commit }) {
+    let answer = await axios.post("boot");
+    commit("setGroup", answer.data.group[0]);
+    commit("setUsers", answer.data.users);
+    commit("setPeriods", answer.data.periods);
+  },
+
   async login({ commit }, { email, password }) {
     let answer = await axios.post("login", { email, password });
     commit("setLoginToken", answer.data.login.token);
@@ -212,6 +241,9 @@ const actions = {
     commit("setLoginUserId", answer.data.login.id);
     commit("setLoginGroupId", answer.data.login.group);
     commit("setLoginEmail", email);
+    // Clear errors after login...
+    commit("setInError", false);
+    commit("setErrorMessage", "");
   },
 
   async signup({ commit }, { email, password }) {
