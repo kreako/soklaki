@@ -116,6 +116,19 @@ const token = computed(() => store.state.login.token);
 const students = computed(() => store.state.students);
 const socle = computed(() => store.state.socle);
 
+const currentUser = computed(() => {
+  if (store.state.login.userId in store.state.users) {
+    return store.state.users[store.state.login.userId];
+  }
+  // Fake
+  return {
+    email: null,
+    firstname: null,
+    lastname: null,
+    manager: false,
+  };
+});
+
 const inError = computed(() => store.state.error.inError);
 const errorMessage = computed(() => store.state.error.message);
 const clearError = () => {
@@ -128,11 +141,20 @@ onBeforeRouteUpdate((updateGuard) => {
   showMobileMenu.value = false;
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (token.value == null) {
     router.push("/login");
   }
-  store.dispatch("students");
-  store.dispatch("socle");
+  await store.dispatch("boot");
+  await store.dispatch("students");
+  await store.dispatch("socle");
+  if (
+    store.state.currentPeriod == null ||
+    store.state.group.name == null ||
+    currentUser.firstname == null ||
+    currentUser.lastname == null
+  ) {
+    router.push("/first-step");
+  }
 });
 </script>
