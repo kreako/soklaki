@@ -63,7 +63,7 @@ async def signup(signup: SignupInput):
     # hash of the password
     h = Password.hash(signup.input.password)
     # Create a group for the new user
-    group_id = await gql_client.insert_group_one("", True)
+    group_id = await gql_client.insert_group_one(True)
     # Now create the user
     try:
         user_id = await gql_client.insert_user_one(group_id, signup.input.email, h)
