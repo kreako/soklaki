@@ -2,6 +2,9 @@ table:
   name: eval_comment
   schema: public
 object_relationships:
+- name: period
+  using:
+    foreign_key_constraint_on: eval_period_id
 - name: student
   using:
     foreign_key_constraint_on: student_id
@@ -16,6 +19,7 @@ insert_permissions:
         group_id:
           _eq: X-Hasura-User-Group
     columns:
+    - eval_period_id
     - student_id
     - text
     - user_id
@@ -23,12 +27,13 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - created_at
+    - eval_period_id
     - id
     - student_id
-    - user_id
     - text
-    - created_at
     - updated_at
+    - user_id
     filter:
       student:
         group_id:
@@ -38,6 +43,7 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - eval_period_id
     - text
     filter:
       student:

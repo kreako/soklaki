@@ -1,5 +1,5 @@
 table:
-  name: user
+  name: eval_period
   schema: public
 object_relationships:
 - name: group
@@ -9,65 +9,65 @@ array_relationships:
 - name: comments
   using:
     foreign_key_constraint_on:
-      column: user_id
+      column: eval_period_id
       table:
         name: eval_comment
         schema: public
 - name: evaluations
   using:
     foreign_key_constraint_on:
-      column: user_id
+      column: eval_period_id
       table:
         name: eval_evaluation
-        schema: public
-- name: logins
-  using:
-    foreign_key_constraint_on:
-      column: user_id
-      table:
-        name: user_login
-        schema: public
-- name: navigations
-  using:
-    foreign_key_constraint_on:
-      column: user_id
-      table:
-        name: user_navigation
         schema: public
 - name: observations
   using:
     foreign_key_constraint_on:
-      column: user_id
+      column: eval_period_id
       table:
         name: eval_observation
         schema: public
+- name: reports
+  using:
+    foreign_key_constraint_on:
+      column: eval_period_id
+      table:
+        name: report
+        schema: public
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      group_id:
+        _eq: X-Hasura-User-Group
+    columns:
+    - end
+    - group_id
+    - name
+    - start
+  role: user
 select_permissions:
 - permission:
     columns:
-    - active
-    - email
-    - email_confirmed
-    - firstname
+    - created_at
+    - end
     - group_id
     - id
-    - lastname
-    - manager
+    - name
+    - start
+    - updated_at
     filter:
-      _or:
-      - id:
-          _eq: X-Hasura-User-Id
-      - group:
-          users:
-            id:
-              _eq: X-Hasura-User-Id
+      group_id:
+        _eq: X-Hasura-User-Group
   role: user
 update_permissions:
 - permission:
     check: null
     columns:
-    - firstname
-    - lastname
+    - end
+    - name
+    - start
     filter:
-      id:
-        _eq: X-Hasura-User-Id
+      group_id:
+        _eq: X-Hasura-User-Group
   role: user

@@ -5,6 +5,9 @@ object_relationships:
 - name: competency
   using:
     foreign_key_constraint_on: competency_id
+- name: period
+  using:
+    foreign_key_constraint_on: eval_period_id
 - name: student
   using:
     foreign_key_constraint_on: student_id
@@ -21,6 +24,8 @@ insert_permissions:
     columns:
     - comment
     - competency_id
+    - date
+    - eval_period_id
     - status
     - student_id
     - user_id
@@ -28,14 +33,16 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - id
-    - user_id
-    - student_id
-    - competency_id
-    - status
     - comment
+    - competency_id
     - created_at
+    - date
+    - eval_period_id
+    - id
+    - status
+    - student_id
     - updated_at
+    - user_id
     filter:
       student:
         group_id:
@@ -49,6 +56,8 @@ update_permissions:
           _eq: X-Hasura-User-Group
     columns:
     - comment
+    - date
+    - eval_period_id
     - status
     filter:
       student:

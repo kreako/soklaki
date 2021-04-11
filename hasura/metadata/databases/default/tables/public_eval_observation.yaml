@@ -2,6 +2,9 @@ table:
   name: eval_observation
   schema: public
 object_relationships:
+- name: period
+  using:
+    foreign_key_constraint_on: eval_period_id
 - name: user
   using:
     foreign_key_constraint_on: user_id
@@ -27,6 +30,8 @@ insert_permissions:
       user_id:
         _eq: X-Hasura-User-Id
     columns:
+    - date
+    - eval_period_id
     - text
     - user_id
   role: user
@@ -35,6 +40,7 @@ select_permissions:
     columns:
     - created_at
     - date
+    - eval_period_id
     - id
     - text
     - updated_at
@@ -49,6 +55,7 @@ update_permissions:
     check: null
     columns:
     - date
+    - eval_period_id
     - text
     - user_id
     filter:

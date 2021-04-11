@@ -2,17 +2,19 @@ table:
   name: report
   schema: public
 object_relationships:
+- name: period
+  using:
+    foreign_key_constraint_on: eval_period_id
 - name: student
   using:
     foreign_key_constraint_on: student_id
 select_permissions:
 - permission:
     columns:
-    - id
     - created_at
-    - start
-    - end
     - cycle
+    - eval_period_id
+    - id
     - json_path
     - pdf_path
     - student_id
