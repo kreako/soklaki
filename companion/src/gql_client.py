@@ -42,8 +42,7 @@ class GqlClient(object):
                                              email_confirmed: false,
                                              group_id: $group_id,
                                              hash: $hash,
-                                             manager: true,
-                                             name: ""}) {
+                                             manager: true}) {
                         id
                     }
                 }""",
@@ -53,14 +52,14 @@ class GqlClient(object):
             raise GqlClientException(str(r["errors"]))
         return r["data"]["insert_user_one"]["id"]
 
-    async def insert_group_one(self, name, is_school):
+    async def insert_group_one(self, is_school):
         r = await self.run_query(
-            """ mutation InsertGroupOne($name: String! $is_school: Boolean!) {
-                    insert_group_one(object: {name: $name, is_school: $is_school, payment_ok: false}) {
+            """ mutation InsertGroupOne($is_school: Boolean!) {
+                    insert_group_one(object: {is_school: $is_school, payment_ok: false}) {
                         id
                 }
             }""",
-            {"name": name, "is_school": is_school},
+            {"is_school": is_school},
         )
         return r["data"]["insert_group_one"]["id"]
 
