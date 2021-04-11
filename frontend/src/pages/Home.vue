@@ -151,8 +151,8 @@ onMounted(async () => {
   if (
     store.state.currentPeriod == null ||
     store.state.group.name == null ||
-    currentUser.firstname == null ||
-    currentUser.lastname == null
+    currentUser.value.firstname == null ||
+    currentUser.value.lastname == null
   ) {
     router.push("/first-step");
   }
