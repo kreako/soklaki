@@ -7,6 +7,7 @@ import HomeContent from "./pages/HomeContent.vue";
 import NewObservation from "./pages/NewObservation.vue";
 import Observation from "./pages/Observation.vue";
 import Observations from "./pages/Observations.vue";
+import FirstStep from "./pages/FirstStep.vue";
 
 const routes = [
   { path: "/login", component: Login },
@@ -31,6 +32,10 @@ const routes = [
       {
         path: "/observations",
         component: Observations,
+      },
+      {
+        path: "/first-step",
+        component: FirstStep,
       },
     ],
   },
