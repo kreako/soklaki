@@ -79,7 +79,7 @@
       <div v-else>
         <button
           @click="showStudentSelector = true"
-          class="ml-2 mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+          class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
         >
           Ajouter un élève
         </button>
@@ -125,7 +125,7 @@
       <div v-else>
         <button
           @click="showCompetencySelector[cycle] = true"
-          class="ml-2 mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+          class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
         >
           Lier une compétence
         </button>
