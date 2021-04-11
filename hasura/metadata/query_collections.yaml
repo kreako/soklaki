@@ -282,3 +282,56 @@
             }
           }
         }
+    - name: evaluation-by-student-competency
+      query: |-
+        query Evaluation($student_id: bigint!, $competency_id: Int!) {
+          eval_evaluation(order_by: {period: {end: desc}}, where: {student_id: {_eq: $student_id}, competency_id: {_eq: $competency_id}}) {
+            comment
+            id
+            created_at
+            status
+            period {
+              id
+            }
+            updated_at
+            user {
+              id
+            }
+            date
+            student {
+              id
+            }
+            competency {
+              id
+            }
+          }
+        }
+    - name: boot
+      query: |-
+        query Boot {
+          group: group {
+            id
+            is_school
+            name
+            payment_ok
+            users(order_by: {firstname: asc}) {
+              id
+            }
+          }
+          users: user(order_by: {firstname: asc}, where: {active: {_eq: true}}) {
+            email
+            email_confirmed
+            firstname
+            id
+            lastname
+            manager
+          }
+          periods: eval_period(order_by: {end: desc}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+          }
+        }
