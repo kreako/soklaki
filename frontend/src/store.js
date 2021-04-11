@@ -166,6 +166,12 @@ const mutations = {
     });
   },
   setObservations(state, { data, limit, offset }) {
+    // Remove everything that is already in there, that I'm currently trying to store
+    state.sortedCreatedAtObservations.splice(
+      offset,
+      state.sortedCreatedAtObservations.length
+    );
+    // Now store
     for (const observation of data) {
       state.observations[observation.id] = observation;
       state.sortedCreatedAtObservations.push(observation.id);
