@@ -335,3 +335,10 @@
             updated_at
           }
         }
+    - name: update-group-name
+      query: |-
+        mutation UpdateGroupName($group_id: bigint!, $name: String!) {
+          update_group_by_pk(pk_columns: {id: $group_id}, _set: {name: $name}) {
+            id
+          }
+        }

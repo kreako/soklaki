@@ -119,6 +119,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: update-group-name
+  url: update-group-name
+  methods:
+  - POST
+  name: update-group-name
+  comment: update-group-name
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: update-observation-date
   url: update-observation-date
   methods:
