@@ -154,6 +154,7 @@ onMounted(async () => {
     currentUser.value.firstname == null ||
     currentUser.value.lastname == null
   ) {
+    // TODO email confirmed
     router.push("/first-step");
   }
 });
