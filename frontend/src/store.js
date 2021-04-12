@@ -239,7 +239,7 @@ const actions = {
     commit("setLoginToken", answer.data.login.token);
     commit("setLoginErrorInvalid", answer.data.login.error);
     commit("setLoginUserId", answer.data.login.id);
-    commit("setLoginGroupId", answer.data.login.group);
+    commit("setLoginGroupId", answer.data.login.group_id);
     commit("setLoginEmail", email);
     // Clear errors after login...
     commit("setInError", false);
