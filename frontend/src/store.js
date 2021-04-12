@@ -197,6 +197,9 @@ const mutations = {
       state.sortedCreatedAtObservations.push(observation.id);
     }
   },
+  setGroupName(state, groupName) {
+    state.group.name = groupName;
+  },
 };
 
 const getters = {
@@ -416,6 +419,21 @@ const actions = {
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
     }
+  },
+
+  async updateGroupName({ commit }, { groupId, groupName }) {
+    console.log("updateGroupName", groupId, groupName);
+    const answer = await axios.post("update-group-name", {
+      group_id: groupId,
+      name: groupName,
+    });
+    let data = answer.data.update_group_by_pk;
+    if (data == null) {
+      throw new Error(`La mise à jour du nom du groupe a échoué :(\n
+        groupId: ${groupId}\n
+        groupName: ${groupName}`);
+    }
+    commit("setGroupName", groupName);
   },
 };
 
