@@ -205,8 +205,8 @@ const getters = {
       return state.students[id];
     } else {
       return {
-        firstName: "",
-        lastName: "",
+        firstname: "",
+        lastname: "",
         birthdate: "",
       };
     }
