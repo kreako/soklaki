@@ -133,13 +133,15 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { dateJsObj } from "../utils/date";
 import MascotteTip from "../components/MascotteTip.vue";
 import IconPencil from "../icons/IconPencil.vue";
 
 const store = useStore();
+const router = useRouter();
 
 const groupName = computed(() => store.state.group.name);
 const groupNameInEdit = ref(false);
@@ -154,6 +156,7 @@ const saveGroupName = async () => {
     groupName: groupNameEdit.value,
   });
   groupNameInEdit.value = false;
+  checkEnd();
 };
 
 // const periods = computed(() => store.state.periods);
@@ -254,6 +257,7 @@ const savePeriod = async () => {
     start: periodStartEdit.value,
     end: periodEndEdit.value,
   });
+  checkEnd();
 };
 const period0 = computed(() => {
   if (store.state.sortedPeriods.length > 0) {
@@ -291,5 +295,31 @@ const saveUser = async () => {
     firstname: firstnameEdit.value,
     lastname: lastnameEdit.value,
   });
+  checkEnd();
+};
+
+const checkEnd = () => {
+  const periods = store.state.periods;
+  const group = store.state.group;
+  const users = store.state.users;
+  if (periods.length === 0) {
+    return;
+  }
+  if (group.name == null) {
+    return;
+  }
+  const userId = store.state.login.userId;
+  if (!(userId in users)) {
+    return;
+  }
+  const firstname = users[userId].firstname;
+  if (firstname == null) {
+    return;
+  }
+  const lastname = users[userId].lastname;
+  if (lastname == null) {
+    return;
+  }
+  router.push("/");
 };
 </script>
