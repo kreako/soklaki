@@ -23,6 +23,8 @@ module.exports = {
   variants: {
     extend: {
       textColor: ["group-hover"],
+      backgroundColor: ["disabled"],
+      cursor: ["disabled"],
     },
   },
   plugins: [require("./tailwindcss-plugins/forms")],
