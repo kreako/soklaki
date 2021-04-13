@@ -22,8 +22,8 @@ const state = {
   users: [],
   // id -> period
   periods: {},
-  // id of the current period (refering to today)
-  currentPeriod: null,
+  // id sorted by end date desc
+  sortedPeriods: [],
   // id -> student
   students: {},
   sortedStudents: [],
@@ -50,7 +50,7 @@ const fromArrayToIdObjects = (array) => {
   const obj = {};
   for (const idx in array) {
     const o = array[idx];
-    obj[o.id] = o;
+    obj[Number(o.id)] = o;
   }
   return obj;
 };
@@ -70,15 +70,7 @@ const mutations = {
   },
   setPeriods(state, periods) {
     state.periods = fromArrayToIdObjects(periods);
-    const today = new Date().valueOf();
-    for (const period of periods) {
-      const start = dateJsObj(period.start).valueOf();
-      const end = dateJsObj(period.end).valueOf();
-      if (today >= start && today <= end) {
-        state.currentPeriod = period.id;
-        break;
-      }
-    }
+    state.sortedPeriods = periods.map((x) => x.id);
   },
   loadFromLocalStorage(state) {
     state.login.email = localStorage.getItem("email");
@@ -199,6 +191,10 @@ const mutations = {
   },
   setGroupName(state, groupName) {
     state.group.name = groupName;
+  },
+  setUserName(state, { userId, firstname, lastname }) {
+    state.users[userId].firstname = firstname;
+    state.users[userId].lastname = lastname;
   },
 };
 
@@ -434,6 +430,39 @@ const actions = {
         groupName: ${groupName}`);
     }
     commit("setGroupName", groupName);
+  },
+
+  async insertPeriod({ commit }, { groupId, name, start, end }) {
+    const answer = await axios.post("insert-period", {
+      group_id: groupId,
+      name: name,
+      start: start,
+      end: end,
+    });
+    let data = answer.data.insert_eval_period_one;
+    if (data == null) {
+      throw new Error(`Je n'ai pas réussi à créer cette période :(\n
+        groupId: ${groupId}\n
+        name: ${name}\n
+        start: ${start}\n
+        end: ${end}`);
+    }
+    // Reload periods
+    const answer2 = await axios.get("periods");
+    commit("setPeriods", answer2.data.periods);
+  },
+
+  async saveUserName({ commit }, { userId, firstname, lastname }) {
+    const answer = await axios.post("set-user-name", {
+      user_id: userId,
+      firstname: firstname,
+      lastname: lastname,
+    });
+    commit("setUserName", {
+      userId: userId,
+      firstname: firstname,
+      lastname: lastname,
+    });
   },
 };
 
