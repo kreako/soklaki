@@ -64,6 +64,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-period
+  url: insert-period
+  methods:
+  - POST
+  name: insert-period
+  comment: insert-period
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: login
   url: login
   methods:
@@ -88,6 +97,25 @@
   methods:
   - POST
   name: observations-sorted-created-at
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: periods
+  url: periods
+  methods:
+  - GET
+  - POST
+  name: periods
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: set-user-name
+  url: set-user-name
+  methods:
+  - POST
+  name: set-user-name
   comment: null
 - definition:
     query:

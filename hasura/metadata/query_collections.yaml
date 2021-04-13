@@ -342,3 +342,35 @@
             id
           }
         }
+    - name: insert-period
+      query: |-
+        mutation InsertPeriod($group_id: bigint!, $name: String!, $start: date!, $end: date!) {
+          insert_eval_period_one(object: {group_id: $group_id, name: $name, start: $start, end: $end}) {
+            id
+            created_at
+            end
+            group_id
+            name
+            start
+            updated_at
+          }
+        }
+    - name: periods
+      query: |-
+        query Periods {
+          periods: eval_period(order_by: {end: desc}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+          }
+        }
+    - name: set-user-name
+      query: |-
+        mutation setUserName($user_id: bigint!, $firstname: String!, $lastname: String!) {
+          update_user_by_pk(pk_columns: {id: $user_id}, _set: {firstname: $firstname, lastname: $lastname}) {
+            id
+          }
+        }
