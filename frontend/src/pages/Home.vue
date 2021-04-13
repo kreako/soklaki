@@ -149,7 +149,7 @@ onMounted(async () => {
   await store.dispatch("students");
   await store.dispatch("socle");
   if (
-    store.state.currentPeriod == null ||
+    store.state.periods.length === 0 ||
     store.state.group.name == null ||
     currentUser.value.firstname == null ||
     currentUser.value.lastname == null
