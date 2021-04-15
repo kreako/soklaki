@@ -4,8 +4,6 @@ import { dateJsObj } from "./date";
 // or null if not found
 // date is in string format 'YYYY-MM-DD'
 export const searchPeriod = (date, periods) => {
-  console.log("date", date);
-  console.log("periods", periods);
   if (date == null) {
     return null;
   }
