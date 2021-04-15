@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
 import { dateJsObj, today } from "./utils/date";
+import { searchPeriod } from "./utils/period";
 
 const state = {
   error: {
@@ -136,7 +137,17 @@ const mutations = {
   },
   setObservation(
     state,
-    { id, createdAt, updatedAt, date, text, userId, students, competencies }
+    {
+      id,
+      createdAt,
+      updatedAt,
+      date,
+      text,
+      userId,
+      students,
+      competencies,
+      period,
+    }
   ) {
     state.observations[id] = {
       id: id,
@@ -147,13 +158,15 @@ const mutations = {
       text: text,
       students: students,
       competencies: competencies,
+      period: period,
     };
   },
   setObservationText(state, { id, text }) {
     state.observations[id].text = text;
   },
-  setObservationDate(state, { id, date }) {
+  setObservationDate(state, { id, date, period }) {
     state.observations[id].date = date;
+    state.observations[id].period = period;
   },
   insertObservationStudent(state, { id, observationId, studentId }) {
     state.observations[observationId].students.push({
@@ -204,6 +217,7 @@ const getters = {
     if (id in state.students) {
       return state.students[id];
     } else {
+      // Can happen when the store is not yet filled
       return {
         firstname: "",
         lastname: "",
@@ -272,20 +286,27 @@ const actions = {
   },
 
   async insertObservation({ commit, state }, { text }) {
+    const date = today();
+    const period = searchPeriod(date, state.periods);
+    const periodId = period == null ? null : period.id;
     let answer = await axios.post("insert-observation", {
       text: text,
       user_id: state.login.userId,
+      date: date,
+      eval_period_id: periodId,
     });
     let data = answer.data.insert_eval_observation_one;
+    const periodObj = period == null ? null : { id: period.id };
     commit("setObservation", {
       id: data.id,
-      date: today(),
+      date: date,
       createdAt: data.created_at,
       updatedAt: data.created_at,
       text: text,
       userId: state.login.userId,
       students: [],
       competencies: [],
+      period: periodObj,
     });
     return data.id;
   },
@@ -307,6 +328,7 @@ const actions = {
         userId: data.user_id,
         students: data.students,
         competencies: data.competencies,
+        period: data.period,
       });
     }
   },
@@ -330,9 +352,12 @@ const actions = {
   },
 
   async updateObservationDate({ commit }, { id, date }) {
+    const period = searchPeriod(date, state.periods);
+    const periodId = period == null ? null : period.id;
     const answer = await axios.post("update-observation-date", {
       id: id,
       date: date,
+      eval_period_id: periodId,
     });
 
     let data = answer.data.update_eval_observation_by_pk;
@@ -341,9 +366,11 @@ const actions = {
         id: ${id}\n
         date: ${date}`);
     } else {
+      const periodObj = period == null ? null : { id: period.id };
       commit("setObservationDate", {
         id: id,
         date: date,
+        period: periodObj,
       });
     }
   },
