@@ -41,13 +41,22 @@
         <input
           type="text"
           v-model="observationEditDate"
+          @keyup.enter="saveObservationDate"
           class="mt-2 input w-full"
         />
         <button @click="saveObservationDate" class="button-main-action mt-2">
           Sauvegarder
         </button>
       </div>
-      <div v-else class="font-serif">{{ observation.date }}</div>
+      <div v-else>
+        <div class="font-serif">
+          <span>
+            {{ observation.date }}
+          </span>
+          <!-- TODO link to period page ? -->
+          <span class="text-xs"> ({{ period.name }}) </span>
+        </div>
+      </div>
     </div>
     <!-- students -->
     <div class="mt-8">
@@ -131,6 +140,16 @@
         </button>
       </div>
     </div>
+    <!-- les évaluations -->
+    <div v-for="student in observation.students" class="mt-8">
+      <div>
+        <span class="form-label"> Évaluation </span>
+        <span v-if="observation.students.length > 1" class="form-sub-label">
+          {{ studentById(student.student_id).firstname }}
+          {{ studentById(student.student_id).lastname }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -139,6 +158,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { estimateCycle, cycleNb } from "../utils/cycle";
+import { dateJsObj } from "../utils/date";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -193,6 +213,17 @@ const saveObservationDate = async () => {
   });
   observationDateInEdit.value = false;
 };
+const period = computed(() => {
+  if (observation.value.period != null) {
+    if (observation.value.period.id in store.state.periods) {
+      return store.state.periods[observation.value.period.id];
+    }
+  }
+  // default
+  return {
+    name: "?",
+  };
+});
 
 const showStudentSelector = ref(false);
 const students = computed(() => store.state.students);
