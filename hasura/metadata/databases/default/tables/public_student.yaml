@@ -50,23 +50,23 @@ insert_permissions:
       group_id:
         _eq: X-Hasura-User-Group
     columns:
-    - active
     - birthdate
     - firstname
     - group_id
     - lastname
     - school_entry
+    - school_exit
   role: user
 select_permissions:
 - permission:
     columns:
-    - active
     - birthdate
     - firstname
     - group_id
     - id
     - lastname
     - school_entry
+    - school_exit
     filter:
       group_id:
         _eq: X-Hasura-User-Group
@@ -75,11 +75,11 @@ update_permissions:
 - permission:
     check: null
     columns:
-    - active
     - birthdate
     - firstname
     - lastname
     - school_entry
+    - school_exit
     filter:
       group_id:
         _eq: X-Hasura-User-Group
