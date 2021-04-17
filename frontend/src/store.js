@@ -245,6 +245,7 @@ const actions = {
     commit("setGroup", answer.data.group[0]);
     commit("setUsers", answer.data.users);
     commit("setPeriods", answer.data.periods);
+    commit("setStudents", answer.data.students);
   },
 
   async login({ commit }, { email, password }) {
@@ -273,11 +274,6 @@ const actions = {
     // TODO
     window.console.log("dev", import.meta.env.DEV);
     window.console.log("url", import.meta.env.VITE_API_URL);
-  },
-
-  async students({ commit }) {
-    let answer = await axios.get("students");
-    commit("setStudents", answer.data.student);
   },
 
   async socle({ commit }) {
