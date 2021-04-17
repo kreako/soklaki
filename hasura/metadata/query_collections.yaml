@@ -351,7 +351,7 @@
         }
     - name: boot
       query: |-
-        query Boot {
+        query Boot($group_id: bigint!) {
           group: group {
             id
             is_school
@@ -369,14 +369,14 @@
             lastname
             manager
           }
-          periods: eval_period(order_by: {end: desc}) {
+          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}}) {
             created_at
             end
             id
             name
             start
             updated_at
-            students(order_by: {student: {fullname: {fullname: asc}}}) {
+            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}}}) {
               student {
                 id
               }
