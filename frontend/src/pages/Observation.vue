@@ -180,6 +180,7 @@ const observation = computed(() => {
       text: null,
       students: [],
       competencies: [],
+      period: null,
     }
   );
 });
@@ -228,6 +229,7 @@ const period = computed(() => {
 const showStudentSelector = ref(false);
 const students = computed(() => store.state.students);
 const isStudentObserved = (studentId) => {
+  // Used to filter out from selector the student that I already selected
   for (const s of observation.value.students) {
     if (s.student_id === studentId) {
       return true;
@@ -235,9 +237,23 @@ const isStudentObserved = (studentId) => {
   }
   return false;
 };
-const sortedStudents = computed(() =>
-  store.state.sortedStudents.filter((id) => !isStudentObserved(id))
-);
+const sortedStudents = computed(() => {
+  if (observation.value.period != null) {
+    // There is an associated period
+    const periodId = observation.value.period.id;
+    if (!(periodId in store.state.periods)) {
+      // But the store is not ready
+      return [];
+    }
+    const period = store.state.periods[periodId];
+    return period.students
+      .map((x) => x.student.id)
+      .filter((id) => !isStudentObserved(id));
+  } else {
+    // return the full set of students (even those not in school anymore)
+    return store.state.sortedStudents.filter((id) => !isStudentObserved(id));
+  }
+});
 const studentById = computed(() => store.getters.student);
 const studentCycle = computed(() => (studentId) =>
   estimateCycle(
