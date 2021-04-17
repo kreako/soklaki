@@ -146,7 +146,6 @@ onMounted(async () => {
     router.push("/login");
   }
   await store.dispatch("boot");
-  await store.dispatch("students");
   await store.dispatch("socle");
   if (
     store.state.periods.length === 0 ||
