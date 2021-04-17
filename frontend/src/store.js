@@ -240,8 +240,8 @@ const actions = {
     commit("setErrorMessage", "");
   },
 
-  async boot({ commit }) {
-    let answer = await axios.post("boot");
+  async boot({ commit, state }) {
+    let answer = await axios.post("boot", { group_id: state.login.groupId });
     commit("setGroup", answer.data.group[0]);
     commit("setUsers", answer.data.users);
     commit("setPeriods", answer.data.periods);
