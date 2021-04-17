@@ -54,18 +54,6 @@
             id
           }
         }
-    - name: students
-      query: |-
-        query Student {
-          student(order_by: {fullname: {fullname: asc}}, where: {active: {_eq: true}}) {
-            birthdate
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-          }
-        }
     - name: update-observation-text
       query: |-
         mutation UpdateObservationText($id: bigint!, $text: String!) {
@@ -271,35 +259,6 @@
             }
           }
         }
-    - name: boot
-      query: |-
-        query Boot {
-          group: group {
-            id
-            is_school
-            name
-            payment_ok
-            users(order_by: {firstname: asc}) {
-              id
-            }
-          }
-          users: user(order_by: {firstname: asc}, where: {active: {_eq: true}}) {
-            email
-            email_confirmed
-            firstname
-            id
-            lastname
-            manager
-          }
-          periods: eval_period(order_by: {end: desc}) {
-            created_at
-            end
-            id
-            name
-            start
-            updated_at
-          }
-        }
     - name: update-group-name
       query: |-
         mutation UpdateGroupName($group_id: bigint!, $name: String!) {
@@ -375,5 +334,61 @@
         mutation UpdatebservationDate($id: bigint!, $date: date!, $eval_period_id: Int) {
           update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id}) {
             id
+          }
+        }
+    - name: students
+      query: |-
+        query Student {
+          student(order_by: {fullname: {fullname: asc}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+            school_exit
+          }
+        }
+    - name: boot
+      query: |-
+        query Boot {
+          group: group {
+            id
+            is_school
+            name
+            payment_ok
+            users(order_by: {firstname: asc}) {
+              id
+            }
+          }
+          users: user(order_by: {firstname: asc}, where: {active: {_eq: true}}) {
+            email
+            email_confirmed
+            firstname
+            id
+            lastname
+            manager
+          }
+          periods: eval_period(order_by: {end: desc}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+            students(order_by: {student: {fullname: {fullname: asc}}}) {
+              student {
+                id
+              }
+            }
+          }
+          students: student(order_by: {fullname: {fullname: asc}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+            school_exit
           }
         }

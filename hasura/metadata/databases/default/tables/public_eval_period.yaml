@@ -34,6 +34,15 @@ array_relationships:
       table:
         name: report
         schema: public
+- name: students
+  using:
+    manual_configuration:
+      column_mapping:
+        id: eval_period_id
+      insertion_order: null
+      remote_table:
+        name: eval_period_student
+        schema: public
 insert_permissions:
 - permission:
     backend_only: false

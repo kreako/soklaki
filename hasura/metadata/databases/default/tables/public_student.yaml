@@ -36,6 +36,15 @@ array_relationships:
       table:
         name: eval_observation_student
         schema: public
+- name: periods
+  using:
+    manual_configuration:
+      column_mapping:
+        id: student_id
+      insertion_order: null
+      remote_table:
+        name: eval_period_student
+        schema: public
 - name: reports
   using:
     foreign_key_constraint_on:

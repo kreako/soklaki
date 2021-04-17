@@ -1,0 +1,32 @@
+table:
+  name: eval_period_student
+  schema: public
+object_relationships:
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        eval_period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
+- name: student
+  using:
+    manual_configuration:
+      column_mapping:
+        student_id: id
+      insertion_order: null
+      remote_table:
+        name: student
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - eval_period_id
+    - student_id
+    filter:
+      period:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
