@@ -18,12 +18,12 @@ export const estimateCycle = (birthdate, evaluationDate) => {
   evaluationDate = dateJsObj(evaluationDate);
 
   // First estimate scholar year of the evaluation (first part)
-  // If we are after august, the current year is the scholar year starting point
+  // If we are after july, the current year is the scholar year starting point
   // otherwise this was the year before
   const evaluationDateMonth = evaluationDate.getMonth() + 1;
   const evaluationDateYear = evaluationDate.getFullYear();
   const scholarYear =
-    evaluationDateMonth > 8 ? evaluationDateYear : evaluationDateYear - 1;
+    evaluationDateMonth > 7 ? evaluationDateYear : evaluationDateYear - 1;
 
   // Now, compute the date corresponding to the end of the year in the scholar year
   const endOfYear = new Date(scholarYear, 12, 31);
