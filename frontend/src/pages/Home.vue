@@ -16,7 +16,7 @@
           </div>
           <div>Merci 🙏</div>
           <div
-            class="mt-8 whitespace-pre font-serif bg-red-500 px-1 w-10/12 overflow-y-scroll"
+            class="mt-8 whitespace-pre font-serif bg-red-500 px-1 w-10/12 h-48 overflow-y-scroll overflow-x-scroll"
           >
             {{ errorMessage }}
           </div>
