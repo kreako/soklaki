@@ -26,6 +26,7 @@
     />
     <div class="mt-2">
       <div v-if="filtered">
+        <!-- At least one filter is selected so display the full thing -->
         <div v-for="container1 in filteredSocle">
           <div class="flex flex-row space-x-2">
             <div class="uppercase text-xs tracking-wide text-gray-700">
@@ -40,6 +41,7 @@
             </button>
           </div>
           <div class="pl-2" v-for="container2 in container1.children">
+            <!-- Container level 2 -->
             <div class="flex flex-row space-x-2">
               <div class="text-xs text-gray-700">
                 {{ socle.containers[container2.id].rank }}.
@@ -52,6 +54,7 @@
                 <IconBackSpace class="w-4 text-gray-500" />
               </button>
             </div>
+            <!-- competencies attached to container level 2 -->
             <div v-for="competency in container2.competencies">
               <button
                 @click="selectCompetency(competency.id)"
@@ -63,6 +66,7 @@
             </div>
           </div>
           <div v-for="competency in container1.competencies">
+            <!-- competencies attached to container level 1 -->
             <button
               @click="selectCompetency(competency.id)"
               class="pl-2 text-left border border-white hover:border-teal-500"
@@ -89,7 +93,9 @@
         </div>
       </div>
       <div v-else>
+        <!-- Nothing is filtered -->
         <div v-if="selectedContainer1 == null">
+          <!-- no container level 1 selected : so display level 1 container -->
           <div v-for="container1 in socle[cycle]">
             <button
               @click="selectContainer1(container1.id)"
@@ -101,13 +107,15 @@
           </div>
         </div>
         <div v-else>
-          <!-- Here I need to select a container2 -->
+          <!-- container level 1 is selected so Here I need to select a container2
+            Note that I don't display competencies because if container 1 is selected
+            And no container level 2 exists, it is considered as filtered -->
           <div class="flex flex-row space-x-2">
             <div class="uppercase text-xs tracking-wide text-gray-700">
               {{ socle.containers[selectedContainer1].rank }}.
               {{ socle.containers[selectedContainer1].text }}
             </div>
-            <button @click="selectedContainer1">
+            <button @click="deselectContainer1">
               <IconBackSpace class="w-4 text-gray-500" />
             </button>
           </div>
@@ -325,12 +333,36 @@ const filteredSocle = computed(() => {
   return socle;
 });
 
-const filtered = computed(
-  () =>
-    selectedSubject.value !== -1 ||
-    socleFilter.value !== "" ||
-    (selectedContainer1.value != null && selectedContainer2.value != null)
-);
+const filtered = computed(() => {
+  if (selectedSubject.value !== -1) {
+    // A subject have been chosen
+    return true;
+  }
+  if (socleFilter.value !== "") {
+    // something has been entered in filter box
+    return true;
+  }
+  if (selectedContainer1.value != null) {
+    // level 1 has been selected
+    if (selectedContainer2.value != null) {
+      // level 2 selected too
+      return true;
+    }
+    for (const container1 of props.socle[props.cycle]) {
+      if (container1.id === selectedContainer1.value) {
+        if (container1.children.length === 0) {
+          // level 1 has no children so considered filtered
+          return true;
+        } else {
+          // has container children
+          return false;
+        }
+      }
+    }
+  }
+  // everything else is not filtered
+  return false;
+});
 
 const resetAllFilters = () => {
   selectedSubject.value = -1;
