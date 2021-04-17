@@ -255,12 +255,14 @@ const sortedStudents = computed(() => {
   }
 });
 const studentById = computed(() => store.getters.student);
-const studentCycle = computed(() => (studentId) =>
-  estimateCycle(
-    store.getters.student(studentId).birthdate,
-    observation.value.date
-  )
-);
+const studentCycle = computed(() => (studentId) => {
+  const student = store.getters.student(studentId);
+  if (student.birthdate == null) {
+    // Best effort
+    return null;
+  }
+  return estimateCycle(student.birthdate, observation.value.date);
+});
 const addStudent = async (id) => {
   await store.dispatch("insertObservationStudent", {
     observationId: observation.value.id,
