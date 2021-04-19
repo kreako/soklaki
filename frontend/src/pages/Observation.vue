@@ -146,7 +146,7 @@
     <div v-if="competenciesByStudent.length > 0" class="mt-20">
       <div class="form-label">Évaluation</div>
       <div v-for="c in competenciesByStudent">
-        <div class="text-gray-700 mt-2">
+        <div class="form-sub-label mt-2">
           {{ competencyById(c.competencyId).full_rank }}
           {{ competencyById(c.competencyId).text }}
         </div>
