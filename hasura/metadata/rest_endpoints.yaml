@@ -101,6 +101,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: observations-by-user
+  url: observations-by-user
+  methods:
+  - POST
+  name: observations-by-user
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: observations-sorted-created-at
   url: observations-sorted-created-at
   methods:

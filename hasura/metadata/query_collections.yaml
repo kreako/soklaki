@@ -417,3 +417,26 @@
             }
           }
         }
+    - name: observations-by-user
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {user_id: {_eq: $user_id}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+              id
+              competency_id
+            }
+            students(order_by: {student: {fullname: {fullname: asc}}}) {
+              id
+              student_id
+            }
+            period {
+              id
+            }
+          }
+        }
