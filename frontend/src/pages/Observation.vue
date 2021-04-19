@@ -95,7 +95,7 @@
       </div>
     </div>
     <!-- competencies -->
-    <div class="mt-20">
+    <div v-if="Object.keys(studentByCycle).length > 0" class="mt-20">
       <div class="form-label">Les compétences liées</div>
       <div v-for="(cycleStudents, cycle) in studentByCycle" class="mt-2">
         <div>
