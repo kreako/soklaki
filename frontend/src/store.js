@@ -480,6 +480,20 @@ const actions = {
     }
   },
 
+  async observationsByUser({ commit }, { userId, limit, offset }) {
+    const answer = await axios.post("observations-by-user", {
+      user_id: userId,
+      limit: limit,
+      offset: offset,
+    });
+    let data = answer.data.eval_observation;
+    if (data == null) {
+      // No observations maybe
+    } else {
+      commit("setObservations", { data: data, limit: limit, offset: offset });
+    }
+  },
+
   async updateGroupName({ commit }, { groupId, groupName }) {
     const answer = await axios.post("update-group-name", {
       group_id: groupId,
