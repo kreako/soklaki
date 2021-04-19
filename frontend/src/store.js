@@ -278,7 +278,6 @@ const getters = {
     }
   },
   competencyById: (state) => (competencyId) => {
-    console.log("competencyById", competencyId);
     if (competencyId in state.socle.competencies) {
       return state.socle.competencies[competencyId];
     }
