@@ -536,9 +536,7 @@ const getObservation = async (id) => {
     // id is not a number :(
     return;
   }
-  if (!(id in store.state.observations)) {
-    await store.dispatch("observation", id);
-  }
+  await store.dispatch("observation", id);
   await updateEvaluations();
 };
 onMounted(async () => {
