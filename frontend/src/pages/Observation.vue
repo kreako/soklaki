@@ -538,8 +538,8 @@ const getObservation = async (id) => {
   }
   if (!(id in store.state.observations)) {
     await store.dispatch("observation", id);
-    await updateEvaluations();
   }
+  await updateEvaluations();
 };
 onMounted(async () => {
   await getObservation(route.params.id);
