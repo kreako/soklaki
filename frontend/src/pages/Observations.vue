@@ -10,7 +10,7 @@
             </router-link>
           </div>
           <div class="text-xs rounded-full px-1 border border-gray-600">
-            {{ userInitials(userById(observations[observationId].user.id)) }}
+            {{ userInitials(userById(observations[observationId].user_id)) }}
           </div>
           <div class="flex-grow"></div>
           <div class="flex flex-row items-center space-x-2">
