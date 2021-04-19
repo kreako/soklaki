@@ -254,9 +254,9 @@ const getters = {
     } else {
       // Can happen when the store is not yet filled
       return {
-        firstname: "",
-        lastname: "",
-        birthdate: "",
+        firstname: null,
+        lastname: null,
+        birthdate: null,
       };
     }
   },
