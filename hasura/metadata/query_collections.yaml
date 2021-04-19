@@ -213,28 +213,6 @@
             title
           }
         }
-    - name: observations-sorted-created-at
-      query: |-
-        query Observations($limit: Int!, $offset: Int!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user {
-              id
-            }
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              competency {
-                id
-              }
-            }
-            students(order_by: {student: {fullname: {fullname: asc}}}) {
-              id
-            }
-          }
-        }
     - name: evaluation-by-student-competency
       query: |-
         query Evaluation($student_id: bigint!, $competency_id: Int!) {
@@ -413,6 +391,28 @@
             }
             competency {
               id
+            }
+          }
+        }
+    - name: observations-sorted-created-at
+      query: |-
+        query Observations($limit: Int!, $offset: Int!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user {
+              id
+            }
+            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+              id
+              competency_id
+            }
+            students(order_by: {student: {fullname: {fullname: asc}}}) {
+              id
+              student_id
             }
           }
         }
