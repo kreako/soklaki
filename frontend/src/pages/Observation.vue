@@ -502,16 +502,7 @@ const competenciesByStudent = computed(() => {
   }
   return competencies;
 });
-const competencyById = (competencyId) => {
-  if (competencyId in store.state.socle.competencies) {
-    return store.state.socle.competencies[competencyId];
-  }
-  return {
-    full_rank: null,
-    text: null,
-    cycle: null,
-  };
-};
+const competencyById = computed(() => store.getters.competencyById);
 // competencyId -> studentId -> boolean
 // filled by competenciesByStudent computed
 const evaluationInEdit = ref({});
