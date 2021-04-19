@@ -148,31 +148,8 @@ const mutations = {
     state.socle.competencies = fromArrayToIdObjects(socle.competencies);
     state.socle.subjects = fromArrayToIdObjects(socle.subjects);
   },
-  setObservation(
-    state,
-    {
-      id,
-      createdAt,
-      updatedAt,
-      date,
-      text,
-      userId,
-      students,
-      competencies,
-      period,
-    }
-  ) {
-    state.observations[id] = {
-      id: id,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      userId: userId,
-      date: date,
-      text: text,
-      students: students,
-      competencies: competencies,
-      period: period,
-    };
+  setObservation(state, observation) {
+    state.observations[observation.id] = observation;
   },
   setObservationText(state, { id, text }) {
     state.observations[id].text = text;
@@ -388,17 +365,7 @@ const actions = {
         `Apparemment, je ne trouve pas cette observation : ${id}`
       );
     } else {
-      commit("setObservation", {
-        id: data.id,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        date: data.date,
-        text: data.text,
-        userId: data.user_id,
-        students: data.students,
-        competencies: data.competencies,
-        period: data.period,
-      });
+      commit("setObservation", data);
     }
   },
 
