@@ -20,24 +20,24 @@ export const dateJsObj = (dt) => {
   if (separator1 !== "-") {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
     Chaque élément séparé par un tiret '-'.\n
-    Ici, le premier séparateur n'est pas un tiret '-', mais ${separator1} !`);
+    Ici, le premier séparateur n'est pas un tiret '-', mais ${separator1} (date: ${dt}) !`);
   }
   if (separator2 !== "-") {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
     Chaque élément séparé par un tiret '-'.\n
-    Ici, le deuxième séparateur n'est pas un tiret '-', mais ${separator2} !`);
+    Ici, le deuxième séparateur n'est pas un tiret '-', mais ${separator2} (date: ${dt}) !`);
   }
   if (!Number.isInteger(year) || year > 2100 || year < 1900) {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, l'année '${dt.slice(0, 4)}' ne me semble pas valide !`);
+    Ici, l'année '${dt.slice(0, 4)}' ne me semble pas valide (date: ${dt}) !`);
   }
   if (!Number.isInteger(month) || month > 12 || month < 1) {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, le mois '${dt.slice(5, 7)}' ne me semble pas valide !`);
+    Ici, le mois '${dt.slice(5, 7)}' ne me semble pas valide (date: ${dt}) !`);
   }
   if (!Number.isInteger(day) || day > 31 || day < 1) {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, le jour '${dt.slice(8, 10)}' ne me semble pas valide !`);
+    Ici, le jour '${dt.slice(8, 10)}' ne me semble pas valide (date: ${dt}) !`);
   }
   const date = new Date(year, month - 1, day);
   if (
@@ -46,7 +46,7 @@ export const dateJsObj = (dt) => {
     day !== date.getDate()
   ) {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, la date ne me semble pas valide ?`);
+    Ici, la date ne me semble pas valide (date: ${dt}) ?`);
   }
   return new Date(year, month, day);
 };
