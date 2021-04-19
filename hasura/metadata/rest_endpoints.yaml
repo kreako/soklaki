@@ -28,6 +28,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-evaluation
+  url: insert-evaluation
+  methods:
+  - POST
+  name: insert-evaluation
+  comment: insert-evaluation
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-frontend-store-error
   url: insert-frontend-store-error
   methods:

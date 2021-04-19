@@ -392,3 +392,27 @@
             school_exit
           }
         }
+    - name: insert-evaluation
+      query: |-
+        mutation InsertEvaluation($student_id: bigint!, $competency_id: Int!, $status: eval_status!, $comment: String!, $date: date!, $eval_period_id: Int, $user_id: bigint!) {
+          insert_eval_evaluation_one(object: {comment: $comment, competency_id: $competency_id, date: $date, eval_period_id: $eval_period_id, status: $status, student_id: $student_id, user_id: $user_id}) {
+            comment
+            created_at
+            date
+            id
+            status
+            updated_at
+            period {
+              id
+            }
+            user {
+              id
+            }
+            student {
+              id
+            }
+            competency {
+              id
+            }
+          }
+        }
