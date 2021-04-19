@@ -93,7 +93,7 @@
       </div>
     </div>
 
-    <div class>
+    <div class="mb-20">
       <router-view></router-view>
     </div>
   </div>
