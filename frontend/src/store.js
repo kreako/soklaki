@@ -287,6 +287,17 @@ const getters = {
       cycle: null,
     };
   },
+  userById: (state) => (userId) => {
+    if (userId in state.users) {
+      return state.users[userId];
+    }
+    return {
+      email_confirmed: false,
+      firstname: null,
+      lastname: null,
+      manager: false,
+    };
+  },
 };
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
