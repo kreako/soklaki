@@ -42,6 +42,12 @@ const state = {
   // id -> observation object
   observations: {},
   sortedCreatedAtObservations: [],
+  evaluations: {
+    // id -> evaluation object
+    evaluations: {},
+    // student_id -> competency_id -> evaluation_id
+    byStudentCompetency: {},
+  },
 };
 
 /// Return an object from an array
@@ -54,6 +60,13 @@ const fromArrayToIdObjects = (array) => {
     obj[Number(o.id)] = o;
   }
   return obj;
+};
+
+const set_2_levels = (object, key1, key2, value) => {
+  if (!(key1 in object)) {
+    object[key1] = {};
+  }
+  object[key1][key2] = value;
 };
 
 const mutations = {
@@ -209,10 +222,32 @@ const mutations = {
     state.users[userId].firstname = firstname;
     state.users[userId].lastname = lastname;
   },
+  setEvaluationByStudentCompetency(
+    state,
+    { studentId, competencyId, evaluation }
+  ) {
+    if (evaluation == null) {
+      set_2_levels(
+        state.evaluations.byStudentCompetency,
+        studentId,
+        competencyId,
+        null
+      );
+    } else {
+      const evaluationId = evaluation.id;
+      state.evaluations.evaluations[evaluationId] = evaluation;
+      set_2_levels(
+        state.evaluations.byStudentCompetency,
+        studentId,
+        competencyId,
+        evaluationId
+      );
+    }
+  },
 };
 
 const getters = {
-  student: (state) => (studentId) => {
+  studentById: (state) => (studentId) => {
     const id = Number(studentId);
     if (id in state.students) {
       return state.students[id];
@@ -222,6 +257,23 @@ const getters = {
         firstname: "",
         lastname: "",
         birthdate: "",
+      };
+    }
+  },
+  evaluationById: (state) => (evaluationId) => {
+    const id = Number(evaluationId);
+    if (id in state.evaluations.evaluations) {
+      return state.evaluations.evaluations[id];
+    } else {
+      return {
+        comment: null,
+        created_at: null,
+        status: "Empty",
+        period: null,
+        updated_at: null,
+        user: { id: null },
+        date: null,
+        competency: { id: null },
       };
     }
   },
@@ -441,7 +493,6 @@ const actions = {
   },
 
   async updateGroupName({ commit }, { groupId, groupName }) {
-    console.log("updateGroupName", groupId, groupName);
     const answer = await axios.post("update-group-name", {
       group_id: groupId,
       name: groupName,
@@ -485,6 +536,56 @@ const actions = {
       userId: userId,
       firstname: firstname,
       lastname: lastname,
+    });
+  },
+
+  async evaluationByStudentCompetency(
+    { commit, state },
+    { studentId, competencyId }
+  ) {
+    // return evaluation id if any or null
+    if (studentId in state.evaluations.byStudentCompetency) {
+      if (competencyId in state.evaluations.byStudentCompetency[studentId]) {
+        if (
+          state.evaluations.byStudentCompetency[studentId][competencyId] != null
+        ) {
+          // Already in it \o/ : no need to fetch data
+          return state.evaluations.byStudentCompetency[studentId][competencyId];
+        }
+      }
+    }
+    // Fetch data !
+    const answer = await axios.post("evaluation-by-student-competency", {
+      student_id: studentId,
+      competency_id: competencyId,
+    });
+    const data = answer.data.eval_evaluation;
+    commit("setEvaluationByStudentCompetency", {
+      studentId: studentId,
+      competencyId: competencyId,
+      evaluation: data.length === 0 ? null : data[0],
+    });
+    return data.length === 0 ? null : data[0].id;
+  },
+
+  async insertEvaluation(
+    { commit, state },
+    { studentId, competencyId, periodId, date, status, comment }
+  ) {
+    let answer = await axios.post("insert-evaluation", {
+      student_id: studentId,
+      competency_id: competencyId,
+      status: status,
+      comment: comment,
+      date: date,
+      eval_period_id: periodId,
+      user_id: state.login.userId,
+    });
+    const data = answer.data.insert_eval_evaluation_one;
+    commit("setEvaluationByStudentCompetency", {
+      studentId: studentId,
+      competencyId: competencyId,
+      evaluation: data,
     });
   },
 };
