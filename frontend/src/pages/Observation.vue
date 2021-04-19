@@ -140,14 +140,96 @@
         </button>
       </div>
     </div>
-    <!-- les évaluations -->
-    <div v-for="student in observation.students" class="mt-8">
-      <div>
-        <span class="form-label"> Évaluation </span>
-        <span v-if="observation.students.length > 1" class="form-sub-label">
-          {{ studentById(student.student_id).firstname }}
-          {{ studentById(student.student_id).lastname }}
-        </span>
+    <!-- Evaluations -->
+    <div v-if="competenciesByStudent.length > 0" class="mt-8">
+      <div class="form-label">Évaluation</div>
+      <div v-for="c in competenciesByStudent">
+        <div class="text-gray-700 mt-2">
+          {{ competencyById(c.competencyId).full_rank }}
+          {{ competencyById(c.competencyId).text }}
+        </div>
+        <div v-for="e in c.evaluations">
+          <div
+            v-if="!evaluationInEdit[c.competencyId][e.studentId]"
+            class="flex flex-row space-x-2"
+          >
+            <div>
+              {{ studentById(e.studentId).firstname }}
+              {{ studentById(e.studentId).lastname }}
+            </div>
+            <div>:</div>
+            <div>
+              <div v-if="e.evaluationId == null">Non évalué</div>
+              <div v-else>
+                <div v-if="evaluationById(e.evaluationId).status === 'Empty'">
+                  Non évalué
+                </div>
+                <div
+                  v-else-if="
+                    evaluationById(e.evaluationId).status === 'InProgress'
+                  "
+                >
+                  En cours
+                </div>
+                <div
+                  v-else-if="
+                    evaluationById(e.evaluationId).status === 'Acquired'
+                  "
+                >
+                  Acquis
+                </div>
+                <div
+                  v-else-if="
+                    evaluationById(e.evaluationId).status === 'NotAcquired'
+                  "
+                >
+                  Non acquis
+                </div>
+              </div>
+            </div>
+            <button @click="editEvaluation(c.competencyId, e.studentId)">
+              <IconPencil class="h-4 text-gray-600 hover:text-teal-500" />
+            </button>
+          </div>
+          <div v-else class="mb-6 py-2 px-1 border-teal-300 border">
+            <div>
+              {{ competencyById(c.competencyId).full_rank }}
+              {{ studentById(e.studentId).firstname }}
+              {{ studentById(e.studentId).lastname }}
+            </div>
+            <div>
+              <div class="form-sub-label">Commentaire</div>
+              <textarea
+                v-model="evaluationEditText[c.competencyId][e.studentId]"
+                class="mt-2 input w-full"
+                rows="5"
+              >
+              </textarea>
+            </div>
+            <div class="flex flex-row space-x-2">
+              <button
+                @click="
+                  doEvaluation(c.competencyId, e.studentId, 'NotAcquired')
+                "
+                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+              >
+                Non acquis
+              </button>
+              <button
+                @click="doEvaluation(c.competencyId, e.studentId, 'InProgress')"
+                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+              >
+                En cours
+              </button>
+              <button
+                @click="doEvaluation(c.competencyId, e.studentId, 'Acquired')"
+                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+              >
+                Acquis
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -157,7 +239,7 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
-import { estimateCycle, cycleNb } from "../utils/cycle";
+import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
 import { dateJsObj } from "../utils/date";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
@@ -254,9 +336,9 @@ const sortedStudents = computed(() => {
     return store.state.sortedStudents.filter((id) => !isStudentObserved(id));
   }
 });
-const studentById = computed(() => store.getters.student);
+const studentById = computed(() => store.getters.studentById);
 const studentCycle = computed(() => (studentId) => {
-  const student = store.getters.student(studentId);
+  const student = store.getters.studentById(studentId);
   if (student.birthdate == null) {
     // Best effort
     return null;
@@ -269,6 +351,7 @@ const addStudent = async (id) => {
     studentId: id,
   });
   showStudentSelector.value = false;
+  await updateEvaluations();
 };
 const removeStudent = async (id) => {
   await store.dispatch("deleteObservationStudent", {
@@ -316,6 +399,7 @@ const selectCompetency = async (cycle, competencyId) => {
     competencyId: competencyId,
   });
   showCompetencySelector.value[cycle] = false;
+  await updateEvaluations();
 };
 const removeCompetency = async (competencyId) => {
   await store.dispatch("deleteObservationCompetency", {
@@ -342,18 +426,130 @@ const competenciesByCycle = computed(() => {
   return competencies;
 });
 
-const getObservation = (id) => {
+// This function will dispatch evaluationsByStudentCompetency action
+// Allowing computed property competenciesByStudent to use the evaluation id
+// Because vue don't allow async computed
+// TODO This function will over dispatch because it doesn't check competency.cycle === student.cycle
+// Not so important for now (number of competencies/students is probably small)
+// observation is dispatched first but to updateEvaluations I need store.state.socle.competencies
+// Maybe with nextTick or refactor updateEvaluations/competenciesByStudent with vue-async-computed
+const updateEvaluations = async () => {
+  for (const c of observation.value.competencies) {
+    const competencyId = c.competency_id;
+    for (const s of observation.value.students) {
+      const studentId = s.student_id;
+      await store.dispatch("evaluationByStudentCompetency", {
+        studentId: studentId,
+        competencyId: competencyId,
+      });
+    }
+  }
+};
+const competenciesByStudent = computed(() => {
+  // Now build an array of competencies with :
+  // [ { competencyId, evaluations: [{studentId, evaluationId}] } ]
+  const competencies = [];
+  for (const c of observation.value.competencies) {
+    const competencyId = c.competency_id;
+    if (!(competencyId in store.state.socle.competencies)) {
+      // store is not yet full
+      return [];
+    }
+    const competency = store.state.socle.competencies[competencyId];
+    const evaluations = [];
+    for (const s of observation.value.students) {
+      const studentId = s.student_id;
+      if (competency.cycle !== studentCycle.value(studentId)) {
+        // Ignore student it doesn't match the cycle
+        continue;
+      }
+      if (studentId in store.state.evaluations.byStudentCompetency) {
+        if (
+          competencyId in store.state.evaluations.byStudentCompetency[studentId]
+        ) {
+          // Winner
+          const evaluationId =
+            store.state.evaluations.byStudentCompetency[studentId][
+              competencyId
+            ];
+          evaluations.push({
+            studentId: studentId,
+            evaluationId: evaluationId,
+          });
+          // Make sure that evaluationInEdit is filled
+          if (!(competencyId in evaluationInEdit.value)) {
+            evaluationInEdit.value[competencyId] = {};
+          }
+          if (!(studentId in evaluationInEdit.value)) {
+            evaluationInEdit.value[competencyId][studentId] = false;
+          }
+          // And evaluationEditText too
+          if (!(competencyId in evaluationEditText.value)) {
+            evaluationEditText.value[competencyId] = {};
+          }
+          if (!(studentId in evaluationEditText.value)) {
+            if (evaluationId == null) {
+              evaluationEditText.value[competencyId][studentId] = "";
+            } else {
+              evaluationEditText.value[competencyId][studentId] =
+                store.state.evaluations.evaluations[evaluationId].comment;
+            }
+          }
+        }
+      }
+    }
+    competencies.push({ competencyId: competencyId, evaluations: evaluations });
+  }
+  return competencies;
+});
+const competencyById = (competencyId) => {
+  if (competencyId in store.state.socle.competencies) {
+    return store.state.socle.competencies[competencyId];
+  }
+  return {
+    full_rank: null,
+    text: null,
+    cycle: null,
+  };
+};
+// competencyId -> studentId -> boolean
+// filled by competenciesByStudent computed
+const evaluationInEdit = ref({});
+// competencyId -> studentId -> text
+// filled by competenciesByStudent computed too
+const evaluationEditText = ref({});
+const editEvaluation = (competencyId, studentId) => {
+  evaluationInEdit.value[competencyId][studentId] = true;
+};
+const doEvaluation = async (competencyId, studentId, status) => {
+  const comment = evaluationEditText.value[competencyId][studentId];
+  const periodId =
+    observation.value.period == null ? null : observation.value.period.id;
+  await store.dispatch("insertEvaluation", {
+    competencyId: competencyId,
+    studentId: studentId,
+    status: status,
+    comment: comment,
+    date: observation.value.date,
+    periodId: periodId,
+  });
+  evaluationInEdit.value[competencyId][studentId] = false;
+};
+const evaluationById = computed(() => store.getters.evaluationById);
+
+const getObservation = async (id) => {
   id = Number(id);
   if (!id) {
     // id is not a number :(
     return;
   }
   if (!(id in store.state.observations)) {
-    store.dispatch("observation", id);
+    await store.dispatch("observation", id);
+    await updateEvaluations();
   }
 };
-onMounted(() => {
-  getObservation(route.params.id);
+onMounted(async () => {
+  await getObservation(route.params.id);
 });
 watch(() => route.params.id, getObservation);
 </script>
