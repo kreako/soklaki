@@ -22,7 +22,7 @@
     @apply border border-gray-300 hover:border-gray-500;
   }
   .form-label {
-    @apply uppercase text-sm tracking-wide text-gray-700;
+    @apply uppercase text-sm tracking-wide text-gray-700 font-bold;
   }
   .form-sub-label {
     @apply text-sm text-gray-700;

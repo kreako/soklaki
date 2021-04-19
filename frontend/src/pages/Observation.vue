@@ -1,7 +1,7 @@
 <template>
-  <div class="mt-4 px-2">
+  <div class="px-2">
     <!-- observation text -->
-    <div>
+    <div class="mt-8">
       <div>
         <div class="flex flex-row items-center space-x-3">
           <div class="form-label">Description de l'observation</div>
@@ -59,7 +59,7 @@
       </div>
     </div>
     <!-- students -->
-    <div class="mt-8">
+    <div class="mt-16">
       <div class="form-label">Les élèves concernés</div>
       <div
         v-for="student in observation.students"
@@ -88,60 +88,62 @@
       <div v-else>
         <button
           @click="showStudentSelector = true"
-          class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+          class="mt-1 rounded-md px-3 border border-teal-700 hover:border-teal-300"
         >
           Ajouter un élève
         </button>
       </div>
     </div>
     <!-- competencies -->
-    <div v-for="(cycleStudents, cycle) in studentByCycle" class="mt-8">
-      <div>
-        <span class="form-label">Les compétences liées </span>
-        <span
-          v-if="Object.keys(studentByCycle).length > 1"
-          class="form-sub-label"
-        >
-          cycle {{ cycleNb(cycle) }} - {{ cycleStudents.length }}
-          <span v-if="cycleStudents.length > 1"> élèves </span>
-          <span v-else> élève </span>
-        </span>
-      </div>
-      <div v-for="competencyId in competenciesByCycle[cycle]">
-        <div class="flex flex-row items-center">
-          <span>
-            {{ socle.competencies[competencyId].full_rank }}
-          </span>
-          <span class="ml-1 truncate">
-            {{ socle.competencies[competencyId].text }}
-          </span>
-          <button
-            @click="removeCompetency(competencyId)"
-            class="text-gray-300 hover:text-gray-600 mx-2"
+    <div class="mt-20">
+      <div class="form-label">Les compétences liées</div>
+      <div v-for="(cycleStudents, cycle) in studentByCycle" class="mt-2">
+        <div>
+          <span
+            v-if="Object.keys(studentByCycle).length > 1"
+            class="form-sub-label"
           >
-            <IconXCircle class="h-4" />
+            cycle {{ cycleNb(cycle) }} - {{ cycleStudents.length }}
+            <span v-if="cycleStudents.length > 1"> élèves </span>
+            <span v-else> élève </span>
+          </span>
+        </div>
+        <div v-for="competencyId in competenciesByCycle[cycle]">
+          <div class="flex flex-row items-center">
+            <span>
+              {{ competencyById(competencyId).full_rank }}
+            </span>
+            <span class="ml-1 truncate">
+              {{ competencyById(competencyId).text }}
+            </span>
+            <button
+              @click="removeCompetency(competencyId)"
+              class="text-gray-300 hover:text-gray-600 mx-2"
+            >
+              <IconXCircle class="h-4" />
+            </button>
+          </div>
+        </div>
+        <div v-if="showCompetencySelector[cycle]">
+          <CompetencySelector
+            :socle="socle"
+            :cycle="cycle"
+            @cancel="showCompetencySelector[cycle] = false"
+            @selected="selectCompetency(cycle, $event)"
+          />
+        </div>
+        <div v-else>
+          <button
+            @click="showCompetencySelector[cycle] = true"
+            class="mt-1 rounded-md px-3 border border-teal-700 hover:border-teal-300"
+          >
+            Lier une compétence
           </button>
         </div>
       </div>
-      <div v-if="showCompetencySelector[cycle]">
-        <CompetencySelector
-          :socle="socle"
-          :cycle="cycle"
-          @cancel="showCompetencySelector[cycle] = false"
-          @selected="selectCompetency(cycle, $event)"
-        />
-      </div>
-      <div v-else>
-        <button
-          @click="showCompetencySelector[cycle] = true"
-          class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
-        >
-          Lier une compétence
-        </button>
-      </div>
     </div>
     <!-- Evaluations -->
-    <div v-if="competenciesByStudent.length > 0" class="mt-8">
+    <div v-if="competenciesByStudent.length > 0" class="mt-20">
       <div class="form-label">Évaluation</div>
       <div v-for="c in competenciesByStudent">
         <div class="text-gray-700 mt-2">
