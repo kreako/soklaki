@@ -403,9 +403,7 @@
             created_at
             updated_at
             text
-            user {
-              id
-            }
+            user_id
             competencies(order_by: {competency: {alpha_full_rank: asc}}) {
               id
               competency_id
@@ -413,6 +411,9 @@
             students(order_by: {student: {fullname: {fullname: asc}}}) {
               id
               student_id
+            }
+            period {
+              id
             }
           }
         }
