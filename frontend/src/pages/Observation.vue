@@ -289,15 +289,9 @@ const saveObservationDate = async () => {
   observationDateInEdit.value = false;
 };
 const period = computed(() => {
-  if (observation.value.period != null) {
-    if (observation.value.period.id in store.state.periods) {
-      return store.state.periods[observation.value.period.id];
-    }
-  }
-  // default
-  return {
-    name: "?",
-  };
+  const periodId =
+    observation.value.period == null ? null : observation.value.period.id;
+  return store.getters.periodById(periodId);
 });
 
 const showStudentSelector = ref(false);

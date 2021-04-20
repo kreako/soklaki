@@ -295,6 +295,19 @@ const getters = {
       manager: false,
     };
   },
+  periodById: (state) => (periodId) => {
+    if (periodId != null && periodId in state.periods) {
+      return state.periods[periodId];
+    }
+    return {
+      created_at: null,
+      end: null,
+      name: null,
+      start: null,
+      updated_at: null,
+      students: [],
+    };
+  },
 };
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
