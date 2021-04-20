@@ -38,6 +38,7 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
+    - complete
     - created_at
     - date
     - eval_period_id
@@ -54,6 +55,7 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - complete
     - date
     - eval_period_id
     - text
