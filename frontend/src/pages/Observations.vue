@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-4 px-2">
+  <div class="my-4 px-2">
     <div class="form-label">Observations</div>
     <div class="flex flex-row justify-end relative">
       <select
@@ -46,6 +46,22 @@
         </div>
       </div>
     </div>
+    <div class="mt-16 flex flex-row justify-center space-x-4">
+      <button
+        @click="previousPage"
+        :disabled="!isPreviousPage"
+        class="disabled:cursor-not-allowed disabled:text-gray-200"
+      >
+        <IconChevronLeft class="h-6 hover:text-teal-500" />
+      </button>
+      <button
+        @click="nextPage"
+        :disabled="!isNextPage"
+        class="disabled:cursor-not-allowed disabled:text-gray-200"
+      >
+        <IconChevronRight class="h-6 hover:text-teal-500" />
+      </button>
+    </div>
   </div>
 </template>
 <script setup>
@@ -53,6 +69,8 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { userInitials } from "../utils/user";
+import IconChevronLeft from "../icons/IconChevronLeft.vue";
+import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconChevronDown from "../icons/IconChevronDown.vue";
 import IconUser from "../icons/IconUser.vue";
 import IconCompetency from "../icons/IconCompetency.vue";
@@ -75,6 +93,45 @@ watch(selectedFilter, (filter, prevFilter) => {
     });
   }
 });
+
+const previousPage = () => {
+  const limit = Number(route.query.limit);
+  const offset = Number(route.query.offset);
+  const filter = route.query.filter;
+  let newOffset = offset - limit;
+  if (newOffset < 0) {
+    newOffset = 0;
+  }
+  router.push({
+    query: {
+      limit: limit,
+      offset: newOffset,
+      filter: filter,
+    },
+  });
+};
+const nextPage = () => {
+  const limit = Number(route.query.limit);
+  const offset = Number(route.query.offset);
+  const filter = route.query.filter;
+  let newOffset = offset + limit;
+  if (newOffset > store.state.observationsCount) {
+    newOffset = store.state.observationsCount - limit;
+  }
+  router.push({
+    query: {
+      limit: limit,
+      offset: newOffset,
+      filter: filter,
+    },
+  });
+};
+const isPreviousPage = computed(() => Number(route.query.offset) > 0);
+const isNextPage = computed(
+  () =>
+    Number(route.query.offset) <
+    store.state.observationsCount - Number(route.query.limit)
+);
 
 watch(route, async () => {
   await updateObservations();
