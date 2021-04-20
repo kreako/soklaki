@@ -246,6 +246,7 @@ import { computed, ref, onMounted, watch } from "vue";
 import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
 import { dateJsObj } from "../utils/date";
 import { nonSelectedStudents } from "../utils/observation";
+import { studentCycleById } from "../utils/student";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -301,14 +302,9 @@ const sortedStudents = computed(() =>
   nonSelectedStudents(store, observation.value)
 );
 const studentById = computed(() => store.getters.studentById);
-const studentCycle = computed(() => (studentId) => {
-  const student = store.getters.studentById(studentId);
-  if (student.birthdate == null) {
-    // Best effort
-    return null;
-  }
-  return estimateCycle(student.birthdate, observation.value.date);
-});
+const studentCycle = computed(() => (studentId) =>
+  studentCycleById(store, observation.value.date, studentId)
+);
 const addStudent = async (id) => {
   await store.dispatch("insertObservationStudent", {
     observationId: observation.value.id,
