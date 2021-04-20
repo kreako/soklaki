@@ -246,7 +246,7 @@ import { computed, ref, onMounted, watch } from "vue";
 import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
 import { dateJsObj } from "../utils/date";
 import { nonSelectedStudents } from "../utils/observation";
-import { studentCycleById } from "../utils/student";
+import { studentCycleById, groupStudentsByCycle } from "../utils/student";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -320,23 +320,13 @@ const removeStudent = async (id) => {
   });
 };
 
-const studentByCycle = computed(() => {
-  const cycles = {};
-  for (const s of observation.value.students) {
-    const id = s.student_id;
-    const student = store.state.students[id];
-    if (student == null) {
-      // May happens when store is not full at app startup
-      continue;
-    }
-    const cycle = estimateCycle(student.birthdate, observation.value.date);
-    if (!(cycle in cycles)) {
-      cycles[cycle] = [];
-    }
-    cycles[cycle].push(id);
-  }
-  return cycles;
-});
+const studentByCycle = computed(() =>
+  groupStudentsByCycle(
+    store,
+    observation.value.date,
+    observation.value.students.map((x) => x.student_id)
+  )
+);
 
 const showCompetencySelector = ref({
   c1: false,
