@@ -254,19 +254,7 @@ const router = useRouter();
 const route = useRoute();
 
 const observation = computed(() => {
-  return (
-    store.state.observations[route.params.id] || {
-      id: null,
-      createdAt: null,
-      updatedAt: null,
-      userId: null,
-      date: null,
-      text: null,
-      students: [],
-      competencies: [],
-      period: null,
-    }
-  );
+  return store.state.getters.observationById(route.params.id);
 });
 
 const observationTextInEdit = ref(false);

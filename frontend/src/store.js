@@ -257,6 +257,23 @@ const getters = {
       };
     }
   },
+  observationById: (state) => (observationId) => {
+    const id = Number(observationId);
+    if (id in state.observations) {
+      return state.observations[id];
+    }
+    return {
+      date: null,
+      created_at: null,
+      updated_at: null,
+      text: null,
+      user_id: null,
+      complete: null,
+      competencies: [],
+      students: [],
+      period: null,
+    };
+  },
   competencyById: (state) => (competencyId) => {
     if (competencyId in state.socle.competencies) {
       return state.socle.competencies[competencyId];
