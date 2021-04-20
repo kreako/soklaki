@@ -397,7 +397,7 @@
         }
     - name: observations-by-user
       query: |-
-        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!) {
+        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
           eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {user_id: {_eq: $user_id}}) {
             id
             date
@@ -418,10 +418,15 @@
               id
             }
           }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
+            aggregate {
+              count
+            }
+          }
         }
     - name: observations-sorted-created-at
       query: |-
-        query Observations($limit: Int!, $offset: Int!) {
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
           eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
             id
             date
@@ -440,6 +445,11 @@
             }
             period {
               id
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
+            aggregate {
+              count
             }
           }
         }
