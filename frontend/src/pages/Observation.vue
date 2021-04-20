@@ -245,6 +245,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
 import { dateJsObj } from "../utils/date";
+import { isStudentObserved } from "../utils/observation";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -296,15 +297,6 @@ const period = computed(() => {
 
 const showStudentSelector = ref(false);
 const students = computed(() => store.state.students);
-const isStudentObserved = (studentId) => {
-  // Used to filter out from selector the student that I already selected
-  for (const s of observation.value.students) {
-    if (s.student_id === studentId) {
-      return true;
-    }
-  }
-  return false;
-};
 const sortedStudents = computed(() => {
   if (observation.value.period != null) {
     // There is an associated period
@@ -316,7 +308,7 @@ const sortedStudents = computed(() => {
     const period = store.state.periods[periodId];
     return period.students
       .map((x) => x.student.id)
-      .filter((id) => !isStudentObserved(id));
+      .filter((id) => !isStudentObserved(observation.value, id));
   } else {
     // return the full set of students (even those not in school anymore)
     return store.state.sortedStudents.filter((id) => !isStudentObserved(id));
