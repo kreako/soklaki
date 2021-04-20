@@ -48,7 +48,7 @@ export const dateJsObj = (dt) => {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
     Ici, la date ne me semble pas valide (date: ${dt}) ?`);
   }
-  return new Date(year, month, day);
+  return new Date(year, month - 1, day);
 };
 
 /// Diff to date and returns number of days
