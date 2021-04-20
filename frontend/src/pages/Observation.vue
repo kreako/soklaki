@@ -54,7 +54,9 @@
             {{ observation.date }}
           </span>
           <!-- TODO link to period page ? -->
-          <span class="text-xs"> ({{ period.name }}) </span>
+          <span v-if="period.name != null" class="text-xs">
+            ({{ period.name }})
+          </span>
         </div>
       </div>
     </div>
@@ -253,9 +255,9 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
-const observation = computed(() => {
-  return store.state.getters.observationById(route.params.id);
-});
+const observation = computed(() =>
+  store.getters.observationById(route.params.id)
+);
 
 const observationTextInEdit = ref(false);
 const observationEditText = ref("");
