@@ -42,6 +42,8 @@ const state = {
   // id -> observation object
   observations: {},
   sortedCreatedAtObservations: [],
+  // total number of observations in DB for the last query (user or incomplete or all)
+  observationsCount: null,
   evaluations: {
     // id -> evaluation object
     evaluations: {},
@@ -181,16 +183,17 @@ const mutations = {
     });
   },
   setObservations(state, { data, limit, offset }) {
-    // Remove everything that is already in there, that I'm currently trying to store
-    state.sortedCreatedAtObservations.splice(
-      offset,
-      state.sortedCreatedAtObservations.length
-    );
+    // Remove everything that is already in there
+    // Component use pagination
+    state.sortedCreatedAtObservations = [];
     // Now store
     for (const observation of data) {
       state.observations[observation.id] = observation;
       state.sortedCreatedAtObservations.push(observation.id);
     }
+  },
+  setObservationsCount(state, count) {
+    state.observationsCount = count;
   },
   setGroupName(state, groupName) {
     state.group.name = groupName;
@@ -467,8 +470,9 @@ const actions = {
     }
   },
 
-  async observations({ commit }, { limit, offset }) {
+  async observations({ commit, state }, { limit, offset }) {
     const answer = await axios.post("observations-sorted-created-at", {
+      group_id: state.login.groupId,
       limit: limit,
       offset: offset,
     });
@@ -477,11 +481,16 @@ const actions = {
       // No observations maybe
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
+      commit(
+        "setObservationsCount",
+        answer.data.eval_observation_aggregate.aggregate.count
+      );
     }
   },
 
-  async observationsByUser({ commit }, { userId, limit, offset }) {
+  async observationsByUser({ commit, state }, { userId, limit, offset }) {
     const answer = await axios.post("observations-by-user", {
+      group_id: state.login.groupId,
       user_id: userId,
       limit: limit,
       offset: offset,
@@ -491,6 +500,10 @@ const actions = {
       // No observations maybe
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
+      commit(
+        "setObservationsCount",
+        answer.data.eval_observation_aggregate.aggregate.count
+      );
     }
   },
 
