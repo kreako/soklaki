@@ -245,7 +245,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
 import { dateJsObj } from "../utils/date";
-import { isStudentObserved } from "../utils/observation";
+import { nonSelectedStudents } from "../utils/observation";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -297,23 +297,9 @@ const period = computed(() => {
 
 const showStudentSelector = ref(false);
 const students = computed(() => store.state.students);
-const sortedStudents = computed(() => {
-  if (observation.value.period != null) {
-    // There is an associated period
-    const periodId = observation.value.period.id;
-    if (!(periodId in store.state.periods)) {
-      // But the store is not ready
-      return [];
-    }
-    const period = store.state.periods[periodId];
-    return period.students
-      .map((x) => x.student.id)
-      .filter((id) => !isStudentObserved(observation.value, id));
-  } else {
-    // return the full set of students (even those not in school anymore)
-    return store.state.sortedStudents.filter((id) => !isStudentObserved(id));
-  }
-});
+const sortedStudents = computed(() =>
+  nonSelectedStudents(store, observation.value)
+);
 const studentById = computed(() => store.getters.studentById);
 const studentCycle = computed(() => (studentId) => {
   const student = store.getters.studentById(studentId);
