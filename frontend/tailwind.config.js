@@ -22,7 +22,7 @@ module.exports = {
   },
   variants: {
     extend: {
-      textColor: ["group-hover"],
+      textColor: ["group-hover", "disabled"],
       backgroundColor: ["disabled"],
       cursor: ["disabled"],
     },
