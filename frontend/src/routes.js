@@ -4,10 +4,6 @@ import Signup from "./pages/Signup.vue";
 import LostPassword from "./pages/LostPassword.vue";
 import Home from "./pages/Home.vue";
 import HomeContent from "./pages/HomeContent.vue";
-import NewObservation from "./pages/NewObservation.vue";
-import Observation from "./pages/Observation.vue";
-import Observations from "./pages/Observations.vue";
-import FirstStep from "./pages/FirstStep.vue";
 
 const routes = [
   { path: "/login", component: Login },
@@ -23,19 +19,19 @@ const routes = [
       },
       {
         path: "/new-observation",
-        component: NewObservation,
+        component: () => import("./pages/NewObservation.vue"),
       },
       {
         path: "/observation/:id",
-        component: Observation,
+        component: () => import("./pages/Observation.vue"),
       },
       {
         path: "/observations",
-        component: Observations,
+        component: () => import("./pages/Observations.vue"),
       },
       {
         path: "/first-step",
-        component: FirstStep,
+        component: () => import("./pages/FirstStep.vue"),
       },
     ],
   },
