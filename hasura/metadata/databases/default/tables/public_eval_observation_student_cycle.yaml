@@ -20,3 +20,14 @@ object_relationships:
       remote_table:
         name: student
         schema: public
+select_permissions:
+- permission:
+    columns:
+    - observation_id
+    - student_id
+    - cycle
+    filter:
+      student:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
