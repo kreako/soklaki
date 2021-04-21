@@ -500,6 +500,8 @@ const actions = {
     }
   },
 
+  // TODO deleteObservationCompetency
+
   async observations({ commit, state }, { limit, offset }) {
     const answer = await axios.post("observations-sorted-created-at", {
       group_id: state.login.groupId,
