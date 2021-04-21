@@ -167,6 +167,11 @@ const updateObservations = async () => {
       limit: Number(route.query.limit),
       offset: Number(route.query.offset),
     });
+  } else if (route.query.filter === "incomplete") {
+    await store.dispatch("observationsIncomplete", {
+      limit: Number(route.query.limit),
+      offset: Number(route.query.offset),
+    });
   }
 };
 

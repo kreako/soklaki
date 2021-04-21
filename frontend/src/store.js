@@ -502,6 +502,24 @@ const actions = {
     }
   },
 
+  async observationsIncomplete({ commit, state }, { limit, offset }) {
+    const answer = await axios.post("observations-incomplete", {
+      group_id: state.login.groupId,
+      limit: limit,
+      offset: offset,
+    });
+    let data = answer.data.eval_observation;
+    if (data == null) {
+      // No observations maybe
+    } else {
+      commit("setObservations", { data: data, limit: limit, offset: offset });
+      commit(
+        "setObservationsCount",
+        answer.data.eval_observation_aggregate.aggregate.count
+      );
+    }
+  },
+
   async updateGroupName({ commit }, { groupId, groupName }) {
     const answer = await axios.post("update-group-name", {
       group_id: groupId,
