@@ -247,6 +247,7 @@ import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
 import { dateJsObj } from "../utils/date";
 import { nonSelectedStudents } from "../utils/observation";
 import { studentCycleById, groupStudentsByCycle } from "../utils/student";
+import { groupCompetenciesByCycle } from "../utils/competency";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
@@ -357,24 +358,12 @@ const removeCompetency = async (competencyId) => {
     competencyId: competencyId,
   });
 };
-const competenciesByCycle = computed(() => {
-  const competencies = {
-    c1: [],
-    c2: [],
-    c3: [],
-    c4: [],
-  };
-  for (const c of observation.value.competencies) {
-    const competencyId = c.competency_id;
-    const competency = store.state.socle.competencies[competencyId];
-    if (competency == null) {
-      // Could happen when the store is not yet full
-      continue;
-    }
-    competencies[competency.cycle].push(competencyId);
-  }
-  return competencies;
-});
+const competenciesByCycle = computed(() =>
+  groupCompetenciesByCycle(
+    store,
+    observation.value.competencies.map((x) => x.competency_id)
+  )
+);
 
 // This function will dispatch evaluationsByStudentCompetency action
 // Allowing computed property competenciesByStudent to use the evaluation id
