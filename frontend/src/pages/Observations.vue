@@ -44,6 +44,13 @@
             </div>
             <IconCompetency class="h-4 text-gray-500" />
           </div>
+          <div>
+            <IconCheck
+              v-if="observationById(observationId).complete.complete"
+              class="h-4 text-green-600"
+            />
+            <IconX v-else class="h-4 text-red-600" />
+          </div>
         </div>
         <div class="truncate">
           <router-link :to="`/observation/${observationId}`">
@@ -75,6 +82,8 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { userInitials } from "../utils/user";
+import IconCheck from "../icons/IconCheck.vue";
+import IconX from "../icons/IconX.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconChevronDown from "../icons/IconChevronDown.vue";
