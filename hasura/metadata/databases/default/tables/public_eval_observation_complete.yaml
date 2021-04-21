@@ -1,0 +1,24 @@
+table:
+  name: eval_observation_complete
+  schema: public
+object_relationships:
+- name: observation
+  using:
+    manual_configuration:
+      column_mapping:
+        observation_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_observation
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - observation_id
+    - complete
+    filter:
+      observation:
+        user:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user

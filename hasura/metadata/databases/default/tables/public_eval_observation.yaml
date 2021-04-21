@@ -2,6 +2,15 @@ table:
   name: eval_observation
   schema: public
 object_relationships:
+- name: complete
+  using:
+    manual_configuration:
+      column_mapping:
+        id: observation_id
+      insertion_order: null
+      remote_table:
+        name: eval_observation_complete
+        schema: public
 - name: period
   using:
     foreign_key_constraint_on: eval_period_id
@@ -48,7 +57,6 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - complete
     - created_at
     - date
     - eval_period_id
@@ -65,7 +73,6 @@ update_permissions:
 - permission:
     check: null
     columns:
-    - complete
     - date
     - eval_period_id
     - text
