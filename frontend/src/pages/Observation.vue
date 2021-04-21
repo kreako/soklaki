@@ -258,7 +258,7 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
-import { estimateCycle, cycleNb, cycleFullName } from "../utils/cycle";
+import { cycleNb, cycleFullName } from "../utils/cycle";
 import { dateToNiceString } from "../utils/date";
 import { nonSelectedStudents } from "../utils/observation";
 import { groupStudentsByCycle, studentsIdToCycle } from "../utils/student";
