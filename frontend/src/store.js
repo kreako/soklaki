@@ -549,35 +549,6 @@ const actions = {
     });
   },
 
-  async evaluationByStudentCompetency(
-    { commit, state },
-    { studentId, competencyId }
-  ) {
-    // return evaluation id if any or null
-    if (studentId in state.evaluations.byStudentCompetency) {
-      if (competencyId in state.evaluations.byStudentCompetency[studentId]) {
-        if (
-          state.evaluations.byStudentCompetency[studentId][competencyId] != null
-        ) {
-          // Already in it \o/ : no need to fetch data
-          return state.evaluations.byStudentCompetency[studentId][competencyId];
-        }
-      }
-    }
-    // Fetch data !
-    const answer = await axios.post("evaluation-by-student-competency", {
-      student_id: studentId,
-      competency_id: competencyId,
-    });
-    const data = answer.data.eval_evaluation;
-    commit("setEvaluationByStudentCompetency", {
-      studentId: studentId,
-      competencyId: competencyId,
-      evaluation: data.length === 0 ? null : data[0],
-    });
-    return data.length === 0 ? null : data[0].id;
-  },
-
   async insertEvaluation(
     { commit, state },
     { studentId, competencyId, periodId, date, status, comment }
