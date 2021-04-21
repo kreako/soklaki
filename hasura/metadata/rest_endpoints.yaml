@@ -110,6 +110,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: observations-incomplete
+  url: observations-incomplete
+  methods:
+  - POST
+  name: observations-incomplete
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: observations-sorted-created-at
   url: observations-sorted-created-at
   methods:

@@ -646,3 +646,34 @@
             }
           }
         }
+    - name: observations-incomplete
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {complete: {complete: {_eq: false}}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period_id: eval_period_id
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, complete: {complete: {_eq: false}}}) {
+            aggregate {
+              count
+            }
+          }
+        }
