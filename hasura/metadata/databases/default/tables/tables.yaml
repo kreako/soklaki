@@ -3,6 +3,7 @@
 - "!include public_eval_observation.yaml"
 - "!include public_eval_observation_competency.yaml"
 - "!include public_eval_observation_complete.yaml"
+- "!include public_eval_observation_last_evaluations.yaml"
 - "!include public_eval_observation_student.yaml"
 - "!include public_eval_observation_student_cycle.yaml"
 - "!include public_eval_observation_template.yaml"

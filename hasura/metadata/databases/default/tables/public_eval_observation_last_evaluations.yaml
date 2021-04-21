@@ -1,0 +1,52 @@
+table:
+  name: eval_observation_last_evaluations
+  schema: public
+object_relationships:
+- name: competency
+  using:
+    manual_configuration:
+      column_mapping:
+        competency_id: id
+      insertion_order: null
+      remote_table:
+        name: socle_competency
+        schema: public
+- name: evaluation
+  using:
+    manual_configuration:
+      column_mapping:
+        evaluation_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_evaluation
+        schema: public
+- name: observation
+  using:
+    manual_configuration:
+      column_mapping:
+        observation_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_observation
+        schema: public
+- name: student
+  using:
+    manual_configuration:
+      column_mapping:
+        student_id: id
+      insertion_order: null
+      remote_table:
+        name: student
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - observation_id
+    - competency_id
+    - student_id
+    - evaluation_id
+    filter:
+      student:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
