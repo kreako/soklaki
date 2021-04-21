@@ -15,12 +15,14 @@ test("groupCompetenciesByCycle", () => {
         } else if (id === 5) {
           return { cycle: "c1" };
         } else {
-          return null;
+          return { cycle: null };
         }
       },
     },
   };
-  expect(groupCompetenciesByCycle(store, [1, 2, 4, 6, 5, 3])).toStrictEqual({
+  expect(
+    groupCompetenciesByCycle(store, [1, 2, 4, 6, null, 5, 3])
+  ).toStrictEqual({
     c1: [1, 5],
     c2: [],
     c3: [2],

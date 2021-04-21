@@ -19,29 +19,35 @@
         <div class="flex flex-row items-center space-x-4">
           <div>
             <router-link :to="`/observation/${observationId}`">
-              {{ observations[observationId].date }}
+              {{ observationById(observationId).date }}
             </router-link>
           </div>
           <div class="text-xs rounded-full px-1 border border-gray-600">
-            {{ userInitials(userById(observations[observationId].user_id)) }}
+            {{ userInitials(userById(observationById(observationId).user_id)) }}
           </div>
           <div class="flex-grow"></div>
           <div class="flex flex-row items-center space-x-2">
             <div>
-              {{ observations[observationId].students.length }}
+              {{
+                observationById(observationId).students_aggregate.aggregate
+                  .count
+              }}
             </div>
             <IconUser class="h-4 text-gray-500" />
           </div>
           <div class="flex flex-row items-center space-x-2">
             <div>
-              {{ observations[observationId].competencies.length }}
+              {{
+                observationById(observationId).competencies_aggregate.aggregate
+                  .count
+              }}
             </div>
             <IconCompetency class="h-4 text-gray-500" />
           </div>
         </div>
         <div class="truncate">
           <router-link :to="`/observation/${observationId}`">
-            {{ observations[observationId].text }}
+            {{ observationById(observationId).text }}
           </router-link>
         </div>
       </div>
@@ -80,6 +86,7 @@ const route = useRoute();
 const router = useRouter();
 
 const userById = computed(() => store.getters.userById);
+const observationById = computed(() => store.getters.observationById);
 
 const selectedFilter = ref(route.query.filter || "all");
 watch(selectedFilter, (filter, prevFilter) => {

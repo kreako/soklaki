@@ -39,6 +39,8 @@ const state = {
     c3: [],
     c4: [],
   },
+  // Individual observation
+  observation: { id: null },
   // id -> observation object
   observations: {},
   sortedCreatedAtObservations: [],
@@ -151,36 +153,10 @@ const mutations = {
     state.socle.subjects = fromArrayToIdObjects(socle.subjects);
   },
   setObservation(state, observation) {
-    state.observations[observation.id] = observation;
+    state.observation = observation;
   },
   setObservationText(state, { id, text }) {
-    state.observations[id].text = text;
-  },
-  setObservationDate(state, { id, date, period }) {
-    state.observations[id].date = date;
-    state.observations[id].period = period;
-  },
-  insertObservationStudent(state, { id, observationId, studentId }) {
-    state.observations[observationId].students.push({
-      id: id,
-      student_id: studentId,
-    });
-  },
-  deleteObservationStudent(state, { observationId, id }) {
-    let idx = 0;
-    const length = state.observations[observationId].students.length;
-    for (idx = 0; idx < length; idx++) {
-      if (state.observations[observationId].students[idx].id === id) {
-        break;
-      }
-    }
-    state.observations[observationId].students.splice(idx, 1);
-  },
-  insertObservationCompetency(state, { id, observationId, competencyId }) {
-    state.observations[observationId].competencies.push({
-      id: id,
-      competency_id: competencyId,
-    });
+    state.observation.text = text;
   },
   setObservations(state, { data, limit, offset }) {
     // Remove everything that is already in there
@@ -271,7 +247,20 @@ const getters = {
       complete: null,
       competencies: [],
       students: [],
-      period: null,
+      period_id: null,
+      complete: {
+        complete: null,
+      },
+      competencies_aggregate: {
+        aggregate: {
+          count: null,
+        },
+      },
+      students_aggregate: {
+        aggregate: {
+          count: null,
+        },
+      },
     };
   },
   competencyById: (state) => (competencyId) => {
@@ -376,17 +365,7 @@ const actions = {
     });
     let data = answer.data.insert_eval_observation_one;
     const periodObj = period == null ? null : { id: period.id };
-    commit("setObservation", {
-      id: data.id,
-      date: date,
-      createdAt: data.created_at,
-      updatedAt: data.created_at,
-      text: text,
-      userId: state.login.userId,
-      students: [],
-      competencies: [],
-      period: periodObj,
-    });
+    commit("setObservation", data);
     return data.id;
   },
 
@@ -436,11 +415,7 @@ const actions = {
         date: ${date}`);
     } else {
       const periodObj = period == null ? null : { id: period.id };
-      commit("setObservationDate", {
-        id: id,
-        date: date,
-        period: periodObj,
-      });
+      commit("setObservation", data);
     }
   },
 
@@ -449,32 +424,18 @@ const actions = {
       observation_id: observationId,
       student_id: studentId,
     });
-    if (answer.error) {
-      // TODO
-    }
-    let data = answer.data.insert_eval_observation_student_one;
-    if (data == null) {
-      // TODO
-    } else {
-      commit("insertObservationStudent", {
-        id: data.id,
-        observationId: data.observation_id,
-        studentId: data.student_id,
-      });
-    }
+    let data = answer.data.insert_eval_observation_student_one.observation;
+    commit("setObservation", data);
   },
 
-  async deleteObservationStudent({ commit }, { id, observationId }) {
+  async deleteObservationStudent({ commit }, { studentId, observationId }) {
     let answer = await axios.post("delete-observation-student", {
-      id: id,
+      observation_id: observationId,
+      student_id: studentId,
     });
-    if (answer.error) {
-      // TODO
-    }
-    commit("deleteObservationStudent", {
-      id: id,
-      observationId: observationId,
-    });
+    let data =
+      answer.data.delete_eval_observation_student.returning[0].observation;
+    commit("setObservation", data);
   },
 
   async insertObservationCompetency(
@@ -485,19 +446,21 @@ const actions = {
       observation_id: observationId,
       competency_id: competencyId,
     });
-    if (answer.error) {
-      // TODO
-    }
-    let data = answer.data.insert_eval_observation_competency_one;
-    if (data == null) {
-      // TODO
-    } else {
-      commit("insertObservationCompetency", {
-        id: data.id,
-        observationId: data.observation_id,
-        competencyId: data.competency_id,
-      });
-    }
+    let data = answer.data.insert_eval_observation_competency_one.observation;
+    commit("setObservation", data);
+  },
+
+  async deleteObservationCompetency(
+    { commit },
+    { observationId, competencyId }
+  ) {
+    let answer = await axios.post("delete-observation-competency", {
+      observation_id: observationId,
+      competency_id: competencyId,
+    });
+    let data =
+      answer.data.delete_eval_observation_competency.returning[0].observation;
+    commit("setObservation", data);
   },
 
   // TODO deleteObservationCompetency

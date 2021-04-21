@@ -79,3 +79,14 @@ export const today = () => {
     .toString()
     .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
 };
+
+/// Return a string in french to display
+/// dt is like 2021-03-30T17:59:16.637699+00:00
+export const dateToNiceString = (dt) => {
+  if (dt == null) {
+    return null;
+  }
+  const [date, time] = dt.split("T");
+  const reduceTime = time.slice(0, 5);
+  return `le ${date} à ${reduceTime}`;
+};

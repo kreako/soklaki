@@ -10,7 +10,7 @@ export const groupCompetenciesByCycle = (store, competencies) => {
   };
   for (const id of competencies) {
     const competency = store.getters.competencyById(id);
-    if (competency == null) {
+    if (competency.cycle == null) {
       // Could happen when the store is not yet full
       continue;
     }

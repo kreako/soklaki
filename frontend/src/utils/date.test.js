@@ -1,4 +1,10 @@
-import { dateFromString, dateJsObj, dateDiffInDays, today } from "./date";
+import {
+  dateFromString,
+  dateJsObj,
+  dateDiffInDays,
+  today,
+  dateToNiceString,
+} from "./date";
 
 test("dateFromString", () => {
   expect(dateFromString("2021-03-30T17:59:16.637699+00:00")).toBe("2021-03-30");
@@ -58,4 +64,11 @@ test("today", () => {
   expect(t1.getFullYear()).toBe(t2.getFullYear());
   expect(t1.getMonth()).toBe(t2.getMonth());
   expect(t1.getDate()).toBe(t2.getDate());
+});
+
+test("dateToNiceString", () => {
+  expect(dateToNiceString("2021-03-30T17:59:16.637699+00:00")).toBe(
+    "le 2021-03-30 à 17:59"
+  );
+  expect(dateToNiceString(null)).toBeNull();
 });

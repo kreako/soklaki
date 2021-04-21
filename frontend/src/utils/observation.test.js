@@ -36,9 +36,7 @@ test("nonSelectedStudents", () => {
     },
   };
   const observation = {
-    period: {
-      id: 1,
-    },
+    period_id: 1,
     students: [
       {
         student_id: 3,
@@ -46,6 +44,6 @@ test("nonSelectedStudents", () => {
     ],
   };
   expect(nonSelectedStudents(store, observation)).toStrictEqual([1, 5]);
-  observation.period = null;
+  observation.period_id = null;
   expect(nonSelectedStudents(store, observation)).toStrictEqual([0, 1, 5, 7]);
 });
