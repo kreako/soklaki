@@ -1,0 +1,22 @@
+table:
+  name: eval_observation_student_cycle
+  schema: public
+object_relationships:
+- name: observation
+  using:
+    manual_configuration:
+      column_mapping:
+        observation_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_observation
+        schema: public
+- name: student
+  using:
+    manual_configuration:
+      column_mapping:
+        student_id: id
+      insertion_order: null
+      remote_table:
+        name: student
+        schema: public
