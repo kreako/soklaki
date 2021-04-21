@@ -371,35 +371,6 @@
             }
           }
         }
-    - name: observations-sorted-created-at
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            complete
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              id
-              competency_id
-            }
-            students(order_by: {student: {fullname: {fullname: asc}}}) {
-              id
-              student_id
-            }
-            period {
-              id
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
-            aggregate {
-              count
-            }
-          }
-        }
     - name: observation
       query: |-
         query ObservationByPk($id: bigint!) {
@@ -410,16 +381,22 @@
             date
             updated_at
             user_id
-            students(order_by: {student: {fullname: {fullname: asc}}}) {
-              student_id
-              id
+            period_id: eval_period_id
+            complete {
+              complete
             }
             competencies(order_by: {competency: {alpha_full_rank: asc}}) {
               id
               competency_id
             }
-            period {
-              id
+            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+              student_id
+              cycle
+            }
+            last_evaluations {
+              competency_id
+              evaluation_id
+              student_id
             }
           }
         }
@@ -433,16 +410,50 @@
             updated_at
             text
             user_id
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              id
-              competency_id
+            period_id: eval_period_id
+            complete {
+              complete
             }
-            students(order_by: {student: {fullname: {fullname: asc}}}) {
-              id
-              student_id
+            competencies_aggregate {
+              aggregate {
+                count
+              }
             }
-            period {
-              id
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, user_id: {_eq: $user_id}}) {
+            aggregate {
+              count
+            }
+          }
+        }
+    - name: observations-sorted-created-at
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period_id: eval_period_id
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
             }
           }
           eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
