@@ -2,6 +2,15 @@ table:
   name: student
   schema: public
 object_relationships:
+- name: current_cycle
+  using:
+    manual_configuration:
+      column_mapping:
+        id: student_id
+      insertion_order: null
+      remote_table:
+        name: student_current_cycle
+        schema: public
 - name: fullname
   using:
     manual_configuration:

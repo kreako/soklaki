@@ -1,3 +1,23 @@
 table:
   name: student_current_cycle
   schema: public
+object_relationships:
+- name: student
+  using:
+    manual_configuration:
+      column_mapping:
+        student_id: id
+      insertion_order: null
+      remote_table:
+        name: student
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - student_id
+    - current_cycle
+    filter:
+      student:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
