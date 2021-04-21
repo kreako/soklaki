@@ -6,7 +6,7 @@
         v-model="selectedFilter"
         class="appearance-none block bg-transparent py-1 pr-3 text-gray-500 font-medium text-sm focus:outline-none focus:text-gray-900 transition-colors duration-200"
       >
-        <option value="all">Filtres</option>
+        <option value="all">Toutes</option>
         <option value="incomplete">Les incomplètes</option>
         <option value="mine">Mes observations</option>
       </select>
