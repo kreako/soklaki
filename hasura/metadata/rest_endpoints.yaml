@@ -10,21 +10,21 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: delete-observation-competency
+  url: delete-observation-competency
+  methods:
+  - POST
+  name: delete-observation-competency
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: delete-observation-student
   url: delete-observation-student
   methods:
   - POST
   name: delete-observation-student
   comment: Delete observation student
-- definition:
-    query:
-      collection_name: allowed-queries
-      query_name: evaluation-by-student-competency
-  url: evaluation-by-student-competency
-  methods:
-  - POST
-  name: evaluation-by-student-competency
-  comment: null
 - definition:
     query:
       collection_name: allowed-queries

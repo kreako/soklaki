@@ -22,11 +22,16 @@ object_relationships:
         schema: public
 select_permissions:
 - permission:
+    allow_aggregations: true
     columns:
     - eval_period_id
     - student_id
     filter:
-      period:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user
