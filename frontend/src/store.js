@@ -302,6 +302,14 @@ const getters = {
       students: [],
     };
   },
+  subjectById: (state) => (subjectId) => {
+    if (subjectId != null && subjectId in state.socle.subjects) {
+      return state.socle.subjects[subjectId];
+    }
+    return {
+      title: null,
+    };
+  },
 };
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
