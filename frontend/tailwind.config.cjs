@@ -13,6 +13,7 @@ module.exports = {
       teal: colors.teal,
       rose: colors.rose,
       blue: colors.blue,
+      transparent: colors.transparent,
     },
     extend: {
       maxHeight: {

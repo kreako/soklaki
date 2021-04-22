@@ -27,4 +27,8 @@
   .form-sub-label {
     @apply text-sm text-gray-700;
   }
+  .invisible-select {
+    @apply appearance-none block bg-transparent py-1 pr-3 text-gray-500 font-medium text-sm;
+    @apply focus:outline-none focus:text-gray-900 transition-colors duration-200;
+  }
 }
