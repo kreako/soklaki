@@ -240,49 +240,6 @@
             school_exit
           }
         }
-    - name: boot
-      query: |-
-        query Boot($group_id: bigint!) {
-          group: group {
-            id
-            is_school
-            name
-            payment_ok
-            users(order_by: {firstname: asc}) {
-              id
-            }
-          }
-          users: user(order_by: {firstname: asc}, where: {active: {_eq: true}}) {
-            email
-            email_confirmed
-            firstname
-            id
-            lastname
-            manager
-          }
-          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}}) {
-            created_at
-            end
-            id
-            name
-            start
-            updated_at
-            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}}}) {
-              student {
-                id
-              }
-            }
-          }
-          students: student(order_by: {fullname: {fullname: asc}}) {
-            birthdate
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-            school_exit
-          }
-        }
     - name: observations-by-user
       query: |-
         query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
@@ -674,6 +631,52 @@
           eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, complete: {complete: {_eq: false}}}) {
             aggregate {
               count
+            }
+          }
+        }
+    - name: boot
+      query: |-
+        query Boot($group_id: bigint!) {
+          group: group {
+            id
+            is_school
+            name
+            payment_ok
+            users(order_by: {firstname: asc}) {
+              id
+            }
+          }
+          users: user(order_by: {firstname: asc}, where: {active: {_eq: true}}) {
+            email
+            email_confirmed
+            firstname
+            id
+            lastname
+            manager
+          }
+          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}}}) {
+              student {
+                id
+              }
+            }
+          }
+          students: student(order_by: {fullname: {fullname: asc}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+            school_exit
+            current_cycle {
+              current_cycle
             }
           }
         }
