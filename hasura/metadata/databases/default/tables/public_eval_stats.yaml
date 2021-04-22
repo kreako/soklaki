@@ -1,12 +1,21 @@
 table:
-  name: eval_period_student
+  name: eval_stats
   schema: public
 object_relationships:
+- name: competency
+  using:
+    manual_configuration:
+      column_mapping:
+        competency_id: id
+      insertion_order: null
+      remote_table:
+        name: socle_competency
+        schema: public
 - name: period
   using:
     manual_configuration:
       column_mapping:
-        eval_period_id: id
+        period_id: id
       insertion_order: null
       remote_table:
         name: eval_period
@@ -22,11 +31,15 @@ object_relationships:
         schema: public
 select_permissions:
 - permission:
-    allow_aggregations: true
     columns:
-    - eval_period_id
+    - period_id
     - student_id
     - cycle
+    - competency_id
+    - full_rank
+    - observations_count
+    - evaluations_count
+    - comments_count
     filter:
       _and:
       - period:

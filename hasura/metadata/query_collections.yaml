@@ -683,3 +683,103 @@
             title
           }
         }
+    - name: stats
+      query: |-
+        query Stats($period_id: Int) {
+          students_c1: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c1" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c1: socle_competency_aggregate(where: { cycle: { _eq: "c1" } }) {
+            aggregate {
+              count
+            }
+          }
+          stats_c1: eval_stats(
+            where: { period_id: { _eq: $period_id }, cycle: { _eq: "c1" } }
+          ) {
+            comments_count
+            competency_id
+            evaluations_count
+            observations_count
+            student_id
+          }
+          students_c2: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c2" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c2: socle_competency_aggregate(where: { cycle: { _eq: "c2" } }) {
+            aggregate {
+              count
+            }
+          }
+          stats_c2: eval_stats(
+            where: { period_id: { _eq: $period_id }, cycle: { _eq: "c2" } }
+          ) {
+            comments_count
+            competency_id
+            evaluations_count
+            observations_count
+            student_id
+          }
+          students_c3: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c3" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c3: socle_competency_aggregate(where: { cycle: { _eq: "c3" } }) {
+            aggregate {
+              count
+            }
+          }
+          stats_c3: eval_stats(
+            where: { period_id: { _eq: $period_id }, cycle: { _eq: "c3" } }
+          ) {
+            comments_count
+            competency_id
+            evaluations_count
+            observations_count
+            student_id
+          }
+          students_c4: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c4" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c4: socle_competency_aggregate(where: { cycle: { _eq: "c4" } }) {
+            aggregate {
+              count
+            }
+          }
+          stats_c4: eval_stats(
+            where: { period_id: { _eq: $period_id }, cycle: { _eq: "c4" } }
+          ) {
+            comments_count
+            competency_id
+            evaluations_count
+            observations_count
+            student_id
+          }
+        }
