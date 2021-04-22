@@ -237,12 +237,6 @@
           </span>
         </div>
         <div>
-          <span>Dernière mise à jour le </span>
-          <span>
-            {{ dateToNiceString(observation.updated_at) }}
-          </span>
-        </div>
-        <div>
           <span>Complète : </span>
           <span v-if="observation.complete.complete" class="text-green-600">
             Oui !
