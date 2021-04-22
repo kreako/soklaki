@@ -17,10 +17,15 @@ query Stats($period_id: Int) {
   stats_c1: eval_stats(
     where: { period_id: { _eq: $period_id }, cycle: { _eq: "c1" } }
   ) {
-    comments_count
     competency_id
     evaluations_count
     observations_count
+    student_id
+  }
+  comment_stats_c1: eval_comment_stats(
+    where: { period_id: { _eq: $period_id }, cycle: { _eq: "c1" } }
+  ) {
+    comments_count
     student_id
   }
   students_c2: student_aggregate(
@@ -41,10 +46,15 @@ query Stats($period_id: Int) {
   stats_c2: eval_stats(
     where: { period_id: { _eq: $period_id }, cycle: { _eq: "c2" } }
   ) {
-    comments_count
     competency_id
     evaluations_count
     observations_count
+    student_id
+  }
+  comment_stats_c2: eval_comment_stats(
+    where: { period_id: { _eq: $period_id }, cycle: { _eq: "c2" } }
+  ) {
+    comments_count
     student_id
   }
   students_c3: student_aggregate(
@@ -65,10 +75,15 @@ query Stats($period_id: Int) {
   stats_c3: eval_stats(
     where: { period_id: { _eq: $period_id }, cycle: { _eq: "c3" } }
   ) {
-    comments_count
     competency_id
     evaluations_count
     observations_count
+    student_id
+  }
+  comment_stats_c3: eval_comment_stats(
+    where: { period_id: { _eq: $period_id }, cycle: { _eq: "c3" } }
+  ) {
+    comments_count
     student_id
   }
   students_c4: student_aggregate(
@@ -89,10 +104,15 @@ query Stats($period_id: Int) {
   stats_c4: eval_stats(
     where: { period_id: { _eq: $period_id }, cycle: { _eq: "c4" } }
   ) {
-    comments_count
     competency_id
     evaluations_count
     observations_count
+    student_id
+  }
+  comment_stats_c4: eval_comment_stats(
+    where: { period_id: { _eq: $period_id }, cycle: { _eq: "c4" } }
+  ) {
+    comments_count
     student_id
   }
 }

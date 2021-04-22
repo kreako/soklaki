@@ -1,16 +1,7 @@
 table:
-  name: eval_stats
+  name: eval_comment_stats
   schema: public
 object_relationships:
-- name: competency
-  using:
-    manual_configuration:
-      column_mapping:
-        competency_id: id
-      insertion_order: null
-      remote_table:
-        name: socle_competency
-        schema: public
 - name: period
   using:
     manual_configuration:
@@ -35,9 +26,7 @@ select_permissions:
     - period_id
     - student_id
     - cycle
-    - competency_id
-    - observations_count
-    - evaluations_count
+    - comments_count
     filter:
       _and:
       - period:

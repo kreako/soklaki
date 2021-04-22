@@ -42,4 +42,4 @@ FROM student
     ON evaluation.competency_id = socle_competency.id
       AND evaluation.student_id = student.id
       AND evaluation.period_id = eval_period.id
-ORDER BY socle_competency.alpha_full_rank
+ORDER BY socle_competency.alpha_full_rank;
