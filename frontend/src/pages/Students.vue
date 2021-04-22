@@ -29,8 +29,10 @@
       <div v-for="studentId in students" class="mt-6">
         <div class="flex flex-row items-center space-x-4">
           <div>
-            {{ studentById(studentId).firstname }}
-            {{ studentById(studentId).lastname }}
+            <router-link :to="`/student/${studentId}`">
+              {{ studentById(studentId).firstname }}
+              {{ studentById(studentId).lastname }}
+            </router-link>
           </div>
           <div class="text-xs rounded-full px-1 border border-gray-600">
             {{
@@ -101,6 +103,10 @@ watch(cycleFilter, (f, prevF) => {
 });
 
 watch(route, () => {
+  if (route.path !== "/students") {
+    // Not my page
+    return;
+  }
   if (route.query.period != periodFilter.value) {
     periodFilter.value = Number(route.query.period);
   }
