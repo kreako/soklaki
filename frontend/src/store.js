@@ -89,6 +89,72 @@ const state = {
       stats: {},
     },
   },
+  statsSummary: {
+    c1: {
+      studentsCount: null,
+      competenciesCount: null,
+      comments: {
+        total: null,
+        current: null,
+      },
+      observations: {
+        total: null,
+        current: null,
+      },
+      evaluations: {
+        total: null,
+        current: null,
+      },
+    },
+    c2: {
+      studentsCount: null,
+      competenciesCount: null,
+      comments: {
+        total: null,
+        current: null,
+      },
+      observations: {
+        total: null,
+        current: null,
+      },
+      evaluations: {
+        total: null,
+        current: null,
+      },
+    },
+    c3: {
+      studentsCount: null,
+      competenciesCount: null,
+      comments: {
+        total: null,
+        current: null,
+      },
+      observations: {
+        total: null,
+        current: null,
+      },
+      evaluations: {
+        total: null,
+        current: null,
+      },
+    },
+    c4: {
+      studentsCount: null,
+      competenciesCount: null,
+      comments: {
+        total: null,
+        current: null,
+      },
+      observations: {
+        total: null,
+        current: null,
+      },
+      evaluations: {
+        total: null,
+        current: null,
+      },
+    },
+  },
 };
 
 /// Return an object from an array
@@ -258,6 +324,43 @@ const mutations = {
         observations: stat.observations_count,
         evaluations: stat.evaluations_count,
       };
+    }
+  },
+  setStatsSummary(
+    state,
+    {
+      studentsCountC1,
+      competenciesCountC1,
+      studentsCountC2,
+      competenciesCountC2,
+      studentsCountC3,
+      competenciesCountC3,
+      studentsCountC4,
+      competenciesCountC4,
+      comments,
+      stats,
+    }
+  ) {
+    const root = state.statsSummary;
+    root.c1.studentsCount = studentsCountC1;
+    root.c2.studentsCount = studentsCountC2;
+    root.c3.studentsCount = studentsCountC3;
+    root.c4.studentsCount = studentsCountC4;
+
+    root.c1.competenciesCount = competenciesCountC1;
+    root.c2.competenciesCount = competenciesCountC2;
+    root.c3.competenciesCount = competenciesCountC3;
+    root.c4.competenciesCount = competenciesCountC4;
+
+    for (const comment of comments) {
+      root[comment.cycle].comments.total = comment.total;
+      root[comment.cycle].comments.current = comment.comments;
+    }
+    for (const stat of stats) {
+      root[stat.cycle].observations.total = stat.total;
+      root[stat.cycle].observations.current = stat.observations;
+      root[stat.cycle].evaluations.total = stat.total;
+      root[stat.cycle].evaluations.current = stat.evaluations;
     }
   },
 };
@@ -706,6 +809,25 @@ const actions = {
       competenciesCount,
       stats,
       commentStats,
+    });
+  },
+
+  async statsSummary({ commit }, { periodId }) {
+    const answer = await axios.post("stats-summary", { period_id: periodId });
+    const data = answer.data;
+    commit("setStatsSummary", {
+      studentsCountC1: data.students_c1.aggregate.count,
+      studentsCountC2: data.students_c2.aggregate.count,
+      studentsCountC3: data.students_c3.aggregate.count,
+      studentsCountC4: data.students_c4.aggregate.count,
+
+      competenciesCountC1: data.competencies_c1.aggregate.count,
+      competenciesCountC2: data.competencies_c2.aggregate.count,
+      competenciesCountC3: data.competencies_c3.aggregate.count,
+      competenciesCountC4: data.competencies_c4.aggregate.count,
+
+      comments: data.comments,
+      stats: data.stats,
     });
   },
 };
