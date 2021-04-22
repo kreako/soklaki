@@ -25,6 +25,8 @@ const state = {
   periods: {},
   // id sorted by end date desc
   sortedPeriods: [],
+  // id of the current period
+  currentPeriod: null,
   // id -> student
   students: {},
   sortedStudents: [],
@@ -89,6 +91,9 @@ const mutations = {
   setPeriods(state, periods) {
     state.periods = fromArrayToIdObjects(periods);
     state.sortedPeriods = periods.map((x) => x.id);
+  },
+  setCurrentPeriod(state, period) {
+    state.currentPeriod = period.id;
   },
   loadFromLocalStorage(state) {
     state.login.email = localStorage.getItem("email");
@@ -317,6 +322,7 @@ const actions = {
     commit("setGroup", answer.data.group[0]);
     commit("setUsers", answer.data.users);
     commit("setPeriods", answer.data.periods);
+    commit("setCurrentPeriod", answer.data.current_period[0]);
     commit("setStudents", answer.data.students);
   },
 
