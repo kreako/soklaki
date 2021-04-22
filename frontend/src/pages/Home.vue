@@ -46,7 +46,7 @@
   <div class="relative">
     <div
       v-if="showMobileMenu"
-      class="w-4/5 absolute top-0 left-0 bg-teal-700 h-screen"
+      class="w-4/5 absolute top-0 left-0 bg-teal-700 h-screen z-50"
     >
       <div class="flex flex-row">
         <div
