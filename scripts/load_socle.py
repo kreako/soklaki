@@ -75,6 +75,8 @@ def parse_competency(cycle, container, line):
 def parse_subjects(competency, line):
     subjects = [s.strip() for s in line[3].split(",")]
     for subject in subjects:
+        if not subject:
+            continue
         s, _ = SocleSubject.get_or_create(title=subject)
         SocleCompetencySubject(competency=competency, subject=s).save()
 
