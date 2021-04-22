@@ -60,7 +60,9 @@
           </div>
           <div><router-link to="/students">Élèves</router-link></div>
           <div>Rapports</div>
-          <div>Socle</div>
+          <div>
+            <router-link to="/socle">Socle</router-link>
+          </div>
           <div>Réglages</div>
           <div>Aide</div>
         </div>
