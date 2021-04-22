@@ -803,3 +803,80 @@
             student_id
           }
         }
+    - name: stats-summary
+      query: |-
+        query StatsSummary($period_id: Int) {
+          students_c1: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c1" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c1: socle_competency_aggregate(where: { cycle: { _eq: "c1" } }) {
+            aggregate {
+              count
+            }
+          }
+          students_c2: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c2" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c2: socle_competency_aggregate(where: { cycle: { _eq: "c2" } }) {
+            aggregate {
+              count
+            }
+          }
+          students_c3: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c3" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c3: socle_competency_aggregate(where: { cycle: { _eq: "c3" } }) {
+            aggregate {
+              count
+            }
+          }
+          students_c4: student_aggregate(
+            where: {
+              current_cycle: { current_cycle: { _eq: "c4" } }
+              periods: { eval_period_id: { _eq: $period_id } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          competencies_c4: socle_competency_aggregate(where: { cycle: { _eq: "c4" } }) {
+            aggregate {
+              count
+            }
+          }
+          comments: eval_comment_stats_summary(
+            where: { period_id: { _eq: $period_id } }
+          ) {
+            cycle
+            comments
+            total
+          }
+          stats: eval_stats_summary(where: { period_id: { _eq: $period_id } }) {
+            cycle
+            evaluations
+            observations
+            total
+          }
+        }

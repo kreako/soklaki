@@ -175,6 +175,16 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: stats-summary
+  url: stats-summary
+  methods:
+  - POST
+  - GET
+  name: stats-summary
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: students
   url: students
   methods:
