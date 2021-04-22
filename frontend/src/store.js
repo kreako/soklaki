@@ -54,6 +54,41 @@ const state = {
     // student_id -> competency_id -> evaluation_id
     byStudentCompetency: {},
   },
+  // stats for the selected period
+  stats: {
+    c1: {
+      studentsCount: null,
+      competenciesCount: null,
+      // student id -> comments count
+      commentsCount: {},
+      // competency id -> student id -> { observations: count, evaluations: count }
+      stats: {},
+    },
+    c2: {
+      studentsCount: null,
+      competenciesCount: null,
+      // student id -> comments count
+      commentsCount: {},
+      // competency id -> student id -> { observations: count, evaluations: count }
+      stats: {},
+    },
+    c3: {
+      studentsCount: null,
+      competenciesCount: null,
+      // student id -> comments count
+      commentsCount: {},
+      // competency id -> student id -> { observations: count, evaluations: count }
+      stats: {},
+    },
+    c4: {
+      studentsCount: null,
+      competenciesCount: null,
+      // student id -> comments count
+      commentsCount: {},
+      // competency id -> student id -> { observations: count, evaluations: count }
+      stats: {},
+    },
+  },
 };
 
 /// Return an object from an array
@@ -203,6 +238,26 @@ const mutations = {
         competencyId,
         evaluationId
       );
+    }
+  },
+  setStats(
+    state,
+    { cycle, studentsCount, competenciesCount, stats, commentStats }
+  ) {
+    const root = state.stats[cycle];
+    root.studentsCount = studentsCount;
+    root.competenciesCount = competenciesCount;
+    for (const stat of commentStats) {
+      root.commentsCount[stat.student_id] = stat.comments_count;
+    }
+    for (const stat of stats) {
+      if (!(stat.competency_id in root.stats)) {
+        stats[stat.competency_id] = {};
+      }
+      stats[stat.competency_id][stat.student_id] = {
+        observations: stat.observations_count,
+        evaluations: stat.evaluations_count,
+      };
     }
   },
 };
@@ -599,6 +654,58 @@ const actions = {
       studentId: studentId,
       competencyId: competencyId,
       evaluation: data,
+    });
+  },
+
+  async stats({ commit }, { periodId }) {
+    const answer = await axios.post("stats", { period_id: periodId });
+    // c1
+    let studentsCount = answer.data.students_c1.aggregate.count;
+    let competenciesCount = answer.data.competencies_c1.aggregate.count;
+    let stats = answer.data.stats_c1;
+    let commentStats = answer.data.comment_stats_c1;
+    commit("setStats", {
+      cycle: "c1",
+      studentsCount,
+      competenciesCount,
+      stats,
+      commentStats,
+    });
+    // c2
+    studentsCount = answer.data.students_c2.aggregate.count;
+    competenciesCount = answer.data.competencies_c2.aggregate.count;
+    stats = answer.data.stats_c2;
+    commentStats = answer.data.comment_stats_c2;
+    commit("setStats", {
+      cycle: "c2",
+      studentsCount,
+      competenciesCount,
+      stats,
+      commentStats,
+    });
+    // c3
+    studentsCount = answer.data.students_c3.aggregate.count;
+    competenciesCount = answer.data.competencies_c3.aggregate.count;
+    stats = answer.data.stats_c3;
+    commentStats = answer.data.comment_stats_c3;
+    commit("setStats", {
+      cycle: "c3",
+      studentsCount,
+      competenciesCount,
+      stats,
+      commentStats,
+    });
+    // c4
+    studentsCount = answer.data.students_c4.aggregate.count;
+    competenciesCount = answer.data.competencies_c4.aggregate.count;
+    stats = answer.data.stats_c4;
+    commentStats = answer.data.comment_stats_c3;
+    commit("setStats", {
+      cycle: "c4",
+      studentsCount,
+      competenciesCount,
+      stats,
+      commentStats,
     });
   },
 };
