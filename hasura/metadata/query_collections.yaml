@@ -654,6 +654,9 @@
             lastname
             manager
           }
+          current_period: eval_period_current {
+            id
+          }
           periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}}) {
             created_at
             end

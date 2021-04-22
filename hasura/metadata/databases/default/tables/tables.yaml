@@ -9,6 +9,7 @@
 - "!include public_eval_observation_template.yaml"
 - "!include public_eval_observation_template_competency.yaml"
 - "!include public_eval_period.yaml"
+- "!include public_eval_period_current.yaml"
 - "!include public_eval_period_student.yaml"
 - "!include public_frontend_store_error.yaml"
 - "!include public_group.yaml"
