@@ -80,4 +80,11 @@ FROM student
     ON evaluation_status.competency_id = socle_competency.id 
       AND evaluation_status.student_id = student.id
       AND evaluation_status.period_id = eval_period.id 
-ORDER BY socle_competency.alpha_full_rank
+-- meuh
+-- meuh
+-- meuh
+WHERE student.id = 30 aND eval_period.id = 1 
+-- meuh
+-- meuh
+-- meuh
+ORDER BY socle_competency.alpha_full_rank;

@@ -38,6 +38,7 @@ select_permissions:
     - competency_id
     - observations_count
     - evaluations_count
+    - evaluation_status
     filter:
       _and:
       - period:
