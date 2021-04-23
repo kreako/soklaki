@@ -61,7 +61,7 @@ const state = {
       competenciesCount: null,
       // student id -> comments count
       commentsCount: {},
-      // competency id -> student id -> { observations: count, evaluations: count }
+      // competency id -> student id -> { observations: count, evaluations: { count, status } }
       stats: {},
     },
     c2: {
@@ -69,7 +69,7 @@ const state = {
       competenciesCount: null,
       // student id -> comments count
       commentsCount: {},
-      // competency id -> student id -> { observations: count, evaluations: count }
+      // competency id -> student id -> { observations: count, evaluations: { count, status } }
       stats: {},
     },
     c3: {
@@ -77,7 +77,7 @@ const state = {
       competenciesCount: null,
       // student id -> comments count
       commentsCount: {},
-      // competency id -> student id -> { observations: count, evaluations: count }
+      // competency id -> student id -> { observations: count, evaluations: { count, status } }
       stats: {},
     },
     c4: {
@@ -85,7 +85,7 @@ const state = {
       competenciesCount: null,
       // student id -> comments count
       commentsCount: {},
-      // competency id -> student id -> { observations: count, evaluations: count }
+      // competency id -> student id -> { observations: count, evaluations: { count, status } }
       stats: {},
     },
   },
@@ -323,7 +323,10 @@ const mutations = {
       }
       root.stats[Number(stat.competency_id)][Number(stat.student_id)] = {
         observations: stat.observations_count,
-        evaluations: stat.evaluations_count,
+        evaluations: {
+          count: stat.evaluations_count,
+          status: stat.evaluation_status,
+        },
       };
     }
   },
