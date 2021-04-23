@@ -26,7 +26,14 @@
           class="w-2 h-2"
         ></div>
         <div
-          :class="stat.evaluations > 0 ? 'bg-green-500' : 'bg-red-500'"
+          :class="{
+            'bg-red-500': stat.evaluations.status === 'Empty',
+            'bg-blue-500': stat.evaluations.status === 'NotAcquired',
+            'bg-teal-500': stat.evaluations.status === 'InProgress',
+            'bg-green-500':
+              stat.evaluations.status === 'Acquired' ||
+              stat.evaluations.status === 'TipTop',
+          }"
           class="w-2 h-2"
         ></div>
       </div>
