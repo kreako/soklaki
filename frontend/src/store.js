@@ -90,6 +90,7 @@ const state = {
     },
   },
   statsSummary: {
+    incompleteObservationsCount: null,
     c1: {
       studentsCount: null,
       competenciesCount: null,
@@ -329,6 +330,7 @@ const mutations = {
   setStatsSummary(
     state,
     {
+      incompleteObservationsCount,
       studentsCountC1,
       competenciesCountC1,
       studentsCountC2,
@@ -342,6 +344,8 @@ const mutations = {
     }
   ) {
     const root = state.statsSummary;
+    root.incompleteObservationsCount = incompleteObservationsCount;
+
     root.c1.studentsCount = studentsCountC1;
     root.c2.studentsCount = studentsCountC2;
     root.c3.studentsCount = studentsCountC3;
@@ -816,6 +820,7 @@ const actions = {
     const answer = await axios.post("stats-summary", { period_id: periodId });
     const data = answer.data;
     commit("setStatsSummary", {
+      incompleteObservationsCount: data.incomplete_observations.aggregate.count,
       studentsCountC1: data.students_c1.aggregate.count,
       studentsCountC2: data.students_c2.aggregate.count,
       studentsCountC3: data.students_c3.aggregate.count,

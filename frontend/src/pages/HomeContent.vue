@@ -1,6 +1,19 @@
 <template>
   <div class="my-4 px-2">
     <div class="form-label">Quelques statistiques...</div>
+    <div class="mt-4">
+      <router-link
+        :to="{
+          path: '/observations',
+          query: { limit: 50, offset: 0, filter: 'incomplete' },
+        }"
+      >
+        <span class="text-xl">
+          {{ stats.incompleteObservationsCount }}
+        </span>
+        <span> observations incomplètes </span>
+      </router-link>
+    </div>
     <div class="mt-4 form-sub-label">Cycle 1</div>
     <div class="mt-2">
       <StatsSummary :stats="stats.c1" />
