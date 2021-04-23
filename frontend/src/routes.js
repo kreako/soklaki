@@ -45,6 +45,10 @@ const routes = [
         path: "/socle",
         component: () => import("./pages/Socle.vue"),
       },
+      {
+        path: "/stats",
+        component: () => import("./pages/Stats.vue"),
+      },
     ],
   },
 ];

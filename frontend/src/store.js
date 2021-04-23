@@ -315,13 +315,13 @@ const mutations = {
     root.studentsCount = studentsCount;
     root.competenciesCount = competenciesCount;
     for (const stat of commentStats) {
-      root.commentsCount[stat.student_id] = stat.comments_count;
+      root.commentsCount[Number(stat.student_id)] = stat.comments_count;
     }
     for (const stat of stats) {
       if (!(stat.competency_id in root.stats)) {
-        stats[stat.competency_id] = {};
+        root.stats[Number(stat.competency_id)] = {};
       }
-      stats[stat.competency_id][stat.student_id] = {
+      root.stats[Number(stat.competency_id)][Number(stat.student_id)] = {
         observations: stat.observations_count,
         evaluations: stat.evaluations_count,
       };
@@ -806,7 +806,7 @@ const actions = {
     studentsCount = answer.data.students_c4.aggregate.count;
     competenciesCount = answer.data.competencies_c4.aggregate.count;
     stats = answer.data.stats_c4;
-    commentStats = answer.data.comment_stats_c3;
+    commentStats = answer.data.comment_stats_c4;
     commit("setStats", {
       cycle: "c4",
       studentsCount,
