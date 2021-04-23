@@ -171,6 +171,7 @@
                 <div v-else-if="e.status === 'InProgress'">En cours</div>
                 <div v-else-if="e.status === 'Acquired'">Acquis</div>
                 <div v-else-if="e.status === 'NotAcquired'">Non acquis</div>
+                <div v-else-if="e.status === 'TipTop'">Tip Top</div>
               </div>
             </div>
             <button @click="editEvaluation(c.competencyId, e.student_id)">
@@ -214,6 +215,12 @@
                 class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
               >
                 Acquis
+              </button>
+              <button
+                @click="doEvaluation(c.competencyId, e.student_id, 'TipTop')"
+                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
+              >
+                Tip Top
               </button>
             </div>
           </div>
