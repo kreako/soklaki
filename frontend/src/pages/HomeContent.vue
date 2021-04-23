@@ -30,9 +30,6 @@
     <div class="mt-2">
       <StatsSummary :stats="stats.c4" />
     </div>
-    <div class="mt-8 hover:text-teal-600">
-      <router-link to="/stats"> Voir plus de statistiques... </router-link>
-    </div>
   </div>
 </template>
 

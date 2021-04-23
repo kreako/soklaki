@@ -44,39 +44,13 @@
   </div>
   <!-- Menu panel on left -->
   <div class="relative">
-    <div
-      v-if="showMobileMenu"
-      class="w-4/5 absolute top-0 left-0 bg-teal-700 h-screen z-50"
-    >
-      <div class="flex flex-row">
-        <div
-          class="flex-grow flex flex-col px-4 text-white font-bold text-xl space-y-4 py-4"
-        >
-          <div>
-            <router-link to="/"> Accueil </router-link>
-          </div>
-          <div>
-            <router-link to="/observations"> Observations </router-link>
-          </div>
-          <div><router-link to="/students">Élèves</router-link></div>
-          <div>Rapports</div>
-          <div>
-            <router-link to="/socle">Socle</router-link>
-          </div>
-          <div>Réglages</div>
-          <div>Aide</div>
-        </div>
-        <div class="flex-grow-0">
-          <button @click="showMobileMenu = false">
-            <IconX class="text-white w-12" />
-          </button>
-        </div>
-      </div>
+    <div v-if="showMobileMenu" class="w-4/5 absolute top-0 left-0 z-50">
+      <MainMenu :mobile="true" @close="showMobileMenu = false" />
     </div>
   </div>
   <div class="flex flex-col">
     <div
-      class="flex flex-row items-center mt-2 mx-2 p-2 border border-gray-300 rounded-md justify-between"
+      class="flex flex-row items-center mt-2 mx-2 p-2 border border-gray-300 rounded-md justify-between md:hidden"
     >
       <button @click="showMobileMenu = !showMobileMenu">
         <IconMenu class="h-10 text-gray-600 hover:text-teal-500" />
@@ -95,8 +69,13 @@
       </div>
     </div>
 
-    <div class="mb-20">
-      <router-view></router-view>
+    <div class="flex flex-row">
+      <div class="hidden md:block md:w-1/5">
+        <MainMenu :mobile="false" />
+      </div>
+      <div class="mb-20 flex-grow md:ml-4 md:max-w-screen-md">
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 </template>
@@ -105,11 +84,10 @@
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, onBeforeRouteUpdate } from "vue-router";
-import NewObservation from "../components/NewObservation.vue";
 import Mascotte from "../components/Mascotte.vue";
+import MainMenu from "../components/MainMenu.vue";
 import IconMenu from "../icons/IconMenu.vue";
 import IconPlus from "../icons/IconPlus.vue";
-import IconX from "../icons/IconX.vue";
 
 const store = useStore();
 const router = useRouter();
