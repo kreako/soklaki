@@ -15,7 +15,9 @@
       class="flex flex-row items-center leading-tight"
     >
       <div class="w-16 text-gray-700 text-right pr-2">
-        {{ competencyById(competencyId).full_rank }}
+        <button @click="$emit('selectedCompetency', competencyId)">
+          {{ competencyById(competencyId).full_rank }}
+        </button>
       </div>
       <div
         v-for="(stat, studentId) in statByStudents"
@@ -42,13 +44,15 @@
 </template>
 
 <script setup>
-import { defineProps, computed } from "vue";
+import { defineProps, defineEmit, computed } from "vue";
 import { useStore } from "vuex";
 import ProgressBar from "./ProgressBar.vue";
 
 const props = defineProps({
   stats: Object,
 });
+
+defineEmit(["selectedCompetency", "selectedObservation", "selectedEvaluation"]);
 
 const store = useStore();
 
