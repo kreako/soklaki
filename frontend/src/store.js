@@ -491,7 +491,7 @@ const actions = {
   },
 
   async boot({ commit, state }) {
-    let answer = await axios.post("boot", { group_id: state.login.groupId });
+    const answer = await axios.post("boot", { group_id: state.login.groupId });
     commit("setGroup", answer.data.group[0]);
     commit("setUsers", answer.data.users);
     commit("setPeriods", answer.data.periods);
@@ -500,7 +500,7 @@ const actions = {
   },
 
   async login({ commit }, { email, password }) {
-    let answer = await axios.post("login", { email, password });
+    const answer = await axios.post("login", { email, password });
     commit("setLoginToken", answer.data.login.token);
     commit("setLoginErrorInvalid", answer.data.login.error);
     commit("setLoginUserId", answer.data.login.id);
@@ -512,7 +512,7 @@ const actions = {
   },
 
   async signup({ commit }, { email, password }) {
-    let answer = await axios.post("signup", { email, password });
+    const answer = await axios.post("signup", { email, password });
     commit("setLoginToken", answer.data.signup.token);
     commit("setLoginErrorKnownEmail", answer.data.signup.errorKnownEmail);
     commit("setLoginErrorWeakPassword", answer.data.signup.errorWeakPassword);
@@ -528,7 +528,7 @@ const actions = {
   },
 
   async socle({ commit }) {
-    let answer = await axios.get("socle");
+    const answer = await axios.get("socle");
     commit("setSocle", answer.data);
   },
 
@@ -536,13 +536,13 @@ const actions = {
     const date = today();
     const period = searchPeriod(date, state.periods);
     const periodId = period == null ? null : period.id;
-    let answer = await axios.post("insert-observation", {
+    const answer = await axios.post("insert-observation", {
       text: text,
       user_id: state.login.userId,
       date: date,
       eval_period_id: periodId,
     });
-    let data = answer.data.insert_eval_observation_one;
+    const data = answer.data.insert_eval_observation_one;
     const periodObj = period == null ? null : { id: period.id };
     commit("setObservation", data);
     return data.id;
@@ -550,7 +550,7 @@ const actions = {
 
   async observation({ commit }, id) {
     const answer = await axios.post("observation", { id: id });
-    let data = answer.data.eval_observation_by_pk;
+    const data = answer.data.eval_observation_by_pk;
     if (data == null) {
       throw new Error(
         `Apparemment, je ne trouve pas cette observation : ${id}`
@@ -565,7 +565,7 @@ const actions = {
       id: id,
       text: text,
     });
-    let data = answer.data.update_eval_observation_by_pk;
+    const data = answer.data.update_eval_observation_by_pk;
     if (data == null) {
       throw new Error(`Quelque chose s'est mal passé dans la mise à jour du texte de l'observation. :(\n
         id: ${id}\n
@@ -587,7 +587,7 @@ const actions = {
       eval_period_id: periodId,
     });
 
-    let data = answer.data.update_eval_observation_by_pk;
+    const data = answer.data.update_eval_observation_by_pk;
     if (data == null) {
       throw new Error(`Quelque chose s'est mal passé dans la mise à jour de la date de l'observation. :(\n
         id: ${id}\n
@@ -599,20 +599,20 @@ const actions = {
   },
 
   async insertObservationStudent({ commit }, { observationId, studentId }) {
-    let answer = await axios.post("insert-observation-student", {
+    const answer = await axios.post("insert-observation-student", {
       observation_id: observationId,
       student_id: studentId,
     });
-    let data = answer.data.insert_eval_observation_student_one.observation;
+    const data = answer.data.insert_eval_observation_student_one.observation;
     commit("setObservation", data);
   },
 
   async deleteObservationStudent({ commit }, { studentId, observationId }) {
-    let answer = await axios.post("delete-observation-student", {
+    const answer = await axios.post("delete-observation-student", {
       observation_id: observationId,
       student_id: studentId,
     });
-    let data =
+    const data =
       answer.data.delete_eval_observation_student.returning[0].observation;
     commit("setObservation", data);
   },
@@ -621,11 +621,11 @@ const actions = {
     { commit },
     { observationId, competencyId }
   ) {
-    let answer = await axios.post("insert-observation-competency", {
+    const answer = await axios.post("insert-observation-competency", {
       observation_id: observationId,
       competency_id: competencyId,
     });
-    let data = answer.data.insert_eval_observation_competency_one.observation;
+    const data = answer.data.insert_eval_observation_competency_one.observation;
     commit("setObservation", data);
   },
 
@@ -633,16 +633,14 @@ const actions = {
     { commit },
     { observationId, competencyId }
   ) {
-    let answer = await axios.post("delete-observation-competency", {
+    const answer = await axios.post("delete-observation-competency", {
       observation_id: observationId,
       competency_id: competencyId,
     });
-    let data =
+    const data =
       answer.data.delete_eval_observation_competency.returning[0].observation;
     commit("setObservation", data);
   },
-
-  // TODO deleteObservationCompetency
 
   async observations({ commit, state }, { limit, offset }) {
     const answer = await axios.post("observations-sorted-created-at", {
@@ -650,9 +648,10 @@ const actions = {
       limit: limit,
       offset: offset,
     });
-    let data = answer.data.eval_observation;
+    const data = answer.data.eval_observation;
     if (data == null) {
       // No observations maybe
+      // TODO
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
       commit(
@@ -669,9 +668,10 @@ const actions = {
       limit: limit,
       offset: offset,
     });
-    let data = answer.data.eval_observation;
+    const data = answer.data.eval_observation;
     if (data == null) {
       // No observations maybe
+      // TODO ?
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
       commit(
@@ -687,9 +687,10 @@ const actions = {
       limit: limit,
       offset: offset,
     });
-    let data = answer.data.eval_observation;
+    const data = answer.data.eval_observation;
     if (data == null) {
       // No observations maybe
+      // TODO ?
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
       commit(
@@ -704,7 +705,7 @@ const actions = {
       group_id: groupId,
       name: groupName,
     });
-    let data = answer.data.update_group_by_pk;
+    const data = answer.data.update_group_by_pk;
     if (data == null) {
       throw new Error(`La mise à jour du nom du groupe a échoué :(\n
         groupId: ${groupId}\n
@@ -720,7 +721,7 @@ const actions = {
       start: start,
       end: end,
     });
-    let data = answer.data.insert_eval_period_one;
+    const data = answer.data.insert_eval_period_one;
     if (data == null) {
       throw new Error(`Je n'ai pas réussi à créer cette période :(\n
         groupId: ${groupId}\n
@@ -750,7 +751,7 @@ const actions = {
     { commit, state },
     { studentId, competencyId, periodId, date, status, comment }
   ) {
-    let answer = await axios.post("insert-evaluation", {
+    const answer = await axios.post("insert-evaluation", {
       student_id: studentId,
       competency_id: competencyId,
       status: status,
@@ -837,6 +838,72 @@ const actions = {
       comments: data.comments,
       stats: data.stats,
     });
+  },
+
+  async insertStudent(
+    { commit, state },
+    { birthdate, firstname, groupId, lastname, schoolEntry, schoolExit }
+  ) {
+    const answer = await axios.post("insert-student", {
+      birthdate: birthdate,
+      firstname: firstname,
+      group_id: state.login.groupId,
+      lastname: lastname,
+      school_entry: schoolEntry,
+      school_exit: schoolExit,
+    });
+    // reload all students, a little bit too much - Maybe a TODO for the future me
+    await dispatch("students");
+  },
+
+  async students({ commit }) {
+    const answer = await axios.post("students");
+    commit("setStudents", answer.data.students);
+  },
+
+  async updateStudentBirthdate({ commit }, { studentId, birthdate }) {
+    const answer = await axios.post("update-student-birthdate", {
+      student_id: studentId,
+      birthdate: birthdate,
+    });
+    // reload all students, a little bit too much - Maybe a TODO for the future me
+    await dispatch("students");
+  },
+
+  async updateStudentFirstname({ commit }, { studentId, firstname }) {
+    const answer = await axios.post("update-student-firstname", {
+      student_id: studentId,
+      firstname: firstname,
+    });
+    // reload all students, a little bit too much - Maybe a TODO for the future me
+    await dispatch("students");
+  },
+
+  async updateStudentLastname({ commit }, { studentId, lastname }) {
+    const answer = await axios.post("update-student-lastname", {
+      student_id: studentId,
+      lastname: lastname,
+    });
+    // reload all students, a little bit too much - Maybe a TODO for the future me
+    await dispatch("students");
+  },
+
+  async updateStudentSchoolEntry({ commit }, { studentId, schoolEntry }) {
+    const answer = await axios.post("update-student-school-entry", {
+      student_id: studentId,
+      school_entry: schoolEntry,
+    });
+    // reload all students, a little bit too much - Maybe a TODO for the future me
+    await dispatch("students");
+  },
+
+  async updateStudentSchoolExit({ commit }, { studentId, schoolExit }) {
+    const answer = await axios.post("update-student-school-exit", {
+      student_id: studentId,
+      school_exit: schoolExit,
+    });
+    // reload all students, a little bit too much - Maybe a TODO for the future me
+    await dispatch("students");
   },
 };
 
