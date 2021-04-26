@@ -2,8 +2,16 @@
   "css.validate": false,
   "files.exclude": {
     "companion/env": true,
+    "companion/src/__pycache__": true,
+    "companion/src/.pytest_cache": true,
+    "companion/.pytest_cache": true,
     "backend_tests/env": true,
-    "scripts/env": true
+    "backend_tests/__pycache__": true,
+    "backend_tests/.pytest_cache": true,
+    "frontend/node_modules": true,
+    "pgdata": true,
+    "scripts/env": true,
+    "scripts/__pycache__": true
   },
   "python.formatting.provider": "black"
 }
