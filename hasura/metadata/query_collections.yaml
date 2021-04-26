@@ -91,19 +91,6 @@
             id
           }
         }
-    - name: students
-      query: |-
-        query Student {
-          student(order_by: {fullname: {fullname: asc}}) {
-            birthdate
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-            school_exit
-          }
-        }
     - name: observations-by-user
       query: |-
         query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
@@ -887,5 +874,72 @@
           ) {
             comments_count
             student_id
+          }
+        }
+    - name: insert-student
+      query: |-
+        mutation InsertStudent($birthdate: date!, $firstname: String!, $group_id: bigint!, $lastname: String!, $school_entry: date!, $school_exit: date) {
+          insert_student_one(object: {birthdate: $birthdate, firstname: $firstname, group_id: $group_id, lastname: $lastname, school_entry: $school_entry, school_exit: $school_exit}) {
+            id
+            birthdate
+            firstname
+            group_id
+            lastname
+            school_entry
+            school_exit
+            current_cycle {
+              current_cycle
+            }
+          }
+        }
+    - name: students
+      query: |-
+        query Student {
+        students: student(order_by: {fullname: {fullname: asc}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+            school_exit
+            current_cycle {
+              current_cycle
+            }
+          }
+        }
+    - name: update-student-birthdate
+      query: |-
+        mutation UpdateStudent($student_id: bigint!, $birthdate: date!) {
+          update_student_by_pk(pk_columns: {id: $student_id}, _set: {birthdate: $birthdate}) {
+            id
+          }
+        }
+    - name: update-student-firstname
+      query: |-
+        mutation UpdateStudent($student_id: bigint!, $firstname: String!) {
+          update_student_by_pk(pk_columns: {id: $student_id}, _set: {firstname: $firstname}) {
+            id
+          }
+        }
+    - name: update-student-lastname
+      query: |-
+        mutation UpdateStudent($student_id: bigint!, $lastname: String!) {
+          update_student_by_pk(pk_columns: {id: $student_id}, _set: {lastname: $lastname}) {
+            id
+          }
+        }
+    - name: update-student-school-entry
+      query: |-
+        mutation UpdateStudent($student_id: bigint!, $school_entry: date!) {
+          update_student_by_pk(pk_columns: {id: $student_id}, _set: {school_entry: $school_entry}) {
+            id
+          }
+        }
+    - name: update-student-school-exit
+      query: |-
+        mutation UpdateStudent($student_id: bigint!, $school_exit: date) {
+          update_student_by_pk(pk_columns: {id: $student_id}, _set: {school_exit: $school_exit}) {
+            id
           }
         }

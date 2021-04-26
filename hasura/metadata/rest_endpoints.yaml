@@ -82,6 +82,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-student
+  url: insert-student
+  methods:
+  - POST
+  name: insert-student
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: login
   url: login
   methods:
@@ -218,6 +227,51 @@
   - POST
   name: update-observation-text
   comment: Update observation text
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-student-birthdate
+  url: update-student-birthdate
+  methods:
+  - POST
+  name: update-student-birthdate
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-student-firstname
+  url: update-student-firstname
+  methods:
+  - POST
+  name: update-student-firstname
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-student-lastname
+  url: update-student-lastname
+  methods:
+  - POST
+  name: update-student-lastname
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-student-school-entry
+  url: update-student-school-entry
+  methods:
+  - POST
+  name: update-student-school-entry
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-student-school-exit
+  url: update-student-school-exit
+  methods:
+  - POST
+  name: update-student-school-exit
+  comment: null
 - definition:
     query:
       collection_name: allowed-queries
