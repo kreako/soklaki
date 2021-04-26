@@ -48,6 +48,15 @@ def test_insert_students(login):
         # It means my student was not found :(
         assert 1 == 0
 
+    client.admin_gql(
+        """mutation DeleteStudent($student_id: bigint!) {
+        delete_student_by_pk(id: $student_id) {
+            id
+        }
+    }""",
+        {"student_id": student_id},
+    )
+
 
 def check(login, students, patch_id, patch_prop, patch_value):
     # List and check
@@ -66,7 +75,7 @@ def check(login, students, patch_id, patch_prop, patch_value):
                 assert student[prop] == ref[prop]
 
 
-def test_update_birthdate(login, students):
+def test_update_student_birthdate(login, students):
     # Patch Néo - younger so c1 do not change
     # Warning this test will maybe break in 2 years when Néo won't be in C1 anymore
     neo = students["by_firstname"]["Néo"]
@@ -94,7 +103,7 @@ def test_update_birthdate(login, students):
     check(login, students, None, None, None)
 
 
-def test_update_lastname(login, students):
+def test_update_student_lastname(login, students):
     # Patch Charly
     charly = students["by_firstname"]["Charly"]
     assert charly["lastname"] == "Maou"
@@ -121,7 +130,7 @@ def test_update_lastname(login, students):
     check(login, students, None, None, None)
 
 
-def test_update_firstname(login, students):
+def test_update_student_firstname(login, students):
     # Patch Olivia
     olivia = students["by_firstname"]["Olivia"]
     assert olivia["firstname"] == "Olivia"
@@ -148,7 +157,7 @@ def test_update_firstname(login, students):
     check(login, students, None, None, None)
 
 
-def test_update_school_entry(login, students):
+def test_update_student_school_entry(login, students):
     # Patch Anaëlle
     anaelle = students["by_firstname"]["Anaëlle"]
     assert anaelle["school_entry"] == "2020-07-02"
@@ -175,7 +184,7 @@ def test_update_school_entry(login, students):
     check(login, students, None, None, None)
 
 
-def test_update_school_exit(login, students):
+def test_update_student_school_exit(login, students):
     # Patch Anaëlle
     anaelle = students["by_firstname"]["Anaëlle"]
     assert anaelle["school_exit"] == "2022-06-30"
