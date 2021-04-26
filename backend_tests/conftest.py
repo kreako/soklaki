@@ -1,3 +1,4 @@
+from collections import defaultdict
 import pytest
 from . import client
 
@@ -52,3 +53,136 @@ def login(test_email, test_password):
 
     # Now Remove the group and the user
     delete_group_by_pk(login_data["group_id"])
+
+
+@pytest.fixture(scope="session")
+def students(login):
+    # Anaëlle - C4
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Anaëlle",
+            "lastname": "Eanne",
+            "birthdate": "2007-05-17",
+            "group_id": login["group_id"],
+            "school_entry": "2020-07-02",
+            "school_exit": "2022-06-30",
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Charly - C4
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Charly",
+            "lastname": "Maou",
+            "birthdate": "2006-07-26",
+            "group_id": login["group_id"],
+            "school_entry": "2020-04-12",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Andrew - C3
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Andrew",
+            "lastname": "Éone",
+            "birthdate": "2010-06-18",
+            "group_id": login["group_id"],
+            "school_entry": "2020-06-01",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Clément - C3
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Clément",
+            "lastname": "Lilith",
+            "birthdate": "2011-12-21",
+            "group_id": login["group_id"],
+            "school_entry": "2019-06-25",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Élina - C2
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Élina",
+            "lastname": "Livia",
+            "birthdate": "2012-10-25",
+            "group_id": login["group_id"],
+            "school_entry": "2020-11-09",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Lili - C2
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Lili",
+            "lastname": "Illy",
+            "birthdate": "2014-05-15",
+            "group_id": login["group_id"],
+            "school_entry": "2020-11-06",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Néo - C1
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Néo",
+            "lastname": "Drew",
+            "birthdate": "2016-04-11",
+            "group_id": login["group_id"],
+            "school_entry": "2018-07-01",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+    # Olivia - C1
+    code, data = client.post(
+        "insert-student",
+        {
+            "firstname": "Olivia",
+            "lastname": "Lément",
+            "birthdate": "2016-09-09",
+            "group_id": login["group_id"],
+            "school_entry": "2020-02-04",
+            "school_exit": None,
+        },
+        login["token"],
+    )
+    assert code == 200
+
+    code, data = client.post("students", {}, login["token"])
+    assert code == 200
+    students = data["students"]
+    by_cycle = defaultdict(list)
+    by_id = {}
+    by_firstname = {}
+    for student in students:
+        by_cycle[student["current_cycle"]["current_cycle"]].append(student)
+        by_id[student["id"]] = student
+        by_firstname[student["firstname"]] = student
+    return {
+        "students": students,
+        "by_cycle": by_cycle,
+        "by_id": by_id,
+        "by_firstname": by_firstname,
+    }
