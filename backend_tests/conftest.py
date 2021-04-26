@@ -1,3 +1,4 @@
+from datetime import date
 from collections import defaultdict
 import pytest
 from . import client
@@ -186,3 +187,44 @@ def students(login):
         "by_id": by_id,
         "by_firstname": by_firstname,
     }
+
+
+@pytest.fixture(scope="session")
+def periods(login):
+    today = date.today()
+    for year in range(today.year - 3, today.year + 2):
+        code, data = client.post(
+            "insert-period",
+            {
+                "group_id": login["group_id"],
+                "name": f"{year-1}/{year} S1",
+                "start": f"{year-1}-08-31",
+                "end": f"{year}-01-31",
+            },
+            login["token"],
+        )
+        assert code == 200
+        code, data = client.post(
+            "insert-period",
+            {
+                "group_id": login["group_id"],
+                "name": f"{year-1}/{year} S2",
+                "start": f"{year}-02-01",
+                "end": f"{year}-07-31",
+            },
+            login["token"],
+        )
+        assert code == 200
+    code, data = client.post("boot", {"group_id": login["group_id"]}, login["token"])
+    assert code == 200
+    periods = data["periods"]
+    current_period_id = data["current_period"][0]["id"]
+    for period in periods:
+        if period["id"] == current_period_id:
+            current_period = period
+            break
+    else:
+        print(periods)
+        print(current_period_id)
+        assert False
+    return {"periods": periods, "current_period": current_period}

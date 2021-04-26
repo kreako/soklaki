@@ -1,3 +1,4 @@
+from datetime import date
 from . import client
 
 # TODO
@@ -39,3 +40,10 @@ def test_insert_period(login):
         print(after_periods)
         # If I'm here, it means that my new period is not in periods
         assert 1 == 0
+
+
+def test_current_period(login, periods):
+    today = date.today()
+    period = periods["current_period"]
+    assert date.fromisoformat(period["start"]) <= today
+    assert today <= date.fromisoformat(period["end"])
