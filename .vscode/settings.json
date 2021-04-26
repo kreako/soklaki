@@ -1,8 +1,9 @@
 {
-    "css.validate": false,
-    "files.exclude": {
-        "companion/env": true,
-        "scripts/env": true
-    },
-    "python.formatting.provider": "black"
+  "css.validate": false,
+  "files.exclude": {
+    "companion/env": true,
+    "backend_tests/env": true,
+    "scripts/env": true
+  },
+  "python.formatting.provider": "black"
 }

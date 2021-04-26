@@ -10,3 +10,6 @@ companion/.pytest_cache
 frontend/.env.development
 frontend/.env.production
 scripts/data
+backend_tests/env
+backend_tests/.env
+backend_tests/__pycache__
