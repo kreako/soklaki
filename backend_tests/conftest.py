@@ -228,3 +228,10 @@ def periods(login):
         print(current_period_id)
         assert False
     return {"periods": periods, "current_period": current_period}
+
+
+@pytest.fixture(scope="session")
+def socle(login):
+    status_code, data = client.post("socle", {}, login["token"])
+    assert status_code == 200
+    return data
