@@ -169,6 +169,7 @@
   url: socle
   methods:
   - GET
+  - POST
   name: socle
   comment: Get the socle definition
 - definition:
@@ -198,6 +199,7 @@
   url: students
   methods:
   - GET
+  - POST
   name: students
   comment: List of students
 - definition:
