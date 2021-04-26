@@ -58,6 +58,7 @@ def login(test_email, test_password):
 
 @pytest.fixture(scope="session")
 def students(login):
+    # TODO : make them cycle independant of today using date.today()
     # Anaëlle - C4
     code, data = client.post(
         "insert-student",
