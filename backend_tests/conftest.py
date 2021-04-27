@@ -236,3 +236,23 @@ def socle(login):
     status_code, data = client.post("socle", {}, login["token"])
     assert status_code == 200
     return data
+
+
+@pytest.fixture(scope="session")
+def coworker(login):
+    data = client.admin_gql(
+        """mutation InsertUser($group_id: bigint!) {
+        insert_user_one(object: {firstname: "CoWorker",
+                                 lastname: "Doe",
+                                 active: true,
+                                 manager: false,
+                                 group_id: $group_id,
+                                 hash: "meuh",
+                                 email: "coworker@meuh.fr",
+                                 email_confirmed: true}) {
+            id
+        }
+    }""",
+        {"group_id": login["group_id"]},
+    )
+    return data["data"]["insert_user_one"]["id"]
