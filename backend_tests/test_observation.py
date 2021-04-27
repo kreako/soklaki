@@ -1,11 +1,6 @@
 from datetime import date, timedelta
 from . import client
 
-# TODO
-# observations-by-user
-# observations-incomplete
-# observations-sorted-created-at
-
 
 def insert_observation(text, user_id, period_id, dt, token):
     status, data = client.post(
@@ -292,3 +287,140 @@ def test_incomplete_complete(login, periods, students, socle):
 
     # Cleanup
     admin_delete_observation(observation_id)
+
+
+def test_observations(login, coworker, periods, students, socle):
+    token = login["token"]
+    today = date.today()
+    neo = students["by_firstname"]["Néo"]
+    current_period_id = periods["current_period"]["id"]
+
+    # By user
+    data = insert_observation(
+        "B",
+        login["user_id"],
+        current_period_id,
+        today,
+        token,
+    )
+    observation_id_1 = data["id"]
+
+    # By coworker
+    data = client.admin_gql(
+        """mutation InsertUser($eval_period_id: Int!, $date: date!, $user_id: bigint!) {
+        insert_eval_observation_one(object: {date: $date,
+                                             eval_period_id: $eval_period_id,
+                                             text: "meuh",
+                                             user_id: $user_id}) {
+            id
+        }
+    }""",
+        {"eval_period_id": current_period_id, "date": str(today), "user_id": coworker},
+    )
+    observation_id_2 = data["data"]["insert_eval_observation_one"]["id"]
+
+    # By user again
+    data = insert_observation(
+        "B",
+        login["user_id"],
+        current_period_id,
+        today,
+        token,
+    )
+    observation_id_3 = data["id"]
+
+    # List them all
+    status, data = client.post(
+        "observations-sorted-created-at",
+        {"limit": 500, "offset": 0, "group_id": login["group_id"]},
+        token,
+    )
+    assert status == 200
+    data = data["eval_observation"]
+    found = {1: False, 2: False, 3: False}
+    for observation in data:
+        if observation["id"] == observation_id_1:
+            found[1] = True
+        if observation["id"] == observation_id_2:
+            found[2] = True
+        if observation["id"] == observation_id_3:
+            found[3] = True
+    assert found == {1: True, 2: True, 3: True}
+
+    # List only by user
+    status, data = client.post(
+        "observations-by-user",
+        {
+            "limit": 500,
+            "offset": 0,
+            "user_id": login["user_id"],
+            "group_id": login["group_id"],
+        },
+        token,
+    )
+    assert status == 200
+    data = data["eval_observation"]
+    found = {1: False, 2: False, 3: False}
+    for observation in data:
+        if observation["id"] == observation_id_1:
+            found[1] = True
+        if observation["id"] == observation_id_2:
+            found[2] = True
+        if observation["id"] == observation_id_3:
+            found[3] = True
+    assert found == {1: True, 2: False, 3: True}
+
+    # List by incomplete
+    status, data = client.post(
+        "observations-incomplete",
+        {"limit": 500, "offset": 0, "group_id": login["group_id"]},
+        token,
+    )
+    assert status == 200
+    data = data["eval_observation"]
+    found = {1: False, 2: False, 3: False}
+    for observation in data:
+        if observation["id"] == observation_id_1:
+            found[1] = True
+        if observation["id"] == observation_id_2:
+            found[2] = True
+        if observation["id"] == observation_id_3:
+            found[3] = True
+    assert found == {1: True, 2: True, 3: True}
+
+    # Make observation_id_3 complete Add a student
+    d = insert_observation_student(observation_id_3, neo["id"], token)
+    assert d["complete"]["complete"] == False
+    assert len(d["students"]) == 1
+    assert d["students"][0]["student_id"] == neo["id"]
+    cycle = d["students"][0]["cycle"]
+
+    # Add corresponding competency
+    competency_id_1 = select_a_competency(socle, cycle)
+    d = insert_observation_competency(observation_id_3, competency_id_1, token)
+    assert d["complete"]["complete"] == True
+    assert len(d["competencies"]) == 1
+    assert d["competencies"][0]["competency_id"] == competency_id_1
+
+    # List by incomplete
+    status, data = client.post(
+        "observations-incomplete",
+        {"limit": 500, "offset": 0, "group_id": login["group_id"]},
+        token,
+    )
+    assert status == 200
+    data = data["eval_observation"]
+    found = {1: False, 2: False, 3: False}
+    for observation in data:
+        if observation["id"] == observation_id_1:
+            found[1] = True
+        if observation["id"] == observation_id_2:
+            found[2] = True
+        if observation["id"] == observation_id_3:
+            found[3] = True
+    assert found == {1: True, 2: True, 3: False}
+
+    # cleanup
+    admin_delete_observation(observation_id_1)
+    admin_delete_observation(observation_id_2)
+    admin_delete_observation(observation_id_3)
