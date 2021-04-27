@@ -2,6 +2,9 @@ table:
   name: socle_container
   schema: public
 object_relationships:
+- name: group
+  using:
+    foreign_key_constraint_on: group_id
 - name: parent
   using:
     foreign_key_constraint_on: container_id
@@ -20,15 +23,50 @@ array_relationships:
       table:
         name: socle_competency
         schema: public
-select_permissions:
+insert_permissions:
 - permission:
+    backend_only: false
+    check:
+      group_id:
+        _eq: X-Hasura-User-Group
     columns:
-    - id
-    - rank
-    - text
+    - active
+    - alpha_full_rank
     - container_id
     - cycle
     - full_rank
+    - group_id
+    - rank
+    - text
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - active
     - alpha_full_rank
-    filter: {}
+    - container_id
+    - cycle
+    - full_rank
+    - group_id
+    - id
+    - rank
+    - text
+    filter:
+      group_id:
+        _eq: X-Hasura-User-Group
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - active
+    - alpha_full_rank
+    - container_id
+    - cycle
+    - full_rank
+    - rank
+    - text
+    filter:
+      group_id:
+        _eq: X-Hasura-User-Group
   role: user

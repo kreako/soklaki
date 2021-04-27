@@ -1,0 +1,18 @@
+table:
+  name: default_socle_subject
+  schema: public
+array_relationships:
+- name: competencies
+  using:
+    foreign_key_constraint_on:
+      column: subject_id
+      table:
+        name: default_socle_competency_subject
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - title
+    filter: {}
+  role: user

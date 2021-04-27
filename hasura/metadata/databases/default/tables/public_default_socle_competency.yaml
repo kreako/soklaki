@@ -1,0 +1,27 @@
+table:
+  name: default_socle_competency
+  schema: public
+object_relationships:
+- name: container
+  using:
+    foreign_key_constraint_on: container_id
+array_relationships:
+- name: subjects
+  using:
+    foreign_key_constraint_on:
+      column: competency_id
+      table:
+        name: default_socle_competency_subject
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - id
+    - rank
+    - text
+    - container_id
+    - cycle
+    - full_rank
+    - alpha_full_rank
+    filter: {}
+  role: user

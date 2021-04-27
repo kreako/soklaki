@@ -8,11 +8,50 @@ object_relationships:
 - name: subject
   using:
     foreign_key_constraint_on: subject_id
-select_permissions:
+insert_permissions:
 - permission:
+    backend_only: false
+    check:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
     columns:
-    - id
+    - active
     - competency_id
     - subject_id
-    filter: {}
+  role: user
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - active
+    - competency_id
+    - id
+    - subject_id
+    filter:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - active
+    filter:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user

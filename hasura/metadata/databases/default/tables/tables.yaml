@@ -1,3 +1,7 @@
+- "!include public_default_socle_competency.yaml"
+- "!include public_default_socle_competency_subject.yaml"
+- "!include public_default_socle_container.yaml"
+- "!include public_default_socle_subject.yaml"
 - "!include public_eval_comment.yaml"
 - "!include public_eval_comment_stats.yaml"
 - "!include public_eval_comment_stats_summary.yaml"

@@ -2,6 +2,27 @@ table:
   name: group
   schema: public
 array_relationships:
+- name: competencies
+  using:
+    foreign_key_constraint_on:
+      column: group_id
+      table:
+        name: socle_competency
+        schema: public
+- name: containers
+  using:
+    foreign_key_constraint_on:
+      column: group_id
+      table:
+        name: socle_container
+        schema: public
+- name: periods
+  using:
+    foreign_key_constraint_on:
+      column: group_id
+      table:
+        name: eval_period
+        schema: public
 - name: pricings
   using:
     foreign_key_constraint_on:
@@ -15,6 +36,13 @@ array_relationships:
       column: group_id
       table:
         name: student
+        schema: public
+- name: subjects
+  using:
+    foreign_key_constraint_on:
+      column: group_id
+      table:
+        name: socle_subject
         schema: public
 - name: users
   using:

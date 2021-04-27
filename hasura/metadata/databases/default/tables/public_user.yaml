@@ -20,6 +20,13 @@ array_relationships:
       table:
         name: eval_evaluation
         schema: public
+- name: frontend_store_errors
+  using:
+    foreign_key_constraint_on:
+      column: user_id
+      table:
+        name: frontend_store_error
+        schema: public
 - name: logins
   using:
     foreign_key_constraint_on:
