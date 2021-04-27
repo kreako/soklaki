@@ -1,10 +1,10 @@
 import logging
 import csv
 from models import (
-    SocleContainer,
-    SocleSubject,
-    SocleCompetency,
-    SocleCompetencySubject,
+    DefaultSocleContainer,
+    DefaultSocleSubject,
+    DefaultSocleCompetency,
+    DefaultSocleCompetencySubject,
     database,
 )
 
@@ -20,12 +20,12 @@ def parse_container(cycle, container, line):
         # level 1 container
         rank = int(line[0])
         text = line[1]
-        c = SocleContainer(
+        c = DefaultSocleContainer(
             container=None,
             cycle=cycle,
             rank=rank,
             full_rank=f"{rank}.",
-            alpha_full_rank=f"{rank:02d}.",
+            alpha_full_rank=f"{rank:04d}.",
             text=text,
         )
         c.save()
@@ -38,8 +38,8 @@ def parse_container(cycle, container, line):
             # root container is not yet a level 1
             container = container.container
         full_rank = f"{container.rank}.{rank}."
-        alpha_full_rank = f"{container.rank:02d}.{rank:02d}."
-        c = SocleContainer(
+        alpha_full_rank = f"{container.rank:04d}.{rank:04d}."
+        c = DefaultSocleContainer(
             container=container,
             cycle=cycle,
             rank=rank,
@@ -59,8 +59,8 @@ def parse_competency(cycle, container, line):
         logger.debug(str(line))
         raise ValueError(line)
     full_rank = f"{container.full_rank}{rank}."
-    alpha_full_rank = f"{container.alpha_full_rank}{rank:02d}."
-    competency = SocleCompetency(
+    alpha_full_rank = f"{container.alpha_full_rank}{rank:04d}."
+    competency = DefaultSocleCompetency(
         container=container,
         full_rank=full_rank,
         alpha_full_rank=alpha_full_rank,
@@ -77,8 +77,8 @@ def parse_subjects(competency, line):
     for subject in subjects:
         if not subject:
             continue
-        s, _ = SocleSubject.get_or_create(title=subject)
-        SocleCompetencySubject(competency=competency, subject=s).save()
+        s, _ = DefaultSocleSubject.get_or_create(title=subject)
+        DefaultSocleCompetencySubject(competency=competency, subject=s).save()
 
 
 def main(cycle, input_filename):
