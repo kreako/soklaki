@@ -8,6 +8,7 @@ from pydantic import BaseModel
 import jwt
 
 from gql_client import GqlClient, GqlClientException
+import socle
 
 load_dotenv()
 # Secret to hash password
@@ -123,6 +124,11 @@ async def login(login: LoginInput):
         )
     except VerifyMismatchError:
         return LoginOutput(error=True)
+
+
+@app.post("/load_socle")
+async def load_socle(input: socle.LoadSocleInput):
+    return await socle.load(gql_client, input)
 
 
 # For email confirmation

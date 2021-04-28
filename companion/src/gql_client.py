@@ -4,6 +4,7 @@ import httpx
 class GqlClientException(Exception):
     pass
 
+
 class GqlClient(object):
     def __init__(self, end_point, admin_secret):
         self.end_point = end_point
@@ -63,6 +64,17 @@ class GqlClient(object):
         )
         return r["data"]["insert_group_one"]["id"]
 
+    async def group_by_id(self, group_id):
+        r = await self.run_query(
+            """ query group($group_id: bigint!) {
+                group(where: {id: {_eq: $group_id}}) {
+                    id
+                }
+        }""",
+            {"group_id": group_id},
+        )
+        return r["data"]["group"]
+
     async def delete_group(self, group_id):
         r = await self.run_query(
             """ mutation DeleteGroup($group_id: bigint!) {
@@ -70,7 +82,7 @@ class GqlClient(object):
                         affected_rows
                     }
             }""",
-            {"group_id": group_id}
+            {"group_id": group_id},
         )
 
     async def update_password(self, id, password):
@@ -82,3 +94,128 @@ class GqlClient(object):
                }""",
             {"id": id, "password": password},
         )
+
+    async def socle_counts(self, group_id):
+        r = await self.run_query(
+            """ query socle_counts($group_id: bigint!) {
+                    socle_subject_aggregate(where: {group_id: {_eq: $group_id}}) {
+                        aggregate {
+                            count
+                        }
+                    }
+                    socle_container_aggregate(where: {group_id: {_eq: $group_id}}) {
+                        aggregate {
+                            count
+                        }
+                    }
+                    socle_competency_aggregate(where: {group_id: {_eq: $group_id}}) {
+                        aggregate {
+                            count
+                        }
+                    }
+                }""",
+            {"group_id": group_id},
+        )
+        return r["data"]
+
+    async def default_socle(self):
+        r = await self.run_query(
+            """ query default_socle {
+                    subjects: default_socle_subject {
+                        id
+                        title
+                    }
+                    containers_l1: default_socle_container(where: {container_id: {_is_null: true}}) {
+                        alpha_full_rank
+                        container_id
+                        cycle
+                        full_rank
+                        id
+                        rank
+                        text
+                    }
+                    containers_l2: default_socle_container(where: {container_id: {_is_null: false}}) {
+                        alpha_full_rank
+                        container_id
+                        cycle
+                        full_rank
+                        id
+                        rank
+                        text
+                    }
+                    competencies: default_socle_competency {
+                        alpha_full_rank
+                        container_id
+                        cycle
+                        full_rank
+                        id
+                        rank
+                        text
+                    }
+                    competencies_subjects: default_socle_competency_subject {
+                        competency_id
+                        id
+                        subject_id
+                    }
+                }""",
+            {},
+        )
+        return r["data"]
+
+    async def insert_subjects(self, subjects):
+        r = await self.run_query(
+            """ mutation InsertSubjects($objects: [socle_subject_insert_input!]!) {
+                    insert_socle_subject(objects: $objects) {
+                        returning {
+                            id
+                        }
+                    }
+                }""",
+            {"objects": subjects},
+        )
+        return r["data"]["insert_socle_subject"]["returning"]
+
+    async def insert_containers(self, containers):
+        r = await self.run_query(
+            """ mutation InsertContainers($objects: [socle_container_insert_input!]!) {
+                    insert_socle_container(objects: $objects) {
+                        returning {
+                            id
+                        }
+                    }
+            }""",
+            {
+                "objects": containers,
+            },
+        )
+        return r["data"]["insert_socle_container"]["returning"]
+
+    async def insert_competencies(self, competencies):
+        r = await self.run_query(
+            """ mutation InsertCompetencies($objects: [socle_competency_insert_input!]!) {
+                    insert_socle_competency(objects: $objects) {
+                        returning {
+                            id
+                        }
+                    }
+            }""",
+            {
+                "objects": competencies,
+            },
+        )
+        return r["data"]["insert_socle_competency"]["returning"]
+
+    async def insert_competencies_subjects(self, competencies_subjects):
+        r = await self.run_query(
+            """ mutation InsertCompetenciesSubjects($objects: [socle_competency_subject_insert_input!]!) {
+                    insert_socle_competency_subject(objects: $objects) {
+                        returning {
+                            id
+                        }
+                    }
+                }""",
+            {
+                "objects": competencies_subjects,
+            },
+        )
+        return r["data"]["insert_socle_competency_subject"]["returning"]
