@@ -91,6 +91,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: load-socle
+  url: load-socle
+  methods:
+  - POST
+  name: load-socle
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: login
   url: login
   methods:

@@ -1,4 +1,11 @@
 type Mutation {
+  load_socle (
+    group_id: bigint!
+  ): LoadSocleOutput
+}
+
+
+type Mutation {
   login (
     email: String!
     password: String!
@@ -29,5 +36,11 @@ type LoginOutput {
   token : String
   id : Int
   group_id : Int
+}
+
+type LoadSocleOutput {
+  errorUnknownGroupId : Boolean!
+  errorNonEmptySocle : Boolean!
+  errorUnknown : Boolean!
 }
 

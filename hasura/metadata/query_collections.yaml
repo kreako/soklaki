@@ -943,3 +943,12 @@
             title
           }
         }
+    - name: load-socle
+      query: |-
+        mutation LoadSocle($group_id: bigint!) {
+          load_socle(group_id: $group_id) {
+            errorNonEmptySocle
+            errorUnknown
+            errorUnknownGroupId
+          }
+        }

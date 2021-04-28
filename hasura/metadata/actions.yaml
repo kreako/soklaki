@@ -1,4 +1,11 @@
 actions:
+- name: load_socle
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/load_socle
+    forward_client_headers: true
+  permissions:
+  - role: user
 - name: login
   definition:
     kind: synchronous
@@ -21,4 +28,5 @@ custom_types:
   objects:
   - name: SignupOutput
   - name: LoginOutput
+  - name: LoadSocleOutput
   scalars: []
