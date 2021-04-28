@@ -64,6 +64,10 @@ or copy file to the running container :
 
 podman cp src/main.py soklaki-companion:/app/
 
+Rebuild with :
+
+podman build -t soklaki-companion -f ./Dockerfile .
+
 ### Stop/Delete individually
 
 podman stop soklaki-db && podman rm soklaki-db
