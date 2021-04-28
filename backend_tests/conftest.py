@@ -50,7 +50,7 @@ def login(test_email, test_password):
     login_data["user_id"] = data["signup"]["id"]
     login_data["group_id"] = data["signup"]["group"]
     login_data["token"] = data["signup"]["token"]
-    yield login_data
+    return login_data
 
     # Now Remove the group and the user
     delete_group_by_pk(login_data["group_id"])
@@ -256,3 +256,19 @@ def coworker(login):
         {"group_id": login["group_id"]},
     )
     return data["data"]["insert_user_one"]["id"]
+
+
+@pytest.fixture(scope="session")
+def socle(login):
+    status, data = client.post(
+        "load-socle", {"group_id": login["group_id"]}, login["token"]
+    )
+    assert data["load_socle"] == {
+        "errorNonEmptySocle": False,
+        "errorUnknown": False,
+        "errorUnknownGroupId": False,
+    }
+
+    status_code, socle = client.post("socle", {}, login["token"])
+    assert status == 200
+    return socle
