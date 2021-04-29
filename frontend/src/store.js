@@ -905,6 +905,29 @@ const actions = {
     // reload all students, a little bit too much - Maybe a TODO for the future me
     await dispatch("students");
   },
+
+  // TODO
+  // load-socle
+
+  // insert-socle-container
+  // insert-socle-competency
+  // insert-socle-subject
+  // insert-socle-competency-subject
+  //
+  // update-socle-container-active
+  // update-socle-container-container-id
+  // update-socle-container-rank
+  // update-socle-container-text
+  //
+  // update-socle-competency-active
+  // update-socle-competency-container-id
+  // update-socle-competency-rank
+  // update-socle-competency-text
+  //
+  // update-socle-subject-title
+  // update-socle-subject-active
+  //
+  // update-socle-competency-subject-active
 };
 
 const buildStore = () => {
