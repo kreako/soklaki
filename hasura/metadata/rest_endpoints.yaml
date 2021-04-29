@@ -82,6 +82,42 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-socle-competency
+  url: insert-socle-competency
+  methods:
+  - POST
+  name: insert-socle-competency
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: insert-socle-competency-subject
+  url: insert-socle-competency-subject
+  methods:
+  - POST
+  name: insert-socle-competency-subject
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: insert-socle-container
+  url: insert-socle-container
+  methods:
+  - POST
+  name: insert-socle-container
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: insert-socle-subject
+  url: insert-socle-subject
+  methods:
+  - POST
+  name: insert-socle-subject
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-student
   url: insert-student
   methods:
@@ -238,6 +274,105 @@
   - POST
   name: update-observation-text
   comment: Update observation text
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-active
+  url: update-socle-competency-active
+  methods:
+  - POST
+  name: update-socle-competency-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-container-id
+  url: update-socle-competency-container-id
+  methods:
+  - POST
+  name: update-socle-competency-container-id
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-rank
+  url: update-socle-competency-rank
+  methods:
+  - POST
+  name: update-socle-competency-rank
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-subject-active
+  url: update-socle-competency-subject-active
+  methods:
+  - POST
+  name: update-socle-competency-subject-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-text
+  url: update-socle-competency-text
+  methods:
+  - POST
+  name: update-socle-competency-text
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-container-active
+  url: update-socle-container-active
+  methods:
+  - POST
+  name: update-socle-container-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-container-container-id
+  url: update-socle-container-container-id
+  methods:
+  - POST
+  name: update-socle-container-container-id
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-container-rank
+  url: update-socle-container-rank
+  methods:
+  - POST
+  name: update-socle-container-rank
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-container-text
+  url: update-socle-container-text
+  methods:
+  - POST
+  name: update-socle-container-text
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-subject-active
+  url: update-socle-subject-active
+  methods:
+  - POST
+  name: update-socle-subject-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-subject-title
+  url: update-socle-subject-title
+  methods:
+  - POST
+  name: update-socle-subject-title
+  comment: null
 - definition:
     query:
       collection_name: allowed-queries

@@ -1,0 +1,212 @@
+query Socle {
+  c1: socle_container(
+    order_by: { alpha_full_rank: asc }
+    where: {
+      cycle: { _eq: "c1" }
+      container_id: { _is_null: true }
+      active: { _eq: true }
+    }
+  ) {
+    id
+    children(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      competencies(
+        order_by: { alpha_full_rank: asc }
+        where: { active: { _eq: true } }
+      ) {
+        id
+        subjects(
+          order_by: { subject: { title: asc } }
+          where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+        ) {
+          id
+          subject {
+            id
+          }
+        }
+      }
+    }
+    competencies(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      subjects(
+        order_by: { subject: { title: asc } }
+        where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+      ) {
+        id
+        subject {
+          id
+        }
+      }
+    }
+  }
+  c2: socle_container(
+    order_by: { alpha_full_rank: asc }
+    where: {
+      cycle: { _eq: "c2" }
+      container_id: { _is_null: true }
+      active: { _eq: true }
+    }
+  ) {
+    id
+    children(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      competencies(
+        order_by: { alpha_full_rank: asc }
+        where: { active: { _eq: true } }
+      ) {
+        id
+        subjects(
+          order_by: { subject: { title: asc } }
+          where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+        ) {
+          id
+          subject {
+            id
+          }
+        }
+      }
+    }
+    competencies(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      subjects(
+        order_by: { subject: { title: asc } }
+        where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+      ) {
+        id
+        subject {
+          id
+        }
+      }
+    }
+  }
+  c3: socle_container(
+    order_by: { alpha_full_rank: asc }
+    where: {
+      cycle: { _eq: "c3" }
+      container_id: { _is_null: true }
+      active: { _eq: true }
+    }
+  ) {
+    id
+    children(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      competencies(
+        order_by: { alpha_full_rank: asc }
+        where: { active: { _eq: true } }
+      ) {
+        id
+        subjects(
+          order_by: { subject: { title: asc } }
+          where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+        ) {
+          id
+          subject {
+            id
+          }
+        }
+      }
+    }
+    competencies(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      subjects(
+        order_by: { subject: { title: asc } }
+        where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+      ) {
+        id
+        subject {
+          id
+        }
+      }
+    }
+  }
+  c4: socle_container(
+    order_by: { alpha_full_rank: asc }
+    where: {
+      cycle: { _eq: "c4" }
+      container_id: { _is_null: true }
+      active: { _eq: true }
+    }
+  ) {
+    id
+    children(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      competencies(
+        order_by: { alpha_full_rank: asc }
+        where: { active: { _eq: true } }
+      ) {
+        id
+        subjects(
+          order_by: { subject: { title: asc } }
+          where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+        ) {
+          id
+          subject {
+            id
+          }
+        }
+      }
+    }
+    competencies(
+      order_by: { alpha_full_rank: asc }
+      where: { active: { _eq: true } }
+    ) {
+      id
+      subjects(
+        order_by: { subject: { title: asc } }
+        where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+      ) {
+        id
+        subject {
+          id
+        }
+      }
+    }
+  }
+  competencies: socle_competency(where: { active: { _eq: true } }) {
+    container_id
+    cycle
+    full_rank
+    id
+    rank
+    text
+    subjects(
+      order_by: { subject: { title: asc } }
+      where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+    ) {
+      subject_id
+    }
+  }
+  containers: socle_container(where: { active: { _eq: true } }) {
+    id
+    container_id
+    full_rank
+    cycle
+    rank
+    text
+  }
+  subjects: socle_subject(where: { active: { _eq: true } }) {
+    id
+    title
+  }
+}
