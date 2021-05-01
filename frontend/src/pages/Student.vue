@@ -47,12 +47,12 @@
       </div>
     </div>
     <div class="mt-8">
-      <button
-        @click="router.back()"
+      <router-link
+        to="/students"
         class="text-gray-700 text-xs hover:text-teal-500"
       >
         Retourner à la liste des élèves↵
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
