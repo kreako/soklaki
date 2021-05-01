@@ -1,7 +1,8 @@
 const colors = require("tailwindcss/colors");
 
 module.exports = {
-  purge: [],
+  mode: "jit",
+  purge: ["./index.html", "./src/**/*.{js,jsx,ts,tsx,vue}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
     colors: {
@@ -19,13 +20,6 @@ module.exports = {
       maxHeight: {
         46: "11.5rem",
       },
-    },
-  },
-  variants: {
-    extend: {
-      textColor: ["group-hover", "disabled"],
-      backgroundColor: ["disabled"],
-      cursor: ["disabled"],
     },
   },
   plugins: [require("./tailwindcss-plugins/forms.cjs")],
