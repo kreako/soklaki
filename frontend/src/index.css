@@ -16,6 +16,13 @@
     @apply bg-teal-700;
     @apply disabled:bg-gray-300 disabled:cursor-not-allowed;
   }
+  .button-cancel-action {
+    @apply rounded-md px-4 py-2;
+    @apply text-red-500 shadow-sm;
+    @apply bg-white;
+    @apply border border-red-300;
+    @apply disabled:bg-gray-300 disabled:cursor-not-allowed;
+  }
   .button-minor-action {
     @apply rounded-md px-3 py-1 shadow-sm;
     @apply text-gray-600 hover:text-gray-800;

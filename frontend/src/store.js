@@ -861,7 +861,7 @@ const actions = {
     commit("setStudents", answer.data.students);
   },
 
-  async updateStudentBirthdate({ commit }, { studentId, birthdate }) {
+  async updateStudentBirthdate({ commit, dispatch }, { studentId, birthdate }) {
     const answer = await axios.post("update-student-birthdate", {
       student_id: studentId,
       birthdate: birthdate,
@@ -870,7 +870,7 @@ const actions = {
     await dispatch("students");
   },
 
-  async updateStudentFirstname({ commit }, { studentId, firstname }) {
+  async updateStudentFirstname({ commit, dispatch }, { studentId, firstname }) {
     const answer = await axios.post("update-student-firstname", {
       student_id: studentId,
       firstname: firstname,
@@ -879,7 +879,7 @@ const actions = {
     await dispatch("students");
   },
 
-  async updateStudentLastname({ commit }, { studentId, lastname }) {
+  async updateStudentLastname({ commit, dispatch }, { studentId, lastname }) {
     const answer = await axios.post("update-student-lastname", {
       student_id: studentId,
       lastname: lastname,
@@ -888,7 +888,10 @@ const actions = {
     await dispatch("students");
   },
 
-  async updateStudentSchoolEntry({ commit }, { studentId, schoolEntry }) {
+  async updateStudentSchoolEntry(
+    { commit, dispatch },
+    { studentId, schoolEntry }
+  ) {
     const answer = await axios.post("update-student-school-entry", {
       student_id: studentId,
       school_entry: schoolEntry,
@@ -897,7 +900,10 @@ const actions = {
     await dispatch("students");
   },
 
-  async updateStudentSchoolExit({ commit }, { studentId, schoolExit }) {
+  async updateStudentSchoolExit(
+    { commit, dispatch },
+    { studentId, schoolExit }
+  ) {
     const answer = await axios.post("update-student-school-exit", {
       student_id: studentId,
       school_exit: schoolExit,
