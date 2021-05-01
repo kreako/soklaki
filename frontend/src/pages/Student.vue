@@ -111,4 +111,20 @@ const saveSchoolExit = async (value) => {
   });
   addSchoolExit.value = false;
 };
+
+const getStudent = async (id) => {
+  id = Number(id);
+  if (!id) {
+    // id is not a number :(
+    return;
+  }
+  if (id in store.state.students) {
+    return;
+  }
+  await store.dispatch("students");
+};
+onMounted(async () => {
+  await getStudent(route.params.id);
+});
+watch(() => route.params.id, getStudent);
 </script>
