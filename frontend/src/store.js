@@ -495,7 +495,9 @@ const actions = {
     commit("setGroup", answer.data.group[0]);
     commit("setUsers", answer.data.users);
     commit("setPeriods", answer.data.periods);
-    commit("setCurrentPeriod", answer.data.current_period[0]);
+    if (answer.data.current_period.length > 0) {
+      commit("setCurrentPeriod", answer.data.current_period[0]);
+    }
     commit("setStudents", answer.data.students);
   },
 
@@ -714,7 +716,7 @@ const actions = {
     commit("setGroupName", groupName);
   },
 
-  async insertPeriod({ commit }, { groupId, name, start, end }) {
+  async insertPeriod({ commit, dispatch }, { groupId, name, start, end }) {
     const answer = await axios.post("insert-period", {
       group_id: groupId,
       name: name,
@@ -730,8 +732,7 @@ const actions = {
         end: ${end}`);
     }
     // Reload periods
-    const answer2 = await axios.get("periods");
-    commit("setPeriods", answer2.data.periods);
+    await dispatch("periods");
   },
 
   async saveUserName({ commit }, { userId, firstname, lastname }) {
@@ -841,7 +842,7 @@ const actions = {
   },
 
   async insertStudent(
-    { commit, state },
+    { commit, state, dispatch },
     { birthdate, firstname, groupId, lastname, schoolEntry, schoolExit }
   ) {
     const answer = await axios.post("insert-student", {
@@ -852,13 +853,31 @@ const actions = {
       school_entry: schoolEntry,
       school_exit: schoolExit,
     });
-    // reload all students, a little bit too much - Maybe a TODO for the future me
+    const studentId = answer.data.insert_student_one.id;
+    // Reload students and periods
     await dispatch("students");
+    return studentId;
   },
 
-  async students({ commit }) {
-    const answer = await axios.post("students");
+  async periods({ commit, state }) {
+    const answer = await axios.post("periods", {
+      group_id: state.login.groupId,
+    });
+    commit("setPeriods", answer.data.periods);
+    if (answer.data.current_period.length > 0) {
+      commit("setCurrentPeriod", answer.data.current_period[0]);
+    }
+  },
+
+  async students({ commit, state }) {
+    const answer = await axios.post("students", {
+      group_id: state.login.groupId,
+    });
     commit("setStudents", answer.data.students);
+    commit("setPeriods", answer.data.periods);
+    if (answer.data.current_period.length > 0) {
+      commit("setCurrentPeriod", answer.data.current_period[0]);
+    }
   },
 
   async updateStudentBirthdate({ commit, dispatch }, { studentId, birthdate }) {

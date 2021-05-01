@@ -1,6 +1,14 @@
 <template>
   <div class="my-4 px-2">
-    <div class="form-label">Élèves</div>
+    <div class="flex flex-row space-x-4 items-center">
+      <div class="form-label">Élèves</div>
+      <router-link
+        to="/new-student"
+        class="text-gray-700 text-xs hover:text-teal-500"
+      >
+        Ajouter un élève
+      </router-link>
+    </div>
     <div class="flex flex-row justify-end space-x-2">
       <div class="relative">
         <select v-model="periodFilter" class="invisible-select">
@@ -51,6 +59,14 @@
         </div>
       </div>
     </div>
+    <div class="mt-8">
+      <div class="flex flex-row items-center space-x-2 button-minor-action">
+        <router-link to="/new-student">
+          <IconPlus class="h-4" />
+        </router-link>
+        <router-link to="/new-student"> Ajouter un élève </router-link>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -58,6 +74,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import IconChevronDown from "../icons/IconChevronDown.vue";
+import IconPlus from "../icons/IconPlus.vue";
 
 const store = useStore();
 const route = useRoute();

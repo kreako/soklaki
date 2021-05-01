@@ -72,18 +72,6 @@
             updated_at
           }
         }
-    - name: periods
-      query: |-
-        query Periods {
-          periods: eval_period(order_by: {end: desc}) {
-            created_at
-            end
-            id
-            name
-            start
-            updated_at
-          }
-        }
     - name: set-user-name
       query: |-
         mutation setUserName($user_id: bigint!, $firstname: String!, $lastname: String!) {
@@ -791,22 +779,6 @@
             id
           }
         }
-    - name: students
-      query: |-
-        query Student {
-        students: student(order_by: {fullname: {fullname: asc}}) {
-            birthdate
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-            school_exit
-            current_cycle {
-              current_cycle
-            }
-          }
-        }
     - name: load-socle
       query: |-
         mutation LoadSocle($group_id: bigint!) {
@@ -1133,5 +1105,57 @@
           subjects: socle_subject(where: { active: { _eq: true } }) {
             id
             title
+          }
+        }
+    - name: periods
+      query: |-
+        query Periods($group_id: bigint!) {
+          current_period: eval_period_current(where: {period: {group_id: {_eq: $group_id}}}) {
+            id
+          }
+          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}}}) {
+              student {
+                id
+              }
+            }
+          }
+        }
+    - name: students
+      query: |-
+        query Student($group_id: bigint!) {
+        students: student(order_by: {fullname: {fullname: asc}}, where: {group_id: {_eq: $group_id}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+            school_exit
+            current_cycle {
+              current_cycle
+            }
+          }
+          current_period: eval_period_current(where: {period: {group_id: {_eq: $group_id}}}) {
+            id
+          }
+          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}}}) {
+              student {
+                id
+              }
+            }
           }
         }
