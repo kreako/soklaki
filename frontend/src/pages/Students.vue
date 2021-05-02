@@ -61,13 +61,13 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
-const allCyclesOptions = computed(() => [
+const allCyclesOptions = [
   { value: "all", text: "Tous" },
   { value: "c1", text: "Cycle 1" },
   { value: "c2", text: "Cycle 2" },
   { value: "c3", text: "Cycle 3" },
   { value: "c4", text: "Cycle 4" },
-]);
+];
 
 const allPeriodsOptions = computed(() => {
   if (store.state.currentPeriod == null) {
