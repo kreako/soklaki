@@ -7,34 +7,18 @@
         partie <span class="font-mono">Réglages</span>.
       </template>
     </MascotteTip>
+    <div class="mt-8 form-label">Nos premiers pas ensemble...</div>
     <!-- Group name -->
-    <div v-if="groupName == null || groupNameInEdit" class="mt-4">
-      <div class="form-label">Le nom de votre école</div>
-      <div>
-        <input
-          type="text"
-          @keyup.enter="saveGroupName"
-          v-model="groupNameEdit"
-          class="mt-2 input w-full"
-        />
-        <button @click="saveGroupName" class="button-main-action mt-2">
-          Sauvegarder
-        </button>
-      </div>
-    </div>
-    <div v-else class="mt-4">
-      <div class="flex flex-row items-center space-x-3">
-        <div class="form-label">Le nom de votre école</div>
-        <button @click="editGroupName">
-          <IconPencil class="h-4 text-gray-600 hover:text-teal-500" />
-        </button>
-      </div>
-      <div class="font-serif">{{ groupName }}</div>
-    </div>
+    <InputTextWithLabel
+      class="mt-8"
+      label="Le nom de votre école"
+      :value="groupName"
+      @save="saveGroupName"
+    />
 
     <!-- period -->
     <div v-if="sortedPeriods.length == 0" class="mt-4">
-      <div class="form-label">Une période d'évaluation</div>
+      <div class="form-sub-label">Une période d'évaluation</div>
       <div class="mt-2 form-sub-label">Son petit nom</div>
       <div>
         <input type="text" v-model="periodNameEdit" class="mt-2 input w-full" />
@@ -88,8 +72,8 @@
         </button>
       </div>
     </div>
-    <div v-else class="mt-4">
-      <div class="form-label">Une période d'évaluation</div>
+    <div v-else class="mt-8">
+      <div class="form-sub-label">Une période d'évaluation</div>
       <div class="font-serif">
         {{ period0.name }}
       </div>
@@ -104,30 +88,26 @@
       </div>
     </div>
 
-    <div
-      v-if="currentUser.firstname == null || currentUser.lastname == null"
-      class="mt-4"
-    >
-      <div class="form-label">Votre identité</div>
-      <div class="mt-2 form-sub-label">Votre prénom</div>
-      <input type="text" v-model="firstnameEdit" class="mt-2 input w-full" />
-      <div class="mt-2 form-sub-label">Votre nom</div>
-      <input type="text" v-model="lastnameEdit" class="mt-2 input w-full" />
-      <div>
-        <button
-          @click="saveUser"
-          class="button-main-action mt-2"
-          :disabled="!userValid"
-        >
-          Sauvegarder
-        </button>
-      </div>
-    </div>
-    <div v-else class="mt-4">
-      <div class="form-label">Votre identité</div>
-      <div class="font-serif">
-        {{ currentUser.firstname }}
-        {{ currentUser.lastname }}
+    <!-- Firstname and lastname -->
+
+    <InputTextWithLabel
+      class="mt-8"
+      label="Votre prénom"
+      :value="currentUser.firstname"
+      @save="saveUserFirstname"
+    />
+    <InputTextWithLabel
+      class="mt-8"
+      label="Votre nom"
+      :value="currentUser.lastname"
+      @save="saveUserLastname"
+    />
+    <div class="mt-8">
+      <div class="form-sub-label">La génération du socle</div>
+      <div v-if="!socleValid" class="font-serif text-red-500">En cours...</div>
+      <div v-else class="flex flex-row items-center">
+        <div class="font-serif">Fait !</div>
+        <IconCheck class="h-4 text-green-500" />
       </div>
     </div>
   </div>
@@ -138,24 +118,19 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { dateJsObj } from "../utils/date";
 import MascotteTip from "../components/MascotteTip.vue";
+import InputTextWithLabel from "../components/InputTextWithLabel.vue";
 import IconPencil from "../icons/IconPencil.vue";
+import IconCheck from "../icons/IconCheck.vue";
 
 const store = useStore();
 const router = useRouter();
 
 const groupName = computed(() => store.state.group.name);
-const groupNameInEdit = ref(false);
-const groupNameEdit = ref("");
-const editGroupName = () => {
-  groupNameEdit.value = groupName.value;
-  groupNameInEdit.value = true;
-};
-const saveGroupName = async () => {
+const saveGroupName = async (value) => {
   await store.dispatch("updateGroupName", {
     groupId: store.state.login.groupId,
-    groupName: groupNameEdit.value,
+    groupName: value,
   });
-  groupNameInEdit.value = false;
   checkEnd();
 };
 
@@ -266,37 +241,29 @@ const period0 = computed(() => {
   return null;
 });
 
-const currentUser = computed(() => {
-  if (store.state.login.userId in store.state.users) {
-    return store.state.users[store.state.login.userId];
-  }
-  // Fake
-  return {
-    email: "",
-    firstname: "",
-    lastname: "",
-    manager: false,
-  };
-});
-const firstnameEdit = ref(currentUser.value.firstname);
-const lastnameEdit = ref(currentUser.value.lastname);
-const userValid = computed(() => {
-  if (firstnameEdit == null || firstnameEdit.value === "") {
-    return false;
-  }
-  if (lastnameEdit.value == null || lastnameEdit.value === "") {
-    return false;
-  }
-  return true;
-});
-const saveUser = async () => {
+const currentUser = computed(() =>
+  store.getters.userById(store.state.login.userId)
+);
+const saveUserFirstname = async (value) => {
   await store.dispatch("saveUserName", {
     userId: store.state.login.userId,
-    firstname: firstnameEdit.value,
-    lastname: lastnameEdit.value,
+    firstname: value,
+    lastname: currentUser.value.lastname,
   });
   checkEnd();
 };
+const saveUserLastname = async (value) => {
+  await store.dispatch("saveUserName", {
+    userId: store.state.login.userId,
+    firstname: currentUser.value.firstname,
+    lastname: value,
+  });
+  checkEnd();
+};
+
+const socleValid = computed(
+  () => Object.keys(store.state.socle.containers).length !== 0
+);
 
 const checkEnd = () => {
   const periods = store.state.periods;
@@ -320,6 +287,19 @@ const checkEnd = () => {
   if (lastname == null) {
     return;
   }
-  router.push("/");
+  if (!socleValid.value) {
+    return;
+  }
+  // router.push("/");
 };
+
+onMounted(async () => {
+  console.log("onMounted 1");
+  if (!socleValid.value) {
+    console.log("onMounted 2");
+    await store.dispatch("loadSocle");
+    console.log("onMounted 3");
+  }
+  console.log("onMounted 4");
+});
 </script>
