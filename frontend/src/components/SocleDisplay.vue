@@ -1,5 +1,5 @@
 <template>
-  <div v-for="container1 in socle[cycle]">
+  <div v-for="container1 in filteredSocle">
     <div class="flex flex-row space-x-2">
       <div class="uppercase tracking-wide text-gray-700">
         {{ socle.containers[container1.id].rank }}.
@@ -25,7 +25,7 @@
             v-for="subject in competency.subjects"
             class="text-sm text-gray-700"
           >
-            #{{ subjectById(subject.subject.id).title }}
+            #{{ subjectById(subject.subject_id).title }}
           </div>
         </div>
       </div>
@@ -41,7 +41,7 @@
           v-for="subject in competency.subjects"
           class="text-sm text-gray-700"
         >
-          #{{ subjectById(subject.subject.id).title }}
+          #{{ subjectById(subject.subject_id).title }}
         </div>
       </div>
     </div>
@@ -50,13 +50,42 @@
 <script setup>
 import { defineProps, computed } from "vue";
 import { useStore } from "vuex";
+import { filterSocleBySubject } from "../utils/socle";
 
 const store = useStore();
 
 const props = defineProps({
   socle: Object,
   cycle: String,
+  subjectFilter: String,
 });
 
 const subjectById = computed(() => store.getters.subjectById);
+
+const filteredSocle = computed(() => {
+  const socle = props.socle[props.cycle];
+  if (props.subjectFilter === "all") {
+    return socle;
+  } else {
+    const subjectId = Number(props.subjectFilter);
+    return filterSocleBySubject(socle, subjectId);
+  }
+});
+
+// TODO store actions
+// insertSocleContainer
+// insertSocleCompetency
+// insertSocleSubject
+// insertSocleCompetencySubject
+// updateSocleContainerActive
+// updateSocleCompetencyActive
+// updateSocleSubjectActive
+// updateSocleCompetencySubjectActive
+// updateSocleContainerContainerId
+// updateSocleCompetencyContainerId
+// updateSocleContainerRank
+// updateSocleCompetencyRank
+// updateSocleContainerText
+// updateSocleCompetencyText
+// updateSocleSubjectText
 </script>
