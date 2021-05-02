@@ -8,8 +8,7 @@ export const searchPeriod = (date, periods) => {
     return null;
   }
   const dateValue = dateJsObj(date).valueOf();
-  for (const periodId of Object.keys(periods)) {
-    const period = periods[periodId];
+  for (const period of Object.values(periods)) {
     const startValue = dateJsObj(period.start).valueOf();
     if (dateValue < startValue) {
       // Not my period
