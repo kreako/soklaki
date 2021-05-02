@@ -127,11 +127,14 @@ onMounted(async () => {
   }
   await store.dispatch("boot");
   await store.dispatch("socle");
+  // First steps conditions
+  // TODO : maybe refine socle conditions (take in account the rest...)
   if (
     store.state.periods.length === 0 ||
     store.state.group.name == null ||
     currentUser.value.firstname == null ||
-    currentUser.value.lastname == null
+    currentUser.value.lastname == null ||
+    Object.keys(store.state.socle.containers).length === 0
   ) {
     // TODO email confirmed
     router.push("/first-step");
