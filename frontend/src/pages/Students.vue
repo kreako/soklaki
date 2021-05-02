@@ -54,7 +54,6 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import ElegantSelect from "../components/ElegantSelect.vue";
-import IconChevronDown from "../icons/IconChevronDown.vue";
 import IconPlus from "../icons/IconPlus.vue";
 
 const store = useStore();
