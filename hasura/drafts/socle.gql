@@ -23,9 +23,7 @@ query Socle {
           where: { subject: { active: { _eq: true } }, active: { _eq: true } }
         ) {
           id
-          subject {
-            id
-          }
+          subject_id
         }
       }
     }
@@ -39,9 +37,7 @@ query Socle {
         where: { subject: { active: { _eq: true } }, active: { _eq: true } }
       ) {
         id
-        subject {
-          id
-        }
+        subject_id
       }
     }
   }
@@ -69,9 +65,7 @@ query Socle {
           where: { subject: { active: { _eq: true } }, active: { _eq: true } }
         ) {
           id
-          subject {
-            id
-          }
+          subject_id
         }
       }
     }
@@ -85,9 +79,7 @@ query Socle {
         where: { subject: { active: { _eq: true } }, active: { _eq: true } }
       ) {
         id
-        subject {
-          id
-        }
+        subject_id
       }
     }
   }
@@ -115,9 +107,7 @@ query Socle {
           where: { subject: { active: { _eq: true } }, active: { _eq: true } }
         ) {
           id
-          subject {
-            id
-          }
+          subject_id
         }
       }
     }
@@ -131,9 +121,7 @@ query Socle {
         where: { subject: { active: { _eq: true } }, active: { _eq: true } }
       ) {
         id
-        subject {
-          id
-        }
+        subject_id
       }
     }
   }
@@ -161,9 +149,7 @@ query Socle {
           where: { subject: { active: { _eq: true } }, active: { _eq: true } }
         ) {
           id
-          subject {
-            id
-          }
+          subject_id
         }
       }
     }
@@ -177,9 +163,7 @@ query Socle {
         where: { subject: { active: { _eq: true } }, active: { _eq: true } }
       ) {
         id
-        subject {
-          id
-        }
+        subject_id
       }
     }
   }
@@ -194,6 +178,7 @@ query Socle {
       order_by: { subject: { title: asc } }
       where: { subject: { active: { _eq: true } }, active: { _eq: true } }
     ) {
+      id
       subject_id
     }
   }
