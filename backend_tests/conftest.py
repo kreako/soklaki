@@ -50,7 +50,7 @@ def login(test_email, test_password):
     login_data["user_id"] = data["signup"]["id"]
     login_data["group_id"] = data["signup"]["group"]
     login_data["token"] = data["signup"]["token"]
-    return login_data
+    yield login_data
 
     # Now Remove the group and the user
     delete_group_by_pk(login_data["group_id"])
