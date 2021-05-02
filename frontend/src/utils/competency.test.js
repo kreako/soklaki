@@ -1,4 +1,4 @@
-import { groupCompetenciesByCycle } from "./competency";
+import { groupCompetenciesByCycle, isSubjectInCompetency } from "./competency";
 
 test("groupCompetenciesByCycle", () => {
   const store = {
@@ -28,4 +28,15 @@ test("groupCompetenciesByCycle", () => {
     c3: [2],
     c4: [4, 3],
   });
+});
+
+test("isSubjectInCompetency", () => {
+  const competency = {
+    subjects: [
+      { id: 232, subject_id: 2 },
+      { id: 231, subject_id: 4 },
+    ],
+  };
+  expect(isSubjectInCompetency(2, competency)).toBeTruthy();
+  expect(isSubjectInCompetency(3, competency)).toBeFalsy();
 });

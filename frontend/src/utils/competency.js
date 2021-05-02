@@ -18,3 +18,9 @@ export const groupCompetenciesByCycle = (store, competencies) => {
   }
   return groups;
 };
+
+/// Return true if subjectId is in competency subjects list
+export const isSubjectInCompetency = (subjectId, competency) => {
+  const f = competency.subjects.find((x) => x.subject_id === subjectId);
+  return f != undefined;
+};
