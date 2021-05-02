@@ -844,20 +844,6 @@
             id
           }
         }
-    - name: update-socle-competency-container-id
-      query: |-
-        mutation UpdateSocleCompetencyContainerId($id: Int!, $container_id: Int!) {
-          update_socle_competency_by_pk(pk_columns: {id: $id}, _set: {container_id: $container_id}) {
-            id
-          }
-        }
-    - name: update-socle-container-container-id
-      query: |-
-        mutation UpdateSocleContainerContainerId($id: Int!, $container_id: Int) {
-          update_socle_container_by_pk(pk_columns: {id: $id}, _set: {container_id: $container_id}) {
-            id
-          }
-        }
     - name: update-socle-competency-rank
       query: |-
         mutation UpdateSocleCompetencyRank($id: Int!, $alpha_full_rank: String!, $full_rank: String!, $rank: Int!) {
@@ -1157,5 +1143,19 @@
                 id
               }
             }
+          }
+        }
+    - name: update-socle-container-container-id
+      query: |-
+        mutation UpdateSocleContainerContainerId($id: Int!, $container_id: Int, $alpha_full_rank: String!, $full_rank: String!) {
+          update_socle_container_by_pk(pk_columns: {id: $id}, _set: {container_id: $container_id, alpha_full_rank: $alpha_full_rank, full_rank: $full_rank}) {
+            id
+          }
+        }
+    - name: update-socle-competency-container-id
+      query: |-
+        mutation UpdateSocleCompetencyContainerId($id: Int!, $container_id: Int!, $alpha_full_rank: String!, $full_rank: String!) {
+          update_socle_competency_by_pk(pk_columns: {id: $id}, _set: {container_id: $container_id, alpha_full_rank: $alpha_full_rank, full_rank: $full_rank}) {
+            id
           }
         }
