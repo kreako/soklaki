@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import axios from "axios";
 import { dateJsObj, today } from "./utils/date";
 import { searchPeriod } from "./utils/period";
+import { computeRanks } from "./utils/socle";
 
 const state = {
   error: {
@@ -955,28 +956,210 @@ const actions = {
     await dispatch("socle");
   },
 
-  // TODO
-  // load-socle
+  async insertSocleContainer(
+    { state, dispatch },
+    { containerId, cycle, rank, text }
+  ) {
+    const { alphaFullRank, fullRank } = computeRanks({
+      state,
+      rank,
+      containerId,
+    });
+    await axios.post("insert-socle-container", {
+      alpha_full_rank: alphaFullRank,
+      container_id: containerId,
+      cycle: cycle,
+      full_rank: fullRank,
+      group_id: state.login.groupId,
+      rank: rank,
+      text: text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
 
-  // insert-socle-container
-  // insert-socle-competency
-  // insert-socle-subject
-  // insert-socle-competency-subject
-  //
-  // update-socle-container-active
-  // update-socle-container-container-id
-  // update-socle-container-rank
-  // update-socle-container-text
-  //
-  // update-socle-competency-active
-  // update-socle-competency-container-id
-  // update-socle-competency-rank
-  // update-socle-competency-text
-  //
-  // update-socle-subject-title
-  // update-socle-subject-active
-  //
-  // update-socle-competency-subject-active
+  async insertSocleCompetency(
+    { state, dispatch },
+    { containerId, cycle, rank, text }
+  ) {
+    const { alphaFullRank, fullRank } = computeRanks({
+      state,
+      rank,
+      containerId,
+    });
+    await axios.post("insert-socle-competency", {
+      alpha_full_rank: alphaFullRank,
+      container_id: containerId,
+      cycle: cycle,
+      full_rank: fullRank,
+      group_id: state.login.groupId,
+      rank: rank,
+      text: text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async insertSocleSubject({ state, dispatch }, { title }) {
+    await axios.post("insert-socle-subject", {
+      group_id: state.login.groupId,
+      title: title,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async insertSocleCompetencySubject(
+    { state, dispatch },
+    { competencyId, subjectId }
+  ) {
+    await axios.post("insert-socle-competency-subject", {
+      competency_id: competencyId,
+      subject_id: subjectId,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleContainerActive({ state, dispatch }, { id, active }) {
+    await axios.post("update-socle-container-active", {
+      id: id,
+      active: active,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyActive({ state, dispatch }, { id, active }) {
+    await axios.post("update-socle-competency-active", {
+      id: id,
+      active: active,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleSubjectActive({ state, dispatch }, { id, active }) {
+    await axios.post("update-socle-subject-active", {
+      id: id,
+      active: active,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencySubjectActive(
+    { state, dispatch },
+    { id, active }
+  ) {
+    await axios.post("update-socle-competency-subject-active", {
+      id: id,
+      active: active,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleContainerContainerId(
+    { state, dispatch },
+    { id, containerId }
+  ) {
+    const rank = state.socle.containers[id].rank;
+    const { alphaFullRank, fullRank } = computeRanks({
+      state,
+      rank,
+      containerId,
+    });
+    await axios.post("update-socle-container-container-id", {
+      id: id,
+      alpha_full_rank: alphaFullRank,
+      container_id: containerId,
+      full_rank: fullRank,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyContainerId(
+    { state, dispatch },
+    { id, containerId }
+  ) {
+    const rank = state.socle.competencies[id].rank;
+    const { alphaFullRank, fullRank } = computeRanks({
+      state,
+      rank,
+      containerId,
+    });
+    await axios.post("update-socle-competency-container-id", {
+      id: id,
+      alpha_full_rank: alphaFullRank,
+      container_id: containerId,
+      full_rank: fullRank,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleContainerRank({ state, dispatch }, { id, rank }) {
+    const containerId = state.socle.containers[id].container_id;
+    const { alphaFullRank, fullRank } = computeRanks({
+      state,
+      rank,
+      containerId,
+    });
+    await axios.post("update-socle-container-rank", {
+      id: id,
+      alpha_full_rank: alphaFullRank,
+      full_rank: fullRank,
+      rank: rank,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyRank({ state, dispatch }, { id, rank }) {
+    const containerId = state.socle.competencies[id].container_id;
+    const { alphaFullRank, fullRank } = computeRanks({
+      state,
+      rank,
+      containerId,
+    });
+    await axios.post("update-socle-competency-rank", {
+      id: id,
+      alpha_full_rank: alphaFullRank,
+      full_rank: fullRank,
+      rank: rank,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleContainerText({ state, dispatch }, { id, text }) {
+    await axios.post("update-socle-container-text", {
+      id,
+      text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyText({ state, dispatch }, { id, text }) {
+    await axios.post("update-socle-competency-text", {
+      id,
+      text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleSubjectText({ state, dispatch }, { id, title }) {
+    await axios.post("update-socle-subject-text", {
+      id,
+      title,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
 };
 
 const buildStore = () => {
