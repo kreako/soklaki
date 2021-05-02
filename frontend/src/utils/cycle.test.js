@@ -1,4 +1,3 @@
-// const cycle = require("./cycle");
 import { cycleFullName, cycleNb } from "./cycle";
 
 test("cycleNb", () => {
