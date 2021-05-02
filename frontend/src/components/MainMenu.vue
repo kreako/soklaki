@@ -31,11 +31,11 @@
         <div v-if="!mobile" class="mt-12 px-1">
           <router-link to="/new-observation">
             <div
-              class="bg-white rounded-md text-teal-700 shadow-sm px-2 py-1 text-base"
+              class="bg-white rounded-md text-teal-700 shadow-sm px-3 py-1 text-base"
             >
               <div class="flex flex-row space-x-1 items-center">
-                <IconPlus class="h-8" />
                 <div>Nouvelle observation</div>
+                <IconPlus class="h-8" />
               </div>
             </div>
           </router-link>
