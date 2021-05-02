@@ -931,6 +931,30 @@ const actions = {
     await dispatch("students");
   },
 
+  async loadSocle({ state, dispatch }) {
+    const answer = await axios.post("load-socle", {
+      group_id: state.login.groupId,
+    });
+    const data = answer.data.load_socle;
+    if (data.errorNonEmptySocle) {
+      throw new Error(
+        "J'ai essayé de recharger le socle mais il n'était pas vide !"
+      );
+    }
+    if (data.errorUnknownGroupId) {
+      throw new Error(
+        "J'ai essayé de recharger le socle mais je ne trouve pas votre groupe !"
+      );
+    }
+    if (data.errorUnknown) {
+      throw new Error(
+        "J'ai essayé de recharger le socle mais je n'ai pas réussi!"
+      );
+    }
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
   // TODO
   // load-socle
 
