@@ -172,7 +172,9 @@ def students(login):
     )
     assert code == 200
 
-    code, data = client.post("students", {}, login["token"])
+    code, data = client.post(
+        "students", {"group_id": login["group_id"]}, login["token"]
+    )
     assert code == 200
     students = data["students"]
     by_cycle = defaultdict(list)

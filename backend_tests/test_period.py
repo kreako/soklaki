@@ -7,7 +7,7 @@ from . import client
 
 
 def test_insert_period(login):
-    code, data = client.post("periods", {}, login["token"])
+    code, data = client.post("periods", {"group_id": login["group_id"]}, login["token"])
     assert code == 200
     before_periods = data["periods"]
 
@@ -24,7 +24,7 @@ def test_insert_period(login):
     assert code == 200
     id = data["insert_eval_period_one"]["id"]
 
-    code, data = client.post("periods", {}, login["token"])
+    code, data = client.post("periods", {"group_id": login["group_id"]}, login["token"])
     assert code == 200
     after_periods = data["periods"]
 

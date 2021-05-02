@@ -2,13 +2,17 @@ from . import client
 
 
 def test_students(login):
-    code, data = client.post("students", {}, login["token"])
+    code, data = client.post(
+        "students", {"group_id": login["group_id"]}, login["token"]
+    )
     assert code == 200
     assert "students" in data
 
 
 def test_insert_students(login):
-    code, data = client.post("students", {}, login["token"])
+    code, data = client.post(
+        "students", {"group_id": login["group_id"]}, login["token"]
+    )
     assert code == 200
     before_students = data["students"]
 
@@ -27,7 +31,9 @@ def test_insert_students(login):
     assert code == 200
     student_id = data["insert_student_one"]["id"]
 
-    code, data = client.post("students", {}, login["token"])
+    code, data = client.post(
+        "students", {"group_id": login["group_id"]}, login["token"]
+    )
     assert code == 200
     after_students = data["students"]
 
@@ -60,7 +66,9 @@ def test_insert_students(login):
 
 def check(login, students, patch_id, patch_prop, patch_value):
     # List and check
-    code, data = client.post("students", {}, login["token"])
+    code, data = client.post(
+        "students", {"group_id": login["group_id"]}, login["token"]
+    )
     assert code == 200
     after_students = data["students"]
     assert len(students["students"]) == len(after_students)
