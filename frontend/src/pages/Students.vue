@@ -10,28 +10,8 @@
       </router-link>
     </div>
     <div class="flex flex-row justify-end space-x-2">
-      <div class="relative">
-        <select v-model="periodFilter" class="invisible-select">
-          <option v-for="period in allPeriods" :value="period.id">
-            {{ period.name }}
-          </option>
-        </select>
-        <IconChevronDown
-          class="h-4 absolute top-1/2 right-0 -mt-2 pointer-events-none"
-        />
-      </div>
-      <div class="relative">
-        <select v-model="cycleFilter" class="invisible-select">
-          <option value="all">Tous</option>
-          <option value="c1">Cycle 1</option>
-          <option value="c2">Cycle 2</option>
-          <option value="c3">Cycle 3</option>
-          <option value="c4">Cycle 4</option>
-        </select>
-        <IconChevronDown
-          class="h-4 absolute top-1/2 right-0 -mt-2 pointer-events-none"
-        />
-      </div>
+      <ElegantSelect v-model="periodFilter" :options="allPeriodsOptions" />
+      <ElegantSelect v-model="cycleFilter" :options="allCyclesOptions" />
     </div>
     <div>
       <div v-for="studentId in students" class="mt-6">
@@ -73,6 +53,7 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
+import ElegantSelect from "../components/ElegantSelect.vue";
 import IconChevronDown from "../icons/IconChevronDown.vue";
 import IconPlus from "../icons/IconPlus.vue";
 
@@ -80,23 +61,34 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 
-const allPeriods = computed(() => {
-  // First push the current period
+const allCyclesOptions = computed(() => [
+  { value: "all", text: "Tous" },
+  { value: "c1", text: "Cycle 1" },
+  { value: "c2", text: "Cycle 2" },
+  { value: "c3", text: "Cycle 3" },
+  { value: "c4", text: "Cycle 4" },
+]);
+
+const allPeriodsOptions = computed(() => {
   if (store.state.currentPeriod == null) {
     // store not ready
     return [];
   }
   const periods = [];
+  // First push the current period
   const currentPeriod = store.getters.periodById(store.state.currentPeriod);
-  periods.push({ id: store.state.currentPeriod, name: "Courante" });
+  periods.push({
+    value: store.state.currentPeriod.toString(),
+    text: "Courante",
+  });
   for (const id of store.state.sortedPeriods) {
     const period = store.getters.periodById(id);
-    periods.push({ id: id, name: period.name });
+    periods.push({ value: id.toString(), text: period.name });
   }
-  periods.push({ id: -1, name: "Toutes" });
+  periods.push({ value: String(-1), text: "Toutes" });
   return periods;
 });
-const periodFilter = ref(Number(route.query.period));
+const periodFilter = ref(route.query.period);
 watch(periodFilter, (f, prevF) => {
   if (route.query.period != f) {
     router.replace({
@@ -125,7 +117,7 @@ watch(route, () => {
     return;
   }
   if (route.query.period != periodFilter.value) {
-    periodFilter.value = Number(route.query.period);
+    periodFilter.value = route.query.period;
   }
   if (route.query.cycle != cycleFilter.value) {
     cycleFilter.value = route.query.cycle;
@@ -139,10 +131,10 @@ const students = computed(() => {
   }
   // First set students base on period
   let students = [];
-  if (periodFilter.value === -1) {
+  if (periodFilter.value === "-1") {
     students = store.state.sortedStudents;
   } else {
-    const period = store.getters.periodById(periodFilter.value);
+    const period = store.getters.periodById(Number(periodFilter.value));
     students = period.students.map((x) => x.student.id);
   }
   // And now on current cycle

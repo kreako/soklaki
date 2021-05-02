@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
+@layer components {
   .input {
     @apply rounded-md border-gray-300 shadow-sm;
     @apply focus:border-teal-300 focus:ring focus:ring-teal-200 focus:ring-opacity-50;
@@ -33,9 +33,5 @@
   }
   .form-sub-label {
     @apply text-sm text-gray-700;
-  }
-  .invisible-select {
-    @apply appearance-none block bg-transparent py-1 pr-3 text-gray-500 font-medium text-sm;
-    @apply focus:outline-none focus:text-gray-900 transition-colors duration-200;
   }
 }
