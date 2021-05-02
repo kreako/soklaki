@@ -1,18 +1,8 @@
 <template>
   <div class="my-4 px-2">
     <div class="form-label">Observations</div>
-    <div class="flex flex-row justify-end relative">
-      <select
-        v-model="selectedFilter"
-        class="appearance-none block bg-transparent py-1 pr-3 text-gray-500 font-medium text-sm focus:outline-none focus:text-gray-900 transition-colors duration-200"
-      >
-        <option value="all">Toutes</option>
-        <option value="incomplete">Les incomplètes</option>
-        <option value="mine">Mes observations</option>
-      </select>
-      <IconChevronDown
-        class="h-4 absolute top-1/2 right-0 -mt-2 pointer-events-none"
-      />
+    <div class="flex flex-row justify-end">
+      <ElegantSelect v-model="selectedFilter" :options="filtersOptions" />
     </div>
     <div>
       <div v-for="observationId in sortedObservations" class="mt-6">
@@ -86,9 +76,9 @@ import IconCheck from "../icons/IconCheck.vue";
 import IconX from "../icons/IconX.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
-import IconChevronDown from "../icons/IconChevronDown.vue";
 import IconUser from "../icons/IconUser.vue";
 import IconCompetency from "../icons/IconCompetency.vue";
+import ElegantSelect from "../components/ElegantSelect.vue";
 
 const store = useStore();
 const route = useRoute();
@@ -97,6 +87,11 @@ const router = useRouter();
 const userById = computed(() => store.getters.userById);
 const observationById = computed(() => store.getters.observationById);
 
+const filtersOptions = [
+  { value: "all", text: "Toutes" },
+  { value: "incomplete", text: "Les incomplètes" },
+  { value: "mine", text: "Mes observations" },
+];
 const selectedFilter = ref(route.query.filter || "all");
 watch(selectedFilter, (filter, prevFilter) => {
   if (route.query.filter !== filter) {
