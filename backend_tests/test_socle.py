@@ -158,13 +158,13 @@ def test_socle_subject_active(login, socle):
                 for subject in competency["subjects"]:
                     # Beautiful 4 level nested for loops
                     # Glory begins now
-                    assert subject["subject"]["id"] != subject_id
+                    assert subject["subject_id"] != subject_id
             for l2 in socle[cycle]:
                 for competency in l2["competencies"]:
                     for subject in competency["subjects"]:
                         # I knew I could do better
                         # Look at this beautiful 5 level nested for loop
-                        assert subject["subject"]["id"] != subject_id
+                        assert subject["subject_id"] != subject_id
 
     status, data = client.post(
         "update-socle-subject-active",
@@ -216,7 +216,7 @@ def test_socle_subject_title(login, socle):
 def test_socle_competency_subject_active(login, socle):
     # select a link
     link = socle["c4"][0]["children"][0]["competencies"][0]["subjects"][0]
-    subject_id = link["subject"]["id"]
+    subject_id = link["subject_id"]
     link_id = link["id"]
 
     # active = False
@@ -341,9 +341,18 @@ def test_socle_container_active(login, socle):
 def test_socle_competency_container_id(login, socle):
     competency_ids = map(lambda x: x["id"], socle["competencies"])
     competency_id = random.choice(list(competency_ids))
-    competency = filter(
-        lambda x: x["id"] == competency_id, socle["competencies"]
-    ).__next__()
+    data = client.gql(
+        """ query Competency($id: Int!) {
+                socle_competency_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": competency_id},
+        login["token"],
+    )
+    competency = data["data"]["socle_competency_by_pk"]
 
     # Select a random container
     container_ids = map(lambda x: x["id"], socle["containers"])
@@ -354,48 +363,83 @@ def test_socle_competency_container_id(login, socle):
     # Set container id
     status, data = client.post(
         "update-socle-competency-container-id",
-        {"id": competency_id, "container_id": container_id},
+        {
+            "id": competency_id,
+            "alpha_full_rank": "ac0",
+            "full_rank": "c0",
+            "container_id": container_id,
+        },
         login["token"],
     )
     assert status == 200
     assert data["update_socle_competency_by_pk"]["id"] == competency_id
 
-    # Modified in socle
-    status_code, socle = client.post("socle", {}, login["token"])
-    assert status == 200
-    new_competency = filter(
-        lambda x: x["id"] == competency_id, socle["competencies"]
-    ).__next__()
-    assert competency["rank"] == new_competency["rank"]
+    # Modified
+    data = client.gql(
+        """ query Competency($id: Int!) {
+                socle_competency_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": competency_id},
+        login["token"],
+    )
+    new_competency = data["data"]["socle_competency_by_pk"]
+    assert new_competency["alpha_full_rank"] == "ac0"
+    assert new_competency["full_rank"] == "c0"
     assert competency["container_id"] != new_competency["container_id"]
-    assert container_id == new_competency["container_id"]
+    assert new_competency["container_id"] == container_id
 
     # Set container id back
     status, data = client.post(
         "update-socle-competency-container-id",
-        {"id": competency_id, "container_id": competency["container_id"]},
+        {
+            "id": competency_id,
+            "alpha_full_rank": competency["alpha_full_rank"],
+            "full_rank": competency["full_rank"],
+            "container_id": competency["container_id"],
+        },
         login["token"],
     )
     assert status == 200
     assert data["update_socle_competency_by_pk"]["id"] == competency_id
 
-    # Back as before in socle
-    status_code, socle = client.post("socle", {}, login["token"])
-    assert status == 200
-    new_competency = filter(
-        lambda x: x["id"] == competency_id, socle["competencies"]
-    ).__next__()
-    assert competency["rank"] == new_competency["rank"]
-    assert competency["container_id"] == new_competency["container_id"]
+    # Back as before
+    data = client.gql(
+        """ query Competency($id: Int!) {
+                socle_competency_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": competency_id},
+        login["token"],
+    )
+    new_competency = data["data"]["socle_competency_by_pk"]
+    assert new_competency["alpha_full_rank"] == competency["alpha_full_rank"]
+    assert new_competency["full_rank"] == competency["full_rank"]
+    assert new_competency["container_id"] == competency["container_id"]
 
 
 def test_socle_container_container_id(login, socle):
     token = login["token"]
     container_ids = list(map(lambda x: x["id"], socle["containers"]))
     container_id = random.choice(container_ids)
-    container = filter(
-        lambda x: x["id"] == container_id, socle["containers"]
-    ).__next__()
+    data = client.gql(
+        """ query Container($id: Int!) {
+                socle_container_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": container_id},
+        token,
+    )
+    container = data["data"]["socle_container_by_pk"]
 
     # Select a random container as parent
     parent_id = None
@@ -405,53 +449,95 @@ def test_socle_container_container_id(login, socle):
     # Set container id
     status, data = client.post(
         "update-socle-container-container-id",
-        {"id": container_id, "container_id": parent_id},
+        {
+            "id": container_id,
+            "alpha_full_rank": "meuha",
+            "full_rank": "meuh",
+            "container_id": parent_id,
+        },
         token,
     )
     assert status == 200
     assert data["update_socle_container_by_pk"]["id"] == container_id
 
-    # Modified in socle
-    status_code, socle = client.post("socle", {}, token)
-    assert status == 200
-    new_container = filter(
-        lambda x: x["id"] == container_id, socle["containers"]
-    ).__next__()
+    # Modified
+    data = client.gql(
+        """ query Container($id: Int!) {
+                socle_container_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": container_id},
+        token,
+    )
+    new_container = data["data"]["socle_container_by_pk"]
     assert new_container["container_id"] == parent_id
+    assert new_container["alpha_full_rank"] == "meuha"
+    assert new_container["full_rank"] == "meuh"
 
     # Set container id as None
     status, data = client.post(
         "update-socle-container-container-id",
-        {"id": container_id, "container_id": None},
+        {
+            "id": container_id,
+            "alpha_full_rank": "remeuha",
+            "full_rank": "remeuh",
+            "container_id": None,
+        },
         token,
     )
     assert status == 200
     assert data["update_socle_container_by_pk"]["id"] == container_id
 
-    # Modified in socle
-    status_code, socle = client.post("socle", {}, token)
-    assert status == 200
-    new_container = filter(
-        lambda x: x["id"] == container_id, socle["containers"]
-    ).__next__()
+    # Modified
+    data = client.gql(
+        """ query Container($id: Int!) {
+                socle_container_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": container_id},
+        token,
+    )
+    new_container = data["data"]["socle_container_by_pk"]
     assert new_container["container_id"] == None
+    assert new_container["alpha_full_rank"] == "remeuha"
+    assert new_container["full_rank"] == "remeuh"
 
     # Set container id back
     status, data = client.post(
         "update-socle-container-container-id",
-        {"id": container_id, "container_id": container["container_id"]},
+        {
+            "id": container_id,
+            "container_id": container["container_id"],
+            "alpha_full_rank": container["alpha_full_rank"],
+            "full_rank": container["full_rank"],
+        },
         token,
     )
     assert status == 200
     assert data["update_socle_container_by_pk"]["id"] == container_id
 
-    # Back as before in socle
-    status_code, socle = client.post("socle", {}, token)
-    assert status == 200
-    new_container = filter(
-        lambda x: x["id"] == container_id, socle["containers"]
-    ).__next__()
+    # Back as before
+    data = client.gql(
+        """ query Container($id: Int!) {
+                socle_container_by_pk(id: $id) {
+                    alpha_full_rank
+                    full_rank
+                    container_id
+                }
+            }""",
+        {"id": container_id},
+        token,
+    )
+    new_container = data["data"]["socle_container_by_pk"]
     assert new_container["container_id"] == container["container_id"]
+    assert new_container["alpha_full_rank"] == container["alpha_full_rank"]
+    assert new_container["full_rank"] == container["full_rank"]
 
 
 def test_socle_competency_rank(login, socle):
