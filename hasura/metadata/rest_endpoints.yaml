@@ -358,6 +358,24 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: update-period
+  url: update-period
+  methods:
+  - POST
+  name: update-period
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-period-active
+  url: update-period-active
+  methods:
+  - POST
+  name: update-period-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: update-socle-competency-active
   url: update-socle-competency-active
   methods:
