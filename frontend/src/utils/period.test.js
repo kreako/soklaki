@@ -1,4 +1,4 @@
-import { searchPeriod } from "./period";
+import { searchPeriod, defaultPeriod } from "./period";
 
 test("searchPeriod", () => {
   const periods = {
@@ -30,4 +30,32 @@ test("searchPeriod", () => {
   expect(searchPeriod("2019-08-28", periods)).toBeNull();
   // after
   expect(searchPeriod("2021-07-12", periods)).toBeNull();
+});
+
+test("defaultPeriod", () => {
+  expect(defaultPeriod("2021-10-02")).toStrictEqual({
+    name: "2021/2022 - S1",
+    start: "2021-08-01",
+    end: "2022-01-31",
+  });
+  expect(defaultPeriod("2021-08-01")).toStrictEqual({
+    name: "2021/2022 - S1",
+    start: "2021-08-01",
+    end: "2022-01-31",
+  });
+  expect(defaultPeriod("2021-01-31")).toStrictEqual({
+    name: "2020/2021 - S1",
+    start: "2020-08-01",
+    end: "2021-01-31",
+  });
+  expect(defaultPeriod("2021-02-01")).toStrictEqual({
+    name: "2020/2021 - S2",
+    start: "2021-02-01",
+    end: "2021-07-31",
+  });
+  expect(defaultPeriod("2021-07-31")).toStrictEqual({
+    name: "2020/2021 - S2",
+    start: "2021-02-01",
+    end: "2021-07-31",
+  });
 });
