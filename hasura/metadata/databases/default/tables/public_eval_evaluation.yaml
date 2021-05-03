@@ -18,10 +18,21 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - user:
+          group_id:
+            _eq: X-Hasura-User-Group
     columns:
+    - active
     - comment
     - competency_id
     - date
@@ -33,41 +44,53 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - comment
-    - competency_id
-    - created_at
-    - date
-    - eval_period_id
     - id
-    - status
     - student_id
-    - updated_at
     - user_id
+    - active
+    - date
+    - competency_id
+    - eval_period_id
+    - comment
+    - created_at
+    - updated_at
+    - status
     filter:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - user:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user
 update_permissions:
 - permission:
-    check:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
+    check: {}
     columns:
+    - active
     - comment
     - date
     - eval_period_id
     - status
     filter:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
-  role: user
-delete_permissions:
-- permission:
-    filter:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - user:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user
