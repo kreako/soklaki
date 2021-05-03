@@ -52,8 +52,12 @@ const state = {
   evaluations: {
     // id -> evaluation object
     evaluations: {},
-    // student_id -> competency_id -> evaluation_id
-    byStudentCompetency: {},
+    // id -> comment object
+    comments: {},
+    // Array of id, sorted by date desc
+    sortedEvaluations: [],
+    // Array of id, sorted by date desc
+    sortedComments: [],
   },
   // stats for the selected period
   stats: {
@@ -171,13 +175,6 @@ const fromArrayToIdObjects = (array) => {
   return obj;
 };
 
-const set_2_levels = (object, key1, key2, value) => {
-  if (!(key1 in object)) {
-    object[key1] = {};
-  }
-  object[key1][key2] = value;
-};
-
 const mutations = {
   setInError(state, error) {
     state.error.inError = error;
@@ -286,28 +283,6 @@ const mutations = {
     state.users[userId].firstname = firstname;
     state.users[userId].lastname = lastname;
   },
-  setEvaluationByStudentCompetency(
-    state,
-    { studentId, competencyId, evaluation }
-  ) {
-    if (evaluation == null) {
-      set_2_levels(
-        state.evaluations.byStudentCompetency,
-        studentId,
-        competencyId,
-        null
-      );
-    } else {
-      const evaluationId = evaluation.id;
-      state.evaluations.evaluations[evaluationId] = evaluation;
-      set_2_levels(
-        state.evaluations.byStudentCompetency,
-        studentId,
-        competencyId,
-        evaluationId
-      );
-    }
-  },
   setStats(
     state,
     { cycle, studentsCount, competenciesCount, stats, commentStats }
@@ -370,6 +345,14 @@ const mutations = {
       root[stat.cycle].evaluations.total = stat.total;
       root[stat.cycle].evaluations.current = stat.evaluations;
     }
+  },
+  setEvaluations(state, evaluations) {
+    state.evaluations.evaluations = fromArrayToIdObjects(evaluations);
+    state.evaluations.sortedEvaluations = periods.map((x) => x.id);
+  },
+  setEvalComments(state, comments) {
+    state.evaluations.comments = fromArrayToIdObjects(comments);
+    state.evaluations.sortedComments = periods.map((x) => x.id);
   },
 };
 
@@ -725,27 +708,6 @@ const actions = {
       userId: userId,
       firstname: firstname,
       lastname: lastname,
-    });
-  },
-
-  async insertEvaluation(
-    { commit, state },
-    { studentId, competencyId, periodId, date, status, comment }
-  ) {
-    const answer = await axios.post("insert-evaluation", {
-      student_id: studentId,
-      competency_id: competencyId,
-      status: status,
-      comment: comment,
-      date: date,
-      eval_period_id: periodId,
-      user_id: state.login.userId,
-    });
-    const data = answer.data.insert_eval_evaluation_one;
-    commit("setEvaluationByStudentCompetency", {
-      studentId: studentId,
-      competencyId: competencyId,
-      evaluation: data,
     });
   },
 
@@ -1170,19 +1132,87 @@ const actions = {
     await dispatch("periods");
   },
 
-  // update-comment-active
-  // update-comment-date
-  // update-comment-text
-  //
-  // update-evaluation-active
-  // update-evaluation-date
-  // update-evaluation-status
-  // update-evaluation-comment
-  //
-  // evaluations
-  //
-  // insert-comment
-  // insert-evaluation
+  async insertEvaluation(
+    { commit, state, dispatch },
+    { studentId, competencyId, periodId, date, status, comment }
+  ) {
+    const answer = await axios.post("insert-evaluation", {
+      student_id: studentId,
+      competency_id: competencyId,
+      status: status,
+      comment: comment,
+      date: date,
+      period_id: periodId,
+      user_id: state.login.userId,
+    });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async insertComment(
+    { commit, state, dispatch },
+    { periodId, date, studentId, text }
+  ) {
+    const period = await searchOrCreatePeriod(date, state, dispatch);
+    const answer = await axios.post("insert-comment", {
+      period_id: period.id,
+      date: date,
+      student_id: studentId,
+      text: text,
+      user_id: state.login.userId,
+    });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async evaluations({ commit, state }, { periodId }) {
+    const answer = await axios.post("evaluations", { period_id: periodId });
+    commit("setEvaluations", answer.data.evaluations);
+    commit("setEvalComments", answer.data.comments);
+  },
+
+  async updateCommentActive({ dispatch }, { id, active, periodId }) {
+    await axios.post("update-comment-active", { id, active });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateCommentDate({ state, dispatch }, { id, date, periodId }) {
+    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await axios.post("update-comment-date", {
+      id: id,
+      date: date,
+      eval_period_id: period.id,
+    });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateCommentText({ dispatch }, { id, text, periodId }) {
+    await axios.post("update-comment-text", { id, text });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateEvaluationActive({ dispatch }, { id, active, periodId }) {
+    await axios.post("update-evaluation-active", { id, active });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateEvaluationDate({ state, dispatch }, { id, date, periodId }) {
+    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await axios.post("update-evaluation-date", {
+      id: id,
+      date: date,
+      eval_period_id: period.id,
+    });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateEvaluationComment({ dispatch }, { id, comment, periodId }) {
+    await axios.post("update-comment-text", { id, comment });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateEvaluationStatus({ dispatch }, { id, status, periodId }) {
+    await axios.post("update-comment-status", { id, status });
+    await dispatch("evaluations", { periodId });
+  },
 };
 
 const buildStore = () => {
