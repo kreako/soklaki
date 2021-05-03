@@ -121,7 +121,7 @@ const checkEnd = () => {
   if (!socleValid.value) {
     return;
   }
-  // router.push("/");
+  router.push("/");
 };
 
 onMounted(async () => {
