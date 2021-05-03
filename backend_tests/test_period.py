@@ -1,6 +1,10 @@
 from datetime import date
 from . import client
 
+# TODO
+# update-period-active
+# update-period
+
 
 def test_insert_period(login):
     code, data = client.post("periods", {"group_id": login["group_id"]}, login["token"])
