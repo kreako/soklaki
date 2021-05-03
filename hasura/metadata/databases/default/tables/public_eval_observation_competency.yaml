@@ -12,9 +12,12 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      observation:
-        students:
-          student:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
             group_id:
               _eq: X-Hasura-User-Group
     columns:
@@ -29,31 +32,24 @@ select_permissions:
     - id
     - observation_id
     filter:
-      observation:
-        students:
-          student:
-            group_id:
-              _eq: X-Hasura-User-Group
-  role: user
-update_permissions:
-- permission:
-    check: null
-    columns:
-    - competency_id
-    - observation_id
-    filter:
-      observation:
-        students:
-          student:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
             group_id:
               _eq: X-Hasura-User-Group
   role: user
 delete_permissions:
 - permission:
     filter:
-      observation:
-        students:
-          student:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
             group_id:
               _eq: X-Hasura-User-Group
   role: user

@@ -29,8 +29,8 @@ insert_permissions:
           group_id:
             _eq: X-Hasura-User-Group
       - user:
-          group_id:
-            _eq: X-Hasura-User-Group
+          id:
+            _eq: X-Hasura-User-Id
     columns:
     - active
     - comment

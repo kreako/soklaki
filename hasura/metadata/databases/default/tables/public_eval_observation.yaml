@@ -54,9 +54,14 @@ insert_permissions:
 - permission:
     backend_only: false
     check:
-      user_id:
-        _eq: X-Hasura-User-Id
+      _and:
+      - user_id:
+          _eq: X-Hasura-User-Id
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
     columns:
+    - active
     - date
     - eval_period_id
     - text
@@ -66,6 +71,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
+    - active
     - created_at
     - date
     - eval_period_id
@@ -74,27 +80,29 @@ select_permissions:
     - updated_at
     - user_id
     filter:
-      user:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - user:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user
 update_permissions:
 - permission:
     check: null
     columns:
+    - active
     - date
     - eval_period_id
     - text
     - user_id
     filter:
-      user:
-        group_id:
-          _eq: X-Hasura-User-Group
-  role: user
-delete_permissions:
-- permission:
-    filter:
-      user:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - user:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user

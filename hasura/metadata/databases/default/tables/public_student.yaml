@@ -68,6 +68,7 @@ insert_permissions:
       group_id:
         _eq: X-Hasura-User-Group
     columns:
+    - active
     - birthdate
     - firstname
     - group_id
@@ -79,13 +80,14 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - birthdate
-    - firstname
-    - group_id
     - id
+    - firstname
     - lastname
+    - birthdate
     - school_entry
+    - group_id
     - school_exit
+    - active
     filter:
       group_id:
         _eq: X-Hasura-User-Group
@@ -94,6 +96,7 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - active
     - birthdate
     - firstname
     - lastname

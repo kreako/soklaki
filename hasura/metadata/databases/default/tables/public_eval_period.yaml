@@ -50,6 +50,7 @@ insert_permissions:
       group_id:
         _eq: X-Hasura-User-Group
     columns:
+    - active
     - end
     - group_id
     - name
@@ -58,12 +59,13 @@ insert_permissions:
 select_permissions:
 - permission:
     columns:
-    - created_at
-    - end
     - group_id
+    - active
+    - end
+    - start
     - id
     - name
-    - start
+    - created_at
     - updated_at
     filter:
       group_id:
@@ -73,6 +75,7 @@ update_permissions:
 - permission:
     check: null
     columns:
+    - active
     - end
     - name
     - start
