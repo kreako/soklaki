@@ -38,6 +38,11 @@
         </button>
       </div>
       <div v-if="observationDateInEdit">
+        <DatePicker
+          :value="observationEditDate"
+          @selected="observationDateSelected"
+          class="mt-2"
+        />
         <input
           type="text"
           v-model="observationEditDate"
@@ -271,6 +276,7 @@ import IconX from "../icons/IconX.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
 import StudentSelector from "../components/StudentSelector.vue";
 import CompetencySelector from "../components/CompetencySelector.vue";
+import DatePicker from "../components/DatePicker.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -317,6 +323,9 @@ const saveObservationText = async () => {
 
 const observationDateInEdit = ref(false);
 const observationEditDate = ref("");
+const observationDateSelected = (value) => {
+  observationEditDate.value = value;
+};
 const editObservationDate = () => {
   observationEditDate.value = observation.value.date;
   observationDateInEdit.value = true;

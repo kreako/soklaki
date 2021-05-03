@@ -67,10 +67,10 @@ export const dateDiffInDays = (d1, d2) => {
   return h / 24;
 };
 
-/// Return today date in string format
+/// Return a date in string format
 /// like 2021-04-06
-export const today = () => {
-  const d = new Date();
+/// d is a Date
+export const dateToString = (d) => {
   const year = d.getFullYear();
   const month = d.getMonth() + 1;
   const day = d.getDate();
@@ -78,6 +78,12 @@ export const today = () => {
   return `${year}-${month
     .toString()
     .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+};
+
+/// Return today date in string format
+/// like 2021-04-06
+export const today = () => {
+  return dateToString(new Date());
 };
 
 /// Return a string in french to display
@@ -89,4 +95,31 @@ export const dateToNiceString = (dt) => {
   const [date, time] = dt.split("T");
   const reduceTime = time.slice(0, 5);
   return `le ${date} à ${reduceTime}`;
+};
+
+const MONTHS = {
+  0: "Janvier",
+  1: "Février",
+  2: "Mars",
+  3: "Avril",
+  4: "Mai",
+  5: "Juin",
+  6: "Juillet",
+  7: "Août",
+  8: "Septembre",
+  9: "Octobre",
+  10: "Novembre",
+  11: "Décembre",
+};
+/// Get month name from month number
+/// month integer from 0 to 11 like Date API
+export const monthName = (month) => MONTHS[month];
+
+/// Return a list like : [{value: 0,text: "Janvier"}...]
+export const months = () => {
+  return Object.entries(MONTHS)
+    .map(([value, text]) => {
+      return { value: Number(value), text: text };
+    })
+    .sort((a, b) => a.value - b.value);
 };
