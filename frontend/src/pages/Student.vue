@@ -13,13 +13,13 @@
       :value="student.lastname"
       @save="saveLastname"
     />
-    <InputTextWithLabel
+    <InputDateWithLabel
       class="mt-8"
       label="Date d'anniversaire"
       :value="student.birthdate"
       @save="saveBirthdate"
     />
-    <InputTextWithLabel
+    <InputDateWithLabel
       class="mt-8"
       label="Date d'entrée à l'école"
       :value="student.school_entry"
@@ -27,11 +27,12 @@
     />
     <div class="mt-8">
       <div v-if="student.school_exit != null || addSchoolExit == true">
-        <InputTextWithLabel
+        <InputDateWithLabel
           class="mt-8"
           label="Date de sortie de l'école"
           :value="student.school_exit"
           :edit="addSchoolExit"
+          :nullable="true"
           @save="saveSchoolExit"
           @cancel="addSchoolExit = false"
         />
@@ -64,6 +65,7 @@ import { computed, ref, onMounted, watch } from "vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
+import InputDateWithLabel from "../components/InputDateWithLabel.vue";
 
 const store = useStore();
 const route = useRoute();
