@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
 import { dateJsObj, today } from "./utils/date";
-import { searchPeriod } from "./utils/period";
+import { searchOrCreatePeriod } from "./utils/period";
 import { computeRanks } from "./utils/socle";
 
 const state = {
@@ -535,9 +535,9 @@ const actions = {
     commit("setSocle", answer.data);
   },
 
-  async insertObservation({ commit, state }, { text }) {
+  async insertObservation({ commit, state, dispatch }, { text }) {
     const date = today();
-    const period = searchPeriod(date, state.periods);
+    const period = await searchOrCreatePeriod(date, state, dispatch);
     const periodId = period == null ? null : period.id;
     const answer = await axios.post("insert-observation", {
       text: text,
@@ -581,13 +581,12 @@ const actions = {
     }
   },
 
-  async updateObservationDate({ commit }, { id, date }) {
-    const period = searchPeriod(date, state.periods);
-    const periodId = period == null ? null : period.id;
+  async updateObservationDate({ commit, state, dispatch }, { id, date }) {
+    const period = await searchOrCreatePeriod(date, state, dispatch);
     const answer = await axios.post("update-observation-date", {
       id: id,
       date: date,
-      eval_period_id: periodId,
+      eval_period_id: period.id,
     });
 
     const data = answer.data.update_eval_observation_by_pk;
@@ -596,7 +595,6 @@ const actions = {
         id: ${id}\n
         date: ${date}`);
     } else {
-      const periodObj = period == null ? null : { id: period.id };
       commit("setObservation", data);
     }
   },
@@ -715,25 +713,6 @@ const actions = {
         groupName: ${groupName}`);
     }
     commit("setGroupName", groupName);
-  },
-
-  async insertPeriod({ commit, dispatch }, { groupId, name, start, end }) {
-    const answer = await axios.post("insert-period", {
-      group_id: groupId,
-      name: name,
-      start: start,
-      end: end,
-    });
-    const data = answer.data.insert_eval_period_one;
-    if (data == null) {
-      throw new Error(`Je n'ai pas réussi à créer cette période :(\n
-        groupId: ${groupId}\n
-        name: ${name}\n
-        start: ${start}\n
-        end: ${end}`);
-    }
-    // Reload periods
-    await dispatch("periods");
   },
 
   async saveUserName({ commit }, { userId, firstname, lastname }) {
@@ -858,16 +837,6 @@ const actions = {
     // Reload students and periods
     await dispatch("students");
     return studentId;
-  },
-
-  async periods({ commit, state }) {
-    const answer = await axios.post("periods", {
-      group_id: state.login.groupId,
-    });
-    commit("setPeriods", answer.data.periods);
-    if (answer.data.current_period.length > 0) {
-      commit("setCurrentPeriod", answer.data.current_period[0]);
-    }
   },
 
   async students({ commit, state }) {
@@ -1160,6 +1129,60 @@ const actions = {
     // Now reload the socle
     await dispatch("socle");
   },
+
+  async insertPeriod({ commit, state, dispatch }, { name, start, end }) {
+    const answer = await axios.post("insert-period", {
+      group_id: state.login.groupId,
+      name: name,
+      start: start,
+      end: end,
+    });
+    const data = answer.data.insert_eval_period_one;
+    if (data == null) {
+      throw new Error(`Je n'ai pas réussi à créer cette période :(\n
+        groupId: ${state.login.groupId}\n
+        name: ${name}\n
+        start: ${start}\n
+        end: ${end}`);
+    }
+    // Reload periods
+    await dispatch("periods");
+  },
+
+  async periods({ commit, state }) {
+    const answer = await axios.post("periods", {
+      group_id: state.login.groupId,
+    });
+    commit("setPeriods", answer.data.periods);
+    if (answer.data.current_period.length > 0) {
+      commit("setCurrentPeriod", answer.data.current_period[0]);
+    }
+  },
+
+  async updatePeriodActive({ dispatch }, { id, active }) {
+    await axios.post("update-period-active", { id, active });
+    // Reload periods
+    await dispatch("periods");
+  },
+
+  async updatePeriod({ dispatch }, { id, name, start, end }) {
+    await axios.post("update-period", { id, name, start, end });
+    await dispatch("periods");
+  },
+
+  // update-comment-active
+  // update-comment-date
+  // update-comment-text
+  //
+  // update-evaluation-active
+  // update-evaluation-date
+  // update-evaluation-status
+  // update-evaluation-comment
+  //
+  // evaluations
+  //
+  // insert-comment
+  // insert-evaluation
 };
 
 const buildStore = () => {
