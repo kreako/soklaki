@@ -225,30 +225,6 @@
             }
           }
         }
-    - name: insert-evaluation
-      query: |-
-        mutation InsertEvaluation($student_id: bigint!, $competency_id: Int!, $status: eval_status!, $comment: String!, $date: date!, $eval_period_id: Int, $user_id: bigint!) {
-          insert_eval_evaluation_one(object: {comment: $comment, competency_id: $competency_id, date: $date, eval_period_id: $eval_period_id, status: $status, student_id: $student_id, user_id: $user_id}) {
-            comment
-            created_at
-            date
-            id
-            status
-            updated_at
-            period {
-              id
-            }
-            user {
-              id
-            }
-            student {
-              id
-            }
-            competency {
-              id
-            }
-          }
-        }
     - name: insert-observation
       query: |-
         mutation InsertEvalObservation($text: String!, $user_id: bigint!, $date: date!, $eval_period_id: Int) {
@@ -1142,5 +1118,110 @@
                 id
               }
             }
+          }
+        }
+    - name: update-comment-active
+      query: |-
+        mutation UpdateCommentActive($id: bigint!, $active: Boolean!) {
+          update_eval_comment_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
+            id
+          }
+        }
+    - name: update-comment-date
+      query: |-
+        mutation UpdateCommentDate($id: bigint!, $date: date!, $eval_period_id: Int!) {
+          update_eval_comment_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id}) {
+            id
+          }
+        }
+    - name: update-comment-text
+      query: |-
+        mutation UpdateCommentText($id: bigint!, $text: String!) {
+          update_eval_comment_by_pk(pk_columns: {id: $id}, _set: {text: $text}) {
+            id
+          }
+        }
+    - name: update-evaluation-active
+      query: |-
+        mutation UpdateEvaluationActive($id: bigint!, $active: Boolean!) {
+          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
+            id
+          }
+        }
+    - name: update-evaluation-date
+      query: |-
+        mutation UpdateEvaluationDate($id: bigint!, $date: date!, $eval_period_id: Int!) {
+          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id}) {
+            id
+          }
+        }
+    - name: update-evaluation-status
+      query: |-
+        mutation UpdateEvaluationStatus($id: bigint!, $status: eval_status!) {
+          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {status: $status}) {
+            id
+          }
+        }
+    - name: update-evaluation-comment
+      query: |-
+        mutation UpdateEvaluationComment($id: bigint!, $comment: String!) {
+          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {comment: $comment}) {
+            id
+          }
+        }
+    - name: insert-evaluation
+      query: |-
+        mutation InsertEvaluation($period_id: Int!, $comment: String!, $competency_id: Int!, $date: date!, $status: eval_status!, $student_id: bigint!, $user_id: bigint!) {
+          insert_eval_evaluation_one(object: {active: true, eval_period_id: $period_id, comment: $comment, competency_id: $competency_id, date: $date, status: $status, student_id: $student_id, user_id: $user_id}) {
+            id
+            comment
+            competency_id
+            created_at
+            date
+            period_id: eval_period_id
+            status
+            student_id
+            updated_at
+            user_id
+          }
+        }
+    - name: insert-comment
+      query: |-
+        mutation InsertComment($period_id: Int!, $date: date!, $student_id: bigint!, $text: String!, $user_id: bigint!) {
+          insert_eval_comment_one(object: {active: true, date: $date, eval_period_id: $period_id, student_id: $student_id, text: $text, user_id: $user_id}) {
+            id
+            created_at
+            date
+            period_id: eval_period_id
+            student_id
+            text
+            updated_at
+            user_id
+          }
+        }
+    - name: evaluations
+      query: |-
+        query Evaluations($period_id: Int!) {
+          comments: eval_comment(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
+            id
+            period_id: eval_period_id
+            date
+            created_at
+            student_id
+            text
+            updated_at
+            user_id
+          }
+          evaluations: eval_evaluation(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
+            comment
+            competency_id
+            created_at
+            date
+            period_id: eval_period_id
+            id
+            status
+            student_id
+            updated_at
+            user_id
           }
         }

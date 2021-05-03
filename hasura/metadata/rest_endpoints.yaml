@@ -28,6 +28,24 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: evaluations
+  url: evaluations
+  methods:
+  - POST
+  name: evaluations
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: insert-comment
+  url: insert-comment
+  methods:
+  - POST
+  name: insert-comment
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-evaluation
   url: insert-evaluation
   methods:
@@ -247,6 +265,69 @@
   - POST
   name: students
   comment: List of students
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-comment-active
+  url: update-comment-active
+  methods:
+  - POST
+  name: update-comment-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-comment-date
+  url: update-comment-date
+  methods:
+  - POST
+  name: update-comment-date
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-comment-text
+  url: update-comment-text
+  methods:
+  - POST
+  name: update-comment-text
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-evaluation-active
+  url: update-evaluation-active
+  methods:
+  - POST
+  name: update-evaluation-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-evaluation-comment
+  url: update-evaluation-comment
+  methods:
+  - POST
+  name: update-evaluation-comment
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-evaluation-date
+  url: update-evaluation-date
+  methods:
+  - POST
+  name: update-evaluation-date
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-evaluation-status
+  url: update-evaluation-status
+  methods:
+  - POST
+  name: update-evaluation-status
+  comment: null
 - definition:
     query:
       collection_name: allowed-queries
