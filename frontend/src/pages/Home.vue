@@ -130,7 +130,7 @@ onMounted(async () => {
   // First steps conditions
   // TODO : maybe refine socle conditions (take in account the rest...)
   if (
-    store.state.periods.length === 0 ||
+    store.state.currentPeriod == null ||
     store.state.group.name == null ||
     currentUser.value.firstname == null ||
     currentUser.value.lastname == null ||
