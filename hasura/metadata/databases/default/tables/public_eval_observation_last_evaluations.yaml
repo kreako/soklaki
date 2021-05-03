@@ -46,7 +46,15 @@ select_permissions:
     - student_id
     - evaluation_id
     filter:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
   role: user
