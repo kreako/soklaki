@@ -194,43 +194,7 @@ def students(login):
 
 @pytest.fixture(scope="session")
 def periods(login):
-    today = date.today()
-    for year in range(today.year - 3, today.year + 2):
-        code, data = client.post(
-            "insert-period",
-            {
-                "group_id": login["group_id"],
-                "name": f"{year-1}/{year} S1",
-                "start": f"{year-1}-08-31",
-                "end": f"{year}-01-31",
-            },
-            login["token"],
-        )
-        assert code == 200
-        code, data = client.post(
-            "insert-period",
-            {
-                "group_id": login["group_id"],
-                "name": f"{year-1}/{year} S2",
-                "start": f"{year}-02-01",
-                "end": f"{year}-07-31",
-            },
-            login["token"],
-        )
-        assert code == 200
-    code, data = client.post("boot", {"group_id": login["group_id"]}, login["token"])
-    assert code == 200
-    periods = data["periods"]
-    current_period_id = data["current_period"][0]["id"]
-    for period in periods:
-        if period["id"] == current_period_id:
-            current_period = period
-            break
-    else:
-        print(periods)
-        print(current_period_id)
-        assert False
-    return {"periods": periods, "current_period": current_period}
+    return create_periods(login["group_id"], login["token"])
 
 
 @pytest.fixture(scope="session")
@@ -274,3 +238,106 @@ def socle(login):
     status_code, socle = client.post("socle", {}, login["token"])
     assert status == 200
     return socle
+
+
+@pytest.fixture(scope="session")
+def schools_credentials():
+    return [
+        ("school1@school1.fr", "password"),
+        ("school2@school2.fr", "password"),
+        ("school3@school3.fr", "password"),
+        ("school4@school4.fr", "password"),
+        ("school5@school5.fr", "password"),
+    ]
+
+
+@pytest.fixture(scope="session")
+def schools(schools_credentials):
+    """Create other schools"""
+
+    login_data = []
+    for (email, password) in schools_credentials:
+        # If user exists remove it
+        data = client.admin_gql(
+            """query TestEmail($email: String!) {
+            user(where: {email: {_eq: $email}}) {
+                group_id
+            }
+        }""",
+            {"email": email},
+        )
+        for user in data["data"]["user"]:
+            # OK for loop not necessary, but this is how graphql API works
+            delete_group_by_pk(user["group_id"])
+
+        # Signup
+        status_code, data = client.anonymous_post(
+            "signup", {"email": email, "password": password}
+        )
+        assert status_code == 200
+        l_data = {}
+        l_data["user_id"] = data["signup"]["id"]
+        l_data["group_id"] = data["signup"]["group"]
+        l_data["token"] = data["signup"]["token"]
+        login_data.append(l_data)
+
+    # MAke sure they have a socle
+    for l_data in login_data:
+        status, data = client.post(
+            "load-socle", {"group_id": l_data["group_id"]}, l_data["token"]
+        )
+        assert data["load_socle"] == {
+            "errorNonEmptySocle": False,
+            "errorUnknown": False,
+            "errorUnknownGroupId": False,
+        }
+
+    # And periods
+    for l_data in login_data:
+        create_periods(l_data["group_id"], l_data["token"])
+
+    yield login_data
+
+    for l_data in login_data:
+        # Now Remove the group and the user
+        delete_group_by_pk(l_data["group_id"])
+
+
+def create_periods(group_id, token):
+    today = date.today()
+    for year in range(today.year - 3, today.year + 2):
+        code, data = client.post(
+            "insert-period",
+            {
+                "group_id": group_id,
+                "name": f"{year-1}/{year} S1",
+                "start": f"{year-1}-08-31",
+                "end": f"{year}-01-31",
+            },
+            token,
+        )
+        assert code == 200
+        code, data = client.post(
+            "insert-period",
+            {
+                "group_id": group_id,
+                "name": f"{year-1}/{year} S2",
+                "start": f"{year}-02-01",
+                "end": f"{year}-07-31",
+            },
+            token,
+        )
+        assert code == 200
+    code, data = client.post("boot", {"group_id": group_id}, token)
+    assert code == 200
+    periods = data["periods"]
+    current_period_id = data["current_period"][0]["id"]
+    for period in periods:
+        if period["id"] == current_period_id:
+            current_period = period
+            break
+    else:
+        print(periods)
+        print(current_period_id)
+        assert False
+    return {"periods": periods, "current_period": current_period}
