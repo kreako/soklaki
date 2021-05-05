@@ -348,11 +348,11 @@ const mutations = {
   },
   setEvaluations(state, evaluations) {
     state.evaluations.evaluations = fromArrayToIdObjects(evaluations);
-    state.evaluations.sortedEvaluations = periods.map((x) => x.id);
+    state.evaluations.sortedEvaluations = evaluations.map((x) => x.id);
   },
   setEvalComments(state, comments) {
     state.evaluations.comments = fromArrayToIdObjects(comments);
-    state.evaluations.sortedComments = periods.map((x) => x.id);
+    state.evaluations.sortedComments = comments.map((x) => x.id);
   },
 };
 
