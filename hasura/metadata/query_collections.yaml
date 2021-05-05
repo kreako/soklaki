@@ -1068,22 +1068,6 @@
             id
           }
         }
-    - name: insert-evaluation
-      query: |-
-        mutation InsertEvaluation($period_id: Int!, $comment: String!, $competency_id: Int!, $date: date!, $status: eval_status!, $student_id: bigint!, $user_id: bigint!) {
-          insert_eval_evaluation_one(object: {active: true, eval_period_id: $period_id, comment: $comment, competency_id: $competency_id, date: $date, status: $status, student_id: $student_id, user_id: $user_id}) {
-            id
-            comment
-            competency_id
-            created_at
-            date
-            period_id: eval_period_id
-            status
-            student_id
-            updated_at
-            user_id
-          }
-        }
     - name: insert-comment
       query: |-
         mutation InsertComment($period_id: Int!, $date: date!, $student_id: bigint!, $text: String!, $user_id: bigint!) {
@@ -1094,32 +1078,6 @@
             period_id: eval_period_id
             student_id
             text
-            updated_at
-            user_id
-          }
-        }
-    - name: evaluations
-      query: |-
-        query Evaluations($period_id: Int!) {
-          comments: eval_comment(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
-            id
-            period_id: eval_period_id
-            date
-            created_at
-            student_id
-            text
-            updated_at
-            user_id
-          }
-          evaluations: eval_evaluation(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
-            comment
-            competency_id
-            created_at
-            date
-            period_id: eval_period_id
-            id
-            status
-            student_id
             updated_at
             user_id
           }
@@ -1236,6 +1194,61 @@
       query: |-
         mutation UpdatePeriod($id: Int!, $name: String!, $start: date!, $end: date!) {
           update_eval_period_by_pk(pk_columns: {id: $id}, _set: {name: $name, start: $start, end: $end}) {
+            id
+          }
+        }
+    - name: evaluations
+      query: |-
+        query Evaluations($period_id: Int!) {
+          comments: eval_comment(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
+            id
+            period_id: eval_period_id
+            date
+            created_at
+            student_id
+            text
+            updated_at
+            user_id
+            student_cycle {
+              cycle
+            }
+          }
+          evaluations: eval_evaluation(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
+            comment
+            competency_id
+            created_at
+            date
+            period_id: eval_period_id
+            id
+            status
+            student_id
+            updated_at
+            user_id
+            student_cycle {
+              cycle
+            }
+          }
+        }
+    - name: insert-evaluation
+      query: |-
+        mutation InsertEvaluation($period_id: Int!, $comment: String, $competency_id: Int!, $date: date!, $status: eval_status!, $student_id: bigint!, $user_id: bigint!) {
+          insert_eval_evaluation_one(object: {active: true, eval_period_id: $period_id, comment: $comment, competency_id: $competency_id, date: $date, status: $status, student_id: $student_id, user_id: $user_id}) {
+            id
+            comment
+            competency_id
+            created_at
+            date
+            period_id: eval_period_id
+            status
+            student_id
+            updated_at
+            user_id
+          }
+        }
+    - name: update-evaluation
+      query: |-
+        mutation UpdateEvaluation($id: bigint!, $date: date!, $eval_period_id: Int!, $comment: String, $status: eval_status!) {
+          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id, comment: $comment, status: $status}) {
             id
           }
         }

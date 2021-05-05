@@ -295,6 +295,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: update-evaluation
+  url: update-evaluation
+  methods:
+  - POST
+  name: update-evaluation
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: update-evaluation-active
   url: update-evaluation-active
   methods:
