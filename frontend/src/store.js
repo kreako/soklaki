@@ -51,13 +51,15 @@ const state = {
   observationsCount: null,
   evaluations: {
     // id -> evaluation object
-    evaluations: {},
+    store: {},
+    // Array of id, sorted by date desc
+    sorted: [],
+  },
+  comments: {
     // id -> comment object
-    comments: {},
+    store: {},
     // Array of id, sorted by date desc
-    sortedEvaluations: [],
-    // Array of id, sorted by date desc
-    sortedComments: [],
+    sorted: [],
   },
   // stats for the selected period
   stats: {
@@ -347,12 +349,12 @@ const mutations = {
     }
   },
   setEvaluations(state, evaluations) {
-    state.evaluations.evaluations = fromArrayToIdObjects(evaluations);
-    state.evaluations.sortedEvaluations = evaluations.map((x) => x.id);
+    state.evaluations.store = fromArrayToIdObjects(evaluations);
+    state.evaluations.sorted = evaluations.map((x) => x.id);
   },
   setEvalComments(state, comments) {
-    state.evaluations.comments = fromArrayToIdObjects(comments);
-    state.evaluations.sortedComments = comments.map((x) => x.id);
+    state.comments.store = fromArrayToIdObjects(comments);
+    state.comments.sorted = comments.map((x) => x.id);
   },
 };
 
@@ -415,6 +417,16 @@ const getters = {
           count: null,
         },
       },
+    };
+  },
+  containerById: (state) => (containerId) => {
+    if (containerId in state.socle.containers) {
+      return state.socle.containers[containerId];
+    }
+    return {
+      full_rank: null,
+      text: null,
+      cycle: null,
     };
   },
   competencyById: (state) => (competencyId) => {
@@ -1205,12 +1217,42 @@ const actions = {
   },
 
   async updateEvaluationComment({ dispatch }, { id, comment, periodId }) {
-    await axios.post("update-comment-text", { id, comment });
+    await axios.post("update-evaluation-comment", { id, comment });
     await dispatch("evaluations", { periodId });
   },
 
   async updateEvaluationStatus({ dispatch }, { id, status, periodId }) {
-    await axios.post("update-comment-status", { id, status });
+    await axios.post("update-evaluation-status", { id, status });
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateEvaluation(
+    { state, dispatch },
+    { id, date, periodId, comment, status }
+  ) {
+    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await axios.post("update-evaluation", {
+      id: id,
+      date: date,
+      eval_period_id: period.id,
+      comment: comment,
+      status: status,
+    });
+    // TODO not sure about period.id and periodId
+    // OK for now but maybe in the future...
+    await dispatch("evaluations", { periodId });
+  },
+
+  async updateComment({ state, dispatch }, { id, date, periodId, text }) {
+    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await axios.post("update-comment", {
+      id: id,
+      date: date,
+      eval_period_id: period.id,
+      text: text,
+    });
+    // TODO not sure about period.id and periodId
+    // OK for now but maybe in the future...
     await dispatch("evaluations", { periodId });
   },
 };
