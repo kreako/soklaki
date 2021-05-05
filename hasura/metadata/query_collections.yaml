@@ -1061,13 +1061,6 @@
             id
           }
         }
-    - name: update-evaluation-comment
-      query: |-
-        mutation UpdateEvaluationComment($id: bigint!, $comment: String!) {
-          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {comment: $comment}) {
-            id
-          }
-        }
     - name: insert-comment
       query: |-
         mutation InsertComment($period_id: Int!, $date: date!, $student_id: bigint!, $text: String!, $user_id: bigint!) {
@@ -1249,6 +1242,20 @@
       query: |-
         mutation UpdateEvaluation($id: bigint!, $date: date!, $eval_period_id: Int!, $comment: String, $status: eval_status!) {
           update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id, comment: $comment, status: $status}) {
+            id
+          }
+        }
+    - name: update-evaluation-comment
+      query: |-
+        mutation UpdateEvaluationComment($id: bigint!, $comment: String) {
+          update_eval_evaluation_by_pk(pk_columns: {id: $id}, _set: {comment: $comment}) {
+            id
+          }
+        }
+    - name: update-comment
+      query: |-
+        mutation UpdateComment($id: bigint!, $date: date!, $eval_period_id: Int!, $text: String!) {
+          update_eval_comment_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id, text: $text}) {
             id
           }
         }
