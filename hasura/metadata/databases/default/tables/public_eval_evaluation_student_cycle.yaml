@@ -1,0 +1,38 @@
+table:
+  name: eval_evaluation_student_cycle
+  schema: public
+object_relationships:
+- name: evaluation
+  using:
+    manual_configuration:
+      column_mapping:
+        evaluation_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_evaluation
+        schema: public
+- name: student
+  using:
+    manual_configuration:
+      column_mapping:
+        student_id: id
+      insertion_order: null
+      remote_table:
+        name: student
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - evaluation_id
+    - student_id
+    - cycle
+    filter:
+      _and:
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - evaluation:
+          period:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user
