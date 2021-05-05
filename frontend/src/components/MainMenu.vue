@@ -16,7 +16,9 @@
           <div>
             <router-link to="/observations"> Observations </router-link>
           </div>
-          <div>Évaluations</div>
+          <div>
+            <router-link to="/evaluations"> Évaluations </router-link>
+          </div>
           <div><router-link to="/students">Élèves</router-link></div>
           <div>Rapports</div>
           <div>

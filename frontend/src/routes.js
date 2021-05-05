@@ -53,6 +53,22 @@ const routes = [
         path: "/stats",
         component: () => import("./pages/Stats.vue"),
       },
+      {
+        path: "/evaluations",
+        component: () => import("./pages/Evaluations.vue"),
+      },
+      {
+        path: "/evaluations-by-cycle/:cycle",
+        component: () => import("./pages/EvaluationsByCycle.vue"),
+      },
+      {
+        path: "/evaluation/:cycle/comment",
+        component: () => import("./pages/EvaluationComment.vue"),
+      },
+      {
+        path: "/evaluation/:cycle/:id",
+        component: () => import("./pages/EvaluationCompetency.vue"),
+      },
     ],
   },
 ];
