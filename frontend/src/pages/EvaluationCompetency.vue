@@ -18,18 +18,18 @@
       </div>
     </div>
     <div class="">
-      <div v-for="studentId in students" class="mt-14">
+      <div v-for="student in students" class="mt-14">
         <div class="form-label">
-          {{ studentById(studentId).firstname }}
-          {{ studentById(studentId).lastname }}
+          {{ student.firstname }}
+          {{ student.lastname }}
         </div>
         <div class="mt-2">
           <EvalCompetency
-            :edit="editByStudent[studentId]"
-            :comment="evaluationByStudent[studentId].comment"
-            :status="evaluationByStudent[studentId].status"
-            @save="saveEvaluationByStudent[studentId]"
-            @cancel="cancelEvaluationByStudent[studentId]"
+            :edit="editByStudent[student.id]"
+            :comment="evaluationByStudent[student.id].comment"
+            :status="evaluationByStudent[student.id].status"
+            @save="saveEvaluationByStudent[student.id]"
+            @cancel="cancelEvaluationByStudent[student.id]"
           />
         </div>
       </div>
@@ -77,9 +77,21 @@ const competencyId = computed(() =>
 const competencyById = computed(() => store.getters.competencyById);
 
 const studentById = computed(() => store.getters.studentById);
-const students = computed(() =>
-  Object.keys(store.state.stats[route.params.cycle].commentsCount)
-);
+const students = ref([]);
+const fillStudents = () => {
+  if (store.state.currentPeriod == null) {
+    return;
+  }
+  const period = store.state.periods[store.state.currentPeriod];
+  const full = period.students.map((x) => studentById.value(x.student.id));
+  students.value = full.filter(
+    (x) => x.current_cycle.current_cycle === route.params.cycle
+  );
+  goInEdit();
+  fillCancelEvaluationByStudent();
+  fillSaveEvaluationByStudent();
+  fillEvaluationByStudent();
+};
 
 const previousCompetency = computed(() => {
   const competencies = Object.keys(store.state.stats[route.params.cycle].stats);
@@ -123,36 +135,39 @@ const container1 = computed(() => {
   }
 });
 
-const evaluationByStudent = computed(() => {
-  const evaluations = {};
-  for (const sId of students.value) {
-    const studentId = Number(sId);
+const evaluationByStudent = ref({});
+const fillEvaluationByStudent = () => {
+  for (const student of students.value) {
     const filtered = Object.values(store.state.evaluations.store).filter(
       (e) =>
-        e.student_id === studentId && e.competency_id === competencyId.value
+        e.student_id === student.id && e.competency_id === competencyId.value
     );
     if (filtered.length > 0) {
       const evaluation = filtered[0];
-      evaluations[studentId] = {
+      evaluationByStudent.value[student.id] = {
         id: evaluation.id,
         comment: evaluation.comment,
         status: evaluation.status,
       };
     } else {
-      evaluations[studentId] = { id: null, comment: null, status: "Emtpy" };
+      evaluationByStudent.value[student.id] = {
+        id: null,
+        comment: null,
+        status: "Emtpy",
+      };
     }
   }
-  return evaluations;
-});
+};
 
-const saveEvaluationByStudent = computed(() => {
+const saveEvaluationByStudent = ref({});
+const fillSaveEvaluationByStudent = () => {
   const handlers = {};
-  for (const studentId of students.value) {
-    handlers[studentId] = async ({ comment, status }) => {
-      const evaluation = evaluationByStudent.value[studentId];
+  for (const student of students.value) {
+    saveEvaluationByStudent.value[student.id] = async ({ comment, status }) => {
+      const evaluation = evaluationByStudent.value[student.id];
       if (evaluation.id == null) {
         await store.dispatch("insertEvaluation", {
-          studentId: studentId,
+          studentId: student.id,
           competencyId: competencyId.value,
           periodId: store.state.currentPeriod,
           date: today(),
@@ -168,34 +183,37 @@ const saveEvaluationByStudent = computed(() => {
           periodId: store.state.currentPeriod,
         });
       }
-      editByStudent.value[studentId] = false;
+      fillEvaluationByStudent();
+      editByStudent.value[student.id] = false;
     };
   }
-  return handlers;
-});
+};
 
-const cancelEvaluationByStudent = computed(() => {
-  const handlers = {};
-  for (const studentId of students.value) {
-    handlers[studentId] = async ({ comment, status }) => {
-      editByStudent.value[studentId] = false;
+const cancelEvaluationByStudent = ref({});
+const fillCancelEvaluationByStudent = () => {
+  for (const student of students.value) {
+    cancelEvaluationByStudent.value[student.id] = async ({
+      comment,
+      status,
+    }) => {
+      editByStudent.value[student.id] = false;
     };
   }
-  return handlers;
-});
+};
 
 const editByStudent = ref({});
-watch(students, () => {
-  for (const studentId of students.value) {
-    editByStudent.value[studentId] = true;
+const goInEdit = () => {
+  for (const student of students.value) {
+    editByStudent.value[student.id] = true;
   }
-});
+};
 watch(
   () => route.params.id,
   () => {
-    for (const studentId of students.value) {
-      editByStudent.value[studentId] = true;
-    }
+    goInEdit();
+    fillCancelEvaluationByStudent();
+    fillSaveEvaluationByStudent();
+    fillEvaluationByStudent();
   }
 );
 
@@ -204,12 +222,11 @@ onMounted(async () => {
   await store.dispatch("evaluations", {
     periodId: store.state.currentPeriod,
   });
-  // For students list
+  // For previous/next
   await store.dispatch("stats", {
     periodId: store.state.currentPeriod,
   });
-  for (const studentId of students.value) {
-    editByStudent.value[studentId] = true;
-  }
+  goInEdit();
+  fillStudents();
 });
 </script>
