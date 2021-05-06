@@ -136,6 +136,18 @@ async def load(gql_client, input: LoadSocleInput):
         )
     new_ids = await gql_client.insert_competencies_subjects(news)
 
+    news = []
+    for cs in default_socle["templates"]:
+        news.append(
+            {
+                "competency_id": competencies[cs["competency_id"]],
+                "active": True,
+                "text": cs["text"],
+                "group_id": group_id,
+            }
+        )
+    new_ids = await gql_client.insert_competencies_templates(news)
+
     return LoadSocleOutput(
         errorUnknownGroupId=False,
         errorNonEmptySocle=False,

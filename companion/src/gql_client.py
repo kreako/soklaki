@@ -157,6 +157,11 @@ class GqlClient(object):
                         id
                         subject_id
                     }
+                    templates: default_socle_competency_template {
+                        competency_id
+                        id
+                        text
+                    }
                 }""",
             {},
         )
@@ -219,3 +224,18 @@ class GqlClient(object):
             },
         )
         return r["data"]["insert_socle_competency_subject"]["returning"]
+
+    async def insert_competencies_templates(self, competencies_templates):
+        r = await self.run_query(
+            """ mutation InsertCompetenciesTemplates($objects: [socle_competency_template_insert_input!]!) {
+                    insert_socle_competency_template(objects: $objects) {
+                        returning {
+                            id
+                        }
+                    }
+                }""",
+            {
+                "objects": competencies_templates,
+            },
+        )
+        return r["data"]["insert_socle_competency_template"]["returning"]
