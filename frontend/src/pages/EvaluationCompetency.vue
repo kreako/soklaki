@@ -5,12 +5,12 @@
     </div>
     <div class="mt-4">
       <div class="uppercase tracking-wide text-gray-700">
-        {{ containerById(container1).rank }}.
-        {{ containerById(container1).text }}
+        {{ competencyFathers[0].rank }}.
+        {{ competencyFathers[0].text }}
       </div>
-      <div v-if="container2 != null" class="text-gray-700">
-        {{ containerById(container2).rank }}.
-        {{ containerById(container2).text }}
+      <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
+        {{ competencyFathers[1].rank }}.
+        {{ competencyFathers[1].text }}
       </div>
       <div>
         {{ competencyById(competencyId).rank }}.
@@ -63,6 +63,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { until } from "@vueuse/core";
 import { today } from "../utils/date";
+import { fathers } from "../utils/competency";
 import EvalCompetency from "../components/EvalCompetency.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
@@ -119,21 +120,7 @@ const nextCompetency = computed(() => {
 });
 
 const containerById = computed(() => store.getters.containerById);
-const container2 = ref(null);
-const container1 = computed(() => {
-  if (!(competencyId.value in store.state.socle.competencies)) {
-    return null;
-  }
-  const competency = competencyById.value(competencyId.value);
-  const father = containerById.value(competency.container_id);
-  if (father.container_id == null) {
-    container2.value = null;
-    return father.id;
-  } else {
-    container2.value = father.id;
-    return father.container_id;
-  }
-});
+const competencyFathers = computed(() => fathers(store, competencyId.value));
 
 const evaluationByStudent = ref({});
 const fillEvaluationByStudent = () => {
