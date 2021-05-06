@@ -1,96 +1,92 @@
 <template>
   <div class="my-4 px-2">
-    mobile : {{ mobile }}
-    <div class="form-label">Plein de statistiques !</div>
-    <div class="mt-4 form-sub-label">Cycle 1</div>
-    <div class="mt-2">
-      <StatsDetails :stats="stats.c1" @selectedCompetency="selectCompetency" />
+    <div class="form-label">
+      Plein de statistiques sur le cycle {{ cycleNb(route.params.cycle) }}
     </div>
-    <div class="mt-20 form-sub-label">Cycle 2</div>
-    <div class="mt-2">
-      <StatsDetails :stats="stats.c2" @selectedCompetency="selectCompetency" />
-    </div>
-    <div class="mt-20 form-sub-label">Cycle 3</div>
-    <div class="mt-2">
-      <StatsDetails :stats="stats.c3" @selectedCompetency="selectCompetency" />
-    </div>
-    <div class="mt-20 form-sub-label">Cycle 4</div>
-    <div class="mt-2">
-      <StatsDetails :stats="stats.c4" @selectedCompetency="selectCompetency" />
-    </div>
-  </div>
-  <TransitionRoot appear :show="showCompetencyModal" as="template">
-    <Dialog
-      as="div"
-      static
-      :open="showCompetencyModal"
-      @close="showCompetencyModal = false"
-    >
-      <div class="fixed inset-0 z-10 overflow-y-auto">
-        <div class="min-h-screen md:px-4 text-center">
-          <!--
-          <TransitionChild
-            as="template"
-            enter="duration-300 ease-out"
-            enter-from="opacity-0"
-            enter-to="opacity-0"
-            leave="duration-200 ease-in"
-            leave-from="opacity-0"
-            leave-to="opacity-0"
-          >-->
-          <DialogOverlay class="fixed inset-0 bg-black opacity-50" />
-          <!--</TransitionChild>-->
-
-          <span class="inline-block h-screen align-middle" aria-hidden="true">
-            &#8203;
-          </span>
-
-          <TransitionChild
-            as="template"
-            enter="duration-300 ease-out"
-            enter-from="opacity-0 scale-95"
-            enter-to="opacity-100 scale-100"
-            leave="duration-200 ease-in"
-            leave-from="opacity-100 scale-100"
-            leave-to="opacity-0 scale-95"
+    <div class="mt-12">
+      <div v-for="slice in students">
+        <div class="flex flex-row mt-20">
+          <div class="w-16"></div>
+          <div
+            v-for="studentId in slice"
+            class="text-xs w-8 self-end writing-mode-vertical-lr"
           >
-            <div
-              class="inline-block w-full max-w-md p-6 md:my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
-            >
-              <DialogTitle
-                as="h3"
-                class="text-lg font-medium leading-6 text-gray-900"
-              >
-                La compétence {{ competencyById(selectedCompetency).full_rank }}
-              </DialogTitle>
-              <div class="mt-2">
-                <p class="text-sm text-gray-500">
-                  {{ competencyById(selectedCompetency).text }}
-                </p>
-              </div>
-
-              <div class="mt-4">
-                <button
-                  type="button"
-                  class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                  @click="showCompetencyModal = false"
-                >
-                  OK
-                </button>
-              </div>
+            {{ studentById(studentId).firstname }}
+            {{ studentById(studentId).lastname }}
+          </div>
+        </div>
+        <div class="mt-2">
+          <div
+            v-for="(statByStudents, competencyId) in stats.stats"
+            class="flex flex-row items-center leading-tight"
+          >
+            <div class="w-16 text-gray-700 text-right pr-2 hover:text-teal-500">
+              <button @click="selectCompetency(competencyId)">
+                {{ competencyById(competencyId).full_rank }}
+              </button>
             </div>
-          </TransitionChild>
+            <div v-for="studentId in slice" class="flex flex-row space-x-1 w-8">
+              <button
+                :class="
+                  statByStudents[studentId].observations > 0
+                    ? 'bg-green-500'
+                    : 'bg-red-500'
+                "
+                class="w-2 h-2"
+              ></button>
+              <button
+                :class="{
+                  'bg-red-500':
+                    statByStudents[studentId].evaluations.status === 'Empty',
+                  'bg-blue-500':
+                    statByStudents[studentId].evaluations.status ===
+                    'NotAcquired',
+                  'bg-teal-500':
+                    statByStudents[studentId].evaluations.status ===
+                    'InProgress',
+                  'bg-green-500':
+                    statByStudents[studentId].evaluations.status ===
+                      'Acquired' ||
+                    statByStudents[studentId].evaluations.status === 'TipTop',
+                }"
+                class="w-2 h-2"
+              ></button>
+            </div>
+          </div>
         </div>
       </div>
-    </Dialog>
-  </TransitionRoot>
+    </div>
+    <Modal
+      :title="competencyModalTitle"
+      :show="showCompetencyModal"
+      @close="closeCompetencyModal"
+    >
+      <div>
+        <div class="uppercase tracking-wide text-gray-700">
+          {{ competencyFathers[0].rank }}.
+          {{ competencyFathers[0].text }}
+        </div>
+        <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
+          {{ competencyFathers[1].rank }}.
+          {{ competencyFathers[1].text }}
+        </div>
+        <div>
+          {{ competencyById(selectedCompetency).rank }}.
+          {{ competencyById(selectedCompetency).text }}
+        </div>
+      </div>
+    </Modal>
+  </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
 import { until } from "@vueuse/core";
-import StatsDetails from "../components/StatsDetails.vue";
+import { cycleNb } from "../utils/cycle";
+import { fathers } from "../utils/competency";
+import Modal from "../components/Modal.vue";
 import {
   TransitionRoot,
   TransitionChild,
@@ -101,13 +97,15 @@ import {
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 
 const store = useStore();
+const route = useRoute();
 
-const stats = computed(() => store.state.stats);
+const studentById = computed(() => store.getters.studentById);
+const competencyById = computed(() => store.getters.competencyById);
+
+const stats = computed(() => store.state.stats[route.params.cycle]);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const mobile = breakpoints.smaller("md");
-
-const competencyById = computed(() => store.getters.competencyById);
 
 const selectedCompetency = ref(null);
 const showCompetencyModal = ref(false);
@@ -115,9 +113,55 @@ const selectCompetency = (id) => {
   selectedCompetency.value = id;
   showCompetencyModal.value = true;
 };
+const closeCompetencyModal = () => {
+  showCompetencyModal.value = false;
+};
+const competencyModalTitle = computed(() => {
+  if (selectedCompetency.value == null) {
+    return null;
+  }
+  const competency = competencyById.value(selectedCompetency.value);
+  return `Compétence - ${competency.full_rank}`;
+});
+const competencyFathers = computed(() =>
+  fathers(store, selectedCompetency.value)
+);
+
+const students = computed(() => {
+  if (store.state.stats[route.params.cycle].studentsCount === null) {
+    return [];
+  }
+  const full = store.state.periods[store.state.currentPeriod].students.map(
+    (x) => x.student.id
+  );
+  const filtered = full.filter(
+    (x) =>
+      store.state.students[x].current_cycle.current_cycle === route.params.cycle
+  );
+  let sliceSize = 20;
+  if (mobile.value) {
+    sliceSize = 7;
+  }
+  const students = [];
+  let index = 0;
+  while (true) {
+    const slice = filtered.slice(index, index + sliceSize);
+    if (slice.length === 0) {
+      return students;
+    }
+    students.push(slice);
+    index = index + sliceSize;
+  }
+});
 
 onMounted(async () => {
   await until(() => store.state.currentPeriod).not.toBeNull();
   await store.dispatch("stats", { periodId: store.state.currentPeriod });
 });
 </script>
+
+<style>
+.writing-mode-vertical-lr {
+  writing-mode: vertical-lr;
+}
+</style>

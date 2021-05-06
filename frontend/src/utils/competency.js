@@ -24,3 +24,20 @@ export const isSubjectInCompetency = (subjectId, competency) => {
   const f = competency.subjects.find((x) => x.subject_id === subjectId);
   return f != undefined;
 };
+
+/// Return a list of father containers
+/// [container1, null_default] or [container1, container2]
+export const fathers = (store, competencyId) => {
+  const null_one = store.getters.containerById(null);
+  if (!(competencyId in store.state.socle.competencies)) {
+    return [null_one, null_one];
+  }
+  const competency = store.getters.competencyById(competencyId);
+  const father = store.getters.containerById(competency.container_id);
+  if (father.container_id == null) {
+    return [father, null_one];
+  } else {
+    const grand_father = store.getters.containerById(father.container_id);
+    return [grand_father, father];
+  }
+};

@@ -50,7 +50,7 @@ const routes = [
         component: () => import("./pages/Socle.vue"),
       },
       {
-        path: "/stats",
+        path: "/stats/:cycle",
         component: () => import("./pages/Stats.vue"),
       },
       {
