@@ -473,6 +473,14 @@ const getters = {
       title: null,
     };
   },
+  templateById: (state) => (templateId) => {
+    if (templateId != null && templateId in state.socle.templates) {
+      return state.socle.templates[templateId];
+    }
+    return {
+      text: null,
+    };
+  },
 };
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
