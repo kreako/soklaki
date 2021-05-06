@@ -1,17 +1,17 @@
 <template>
-  <div class="group flex flex-row items-center space-x-2">
+  <div class="group flex flex-row items-center justify-start space-x-2">
     <div
       v-if="kind === 'container1'"
-      class="uppercase tracking-wide text-gray-700"
+      class="uppercase tracking-wide text-gray-700 text-left"
     >
       {{ object.rank }}.
       {{ object.text }}
     </div>
-    <div v-else-if="kind === 'container2'" class="text-gray-700">
+    <div v-else-if="kind === 'container2'" class="text-gray-700 text-left">
       {{ object.rank }}.
       {{ object.text }}
     </div>
-    <div v-else class="">
+    <div v-else class="text-left">
       {{ object.rank }}.
       {{ object.text }}
     </div>

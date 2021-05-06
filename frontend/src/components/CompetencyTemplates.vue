@@ -1,7 +1,7 @@
 <template>
-  <div v-if="subjects.length > 0" class="group flex flex-row space-x-2">
-    <div v-for="subject in subjects" class="text-sm text-gray-700">
-      #{{ subjectById(subject.subject_id).title }}
+  <div v-if="templates.length > 0" class="group">
+    <div v-for="template in templates" class="text-sm text-gray-700">
+      {{ templateById(template.id).text }}
     </div>
     <button @click="edit" class="text-gray-200 group-hover:text-gray-700">
       <IconPencil class="hover:text-teal-500 h-3" />
@@ -17,11 +17,11 @@ import IconPencil from "../icons/IconPencil.vue";
 const store = useStore();
 
 const props = defineProps({
-  subjects: Array,
+  templates: Array,
 });
 const emit = defineEmit(["edit"]);
 
-const subjectById = computed(() => store.getters.subjectById);
+const templateById = computed(() => store.getters.templateById);
 const edit = () => {
   emit("edit");
 };

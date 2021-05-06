@@ -20,30 +20,44 @@
       </div>
       <!-- competencies attached to container level 2 -->
       <div v-for="competency in container2.competencies" class="pl-2">
-        <RankText
-          kind="competency"
-          :socle="socle"
-          :objectId="competency.id"
-          @edit="editCompetency(competency.id)"
-        />
-        <HashSubjects
-          :subjects="competency.subjects"
-          @edit="editSubjects(competency.id)"
-        />
+        <Disclosure>
+          <DisclosureButton class="">
+            <RankText
+              kind="competency"
+              :socle="socle"
+              :objectId="competency.id"
+              @edit="editCompetency(competency.id)"
+            />
+          </DisclosureButton>
+          <DisclosurePanel class="pl-2">
+            <HashSubjects
+              :subjects="competency.subjects"
+              @edit="editSubjects(competency.id)"
+            />
+            <CompetencyTemplates :templates="competency.templates" />
+          </DisclosurePanel>
+        </Disclosure>
       </div>
     </div>
     <div v-for="competency in container1.competencies" class="pl-2">
       <!-- competencies attached to container level 1 -->
-      <RankText
-        kind="competency"
-        :socle="socle"
-        :objectId="competency.id"
-        @edit="editCompetency(competency.id)"
-      />
-      <HashSubjects
-        :subjects="competency.subjects"
-        @edit="editSubjects(competency.id)"
-      />
+      <Disclosure>
+        <DisclosureButton class="">
+          <RankText
+            kind="competency"
+            :socle="socle"
+            :objectId="competency.id"
+            @edit="editCompetency(competency.id)"
+          />
+        </DisclosureButton>
+        <DisclosurePanel class="pl-2">
+          <HashSubjects
+            :subjects="competency.subjects"
+            @edit="editSubjects(competency.id)"
+          />
+          <CompetencyTemplates :templates="competency.templates" />
+        </DisclosurePanel>
+      </Disclosure>
     </div>
   </div>
   <Modal
@@ -57,9 +71,11 @@
 <script setup>
 import { defineProps, computed, ref } from "vue";
 import { useStore } from "vuex";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { filterSocleBySubject } from "../utils/socle";
 import RankText from "./RankText.vue";
 import HashSubjects from "./HashSubjects.vue";
+import CompetencyTemplates from "./CompetencyTemplates.vue";
 import Modal from "./Modal.vue";
 
 const store = useStore();
