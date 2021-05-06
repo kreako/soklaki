@@ -34,7 +34,8 @@
                 "
                 class="w-2 h-2"
               ></button>
-              <button
+              <router-link
+                :to="`/evaluation-single/${route.params.cycle}/${competencyId}/${studentId}`"
                 :class="{
                   'bg-red-500':
                     statByStudents[studentId].evaluations.status === 'Empty',
@@ -50,7 +51,7 @@
                     statByStudents[studentId].evaluations.status === 'TipTop',
                 }"
                 class="w-2 h-2"
-              ></button>
+              ></router-link>
             </div>
           </div>
         </div>

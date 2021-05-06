@@ -55,6 +55,16 @@ const state = {
     store: {},
     // Array of id, sorted by date desc
     sorted: [],
+    // Single evaluation loaded by evaluationSingle
+    evaluation: {
+      comment: null,
+      created_at: null,
+      date: null,
+      id: null,
+      status: null,
+      updated_at: null,
+      user_id: null,
+    },
   },
   comments: {
     // id -> comment object
@@ -353,6 +363,21 @@ const mutations = {
   setEvaluations(state, evaluations) {
     state.evaluations.store = fromArrayToIdObjects(evaluations);
     state.evaluations.sorted = evaluations.map((x) => x.id);
+  },
+  setEvaluationSingle(state, evaluation) {
+    if (evaluation == null) {
+      state.evaluations.evaluation = {
+        comment: null,
+        created_at: null,
+        date: null,
+        id: null,
+        status: null,
+        updated_at: null,
+        user_id: null,
+      };
+    } else {
+      state.evaluations.evaluation = evaluation;
+    }
   },
   setEvalComments(state, comments) {
     state.comments.store = fromArrayToIdObjects(comments);
@@ -1264,6 +1289,23 @@ const actions = {
     // TODO not sure about period.id and periodId
     // OK for now but maybe in the future...
     await dispatch("evaluations", { periodId });
+  },
+
+  async evaluationSingle(
+    { state, commit },
+    { competencyId, periodId, studentId }
+  ) {
+    const answer = await axios.post("evaluation-single", {
+      competency_id: competencyId,
+      period_id: periodId,
+      student_id: studentId,
+    });
+    const data = answer.data.eval_evaluation;
+    if (data.length === 1) {
+      commit("setEvaluationSingle", data[0]);
+    } else {
+      commit("setEvaluationSingle", null);
+    }
   },
 };
 

@@ -70,6 +70,10 @@ const routes = [
         component: () => import("./pages/EvaluationCompetency.vue"),
       },
       {
+        path: "/evaluation-single/:cycle/:competencyId/:studentId",
+        component: () => import("./pages/EvaluationSingle.vue"),
+      },
+      {
         path: "/settings",
         component: () => import("./pages/Settings.vue"),
       },
