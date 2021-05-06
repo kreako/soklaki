@@ -820,205 +820,6 @@
             id
           }
         }
-    - name: socle
-      query: |-
-        query Socle {
-          c1: socle_container(
-            order_by: { alpha_full_rank: asc }
-            where: {
-              cycle: { _eq: "c1" }
-              container_id: { _is_null: true }
-              active: { _eq: true }
-            }
-          ) {
-            id
-            children(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              competencies(
-                order_by: { alpha_full_rank: asc }
-                where: { active: { _eq: true } }
-              ) {
-                id
-                subjects(
-                  order_by: { subject: { title: asc } }
-                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-                ) {
-                  id
-                  subject_id
-                }
-              }
-            }
-            competencies(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              subjects(
-                order_by: { subject: { title: asc } }
-                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-              ) {
-                id
-                subject_id
-              }
-            }
-          }
-          c2: socle_container(
-            order_by: { alpha_full_rank: asc }
-            where: {
-              cycle: { _eq: "c2" }
-              container_id: { _is_null: true }
-              active: { _eq: true }
-            }
-          ) {
-            id
-            children(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              competencies(
-                order_by: { alpha_full_rank: asc }
-                where: { active: { _eq: true } }
-              ) {
-                id
-                subjects(
-                  order_by: { subject: { title: asc } }
-                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-                ) {
-                  id
-                  subject_id
-                }
-              }
-            }
-            competencies(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              subjects(
-                order_by: { subject: { title: asc } }
-                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-              ) {
-                id
-                subject_id
-              }
-            }
-          }
-          c3: socle_container(
-            order_by: { alpha_full_rank: asc }
-            where: {
-              cycle: { _eq: "c3" }
-              container_id: { _is_null: true }
-              active: { _eq: true }
-            }
-          ) {
-            id
-            children(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              competencies(
-                order_by: { alpha_full_rank: asc }
-                where: { active: { _eq: true } }
-              ) {
-                id
-                subjects(
-                  order_by: { subject: { title: asc } }
-                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-                ) {
-                  id
-                  subject_id
-                }
-              }
-            }
-            competencies(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              subjects(
-                order_by: { subject: { title: asc } }
-                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-              ) {
-                id
-                subject_id
-              }
-            }
-          }
-          c4: socle_container(
-            order_by: { alpha_full_rank: asc }
-            where: {
-              cycle: { _eq: "c4" }
-              container_id: { _is_null: true }
-              active: { _eq: true }
-            }
-          ) {
-            id
-            children(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              competencies(
-                order_by: { alpha_full_rank: asc }
-                where: { active: { _eq: true } }
-              ) {
-                id
-                subjects(
-                  order_by: { subject: { title: asc } }
-                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-                ) {
-                  id
-                  subject_id
-                }
-              }
-            }
-            competencies(
-              order_by: { alpha_full_rank: asc }
-              where: { active: { _eq: true } }
-            ) {
-              id
-              subjects(
-                order_by: { subject: { title: asc } }
-                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-              ) {
-                id
-                subject_id
-              }
-            }
-          }
-          competencies: socle_competency(where: { active: { _eq: true } }) {
-            container_id
-            cycle
-            full_rank
-            id
-            rank
-            text
-            subjects(
-              order_by: { subject: { title: asc } }
-              where: { subject: { active: { _eq: true } }, active: { _eq: true } }
-            ) {
-              id
-              subject_id
-            }
-          }
-          containers: socle_container(where: { active: { _eq: true } }) {
-            id
-            container_id
-            full_rank
-            cycle
-            rank
-            text
-          }
-          subjects: socle_subject(where: { active: { _eq: true } }) {
-            id
-            title
-          }
-        }
     - name: update-comment-active
       query: |-
         mutation UpdateCommentActive($id: bigint!, $active: Boolean!) {
@@ -1257,5 +1058,238 @@
         mutation UpdateComment($id: bigint!, $date: date!, $eval_period_id: Int!, $text: String!) {
           update_eval_comment_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id, text: $text}) {
             id
+          }
+        }
+    - name: socle
+      query: |-
+        query Socle {
+          c1: socle_container(
+            order_by: { alpha_full_rank: asc }
+            where: {
+              cycle: { _eq: "c1" }
+              container_id: { _is_null: true }
+              active: { _eq: true }
+            }
+          ) {
+            id
+            children(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              competencies(
+                order_by: { alpha_full_rank: asc }
+                where: { active: { _eq: true } }
+              ) {
+                id
+                subjects(
+                  order_by: { subject: { title: asc } }
+                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+                ) {
+                  id
+                  subject_id
+                }
+                templates {
+                  id
+                }
+              }
+            }
+            competencies(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              subjects(
+                order_by: { subject: { title: asc } }
+                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+              ) {
+                id
+                subject_id
+              }
+              templates {
+                id
+              }
+            }
+          }
+          c2: socle_container(
+            order_by: { alpha_full_rank: asc }
+            where: {
+              cycle: { _eq: "c2" }
+              container_id: { _is_null: true }
+              active: { _eq: true }
+            }
+          ) {
+            id
+            children(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              competencies(
+                order_by: { alpha_full_rank: asc }
+                where: { active: { _eq: true } }
+              ) {
+                id
+                subjects(
+                  order_by: { subject: { title: asc } }
+                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+                ) {
+                  id
+                  subject_id
+                }
+                templates {
+                  id
+                }
+              }
+            }
+            competencies(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              subjects(
+                order_by: { subject: { title: asc } }
+                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+              ) {
+                id
+                subject_id
+              }
+              templates {
+                id
+              }
+            }
+          }
+          c3: socle_container(
+            order_by: { alpha_full_rank: asc }
+            where: {
+              cycle: { _eq: "c3" }
+              container_id: { _is_null: true }
+              active: { _eq: true }
+            }
+          ) {
+            id
+            children(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              competencies(
+                order_by: { alpha_full_rank: asc }
+                where: { active: { _eq: true } }
+              ) {
+                id
+                subjects(
+                  order_by: { subject: { title: asc } }
+                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+                ) {
+                  id
+                  subject_id
+                }
+                templates {
+                  id
+                }
+              }
+            }
+            competencies(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              subjects(
+                order_by: { subject: { title: asc } }
+                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+              ) {
+                id
+                subject_id
+              }
+              templates {
+                id
+              }
+            }
+          }
+          c4: socle_container(
+            order_by: { alpha_full_rank: asc }
+            where: {
+              cycle: { _eq: "c4" }
+              container_id: { _is_null: true }
+              active: { _eq: true }
+            }
+          ) {
+            id
+            children(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              competencies(
+                order_by: { alpha_full_rank: asc }
+                where: { active: { _eq: true } }
+              ) {
+                id
+                subjects(
+                  order_by: { subject: { title: asc } }
+                  where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+                ) {
+                  id
+                  subject_id
+                }
+                templates {
+                  id
+                }
+              }
+            }
+            competencies(
+              order_by: { alpha_full_rank: asc }
+              where: { active: { _eq: true } }
+            ) {
+              id
+              subjects(
+                order_by: { subject: { title: asc } }
+                where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+              ) {
+                id
+                subject_id
+              }
+              templates {
+                id
+              }
+            }
+          }
+          competencies: socle_competency(where: { active: { _eq: true } }) {
+            container_id
+            cycle
+            full_rank
+            id
+            rank
+            text
+            subjects(
+              order_by: { subject: { title: asc } }
+              where: { subject: { active: { _eq: true } }, active: { _eq: true } }
+            ) {
+              id
+              subject_id
+            }
+            templates {
+              id
+            }
+          }
+          containers: socle_container(where: { active: { _eq: true } }) {
+            id
+            container_id
+            full_rank
+            cycle
+            rank
+            text
+          }
+          subjects: socle_subject(where: { active: { _eq: true } }) {
+            id
+            title
+          }
+          templates: socle_competency_template(where: { active: { _eq: true } }) {
+            competency_id
+            created_at
+            id
+            text
+            updated_at
           }
         }

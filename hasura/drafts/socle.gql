@@ -25,6 +25,9 @@ query Socle {
           id
           subject_id
         }
+        templates {
+          id
+        }
       }
     }
     competencies(
@@ -38,6 +41,9 @@ query Socle {
       ) {
         id
         subject_id
+      }
+      templates {
+        id
       }
     }
   }
@@ -67,6 +73,9 @@ query Socle {
           id
           subject_id
         }
+        templates {
+          id
+        }
       }
     }
     competencies(
@@ -80,6 +89,9 @@ query Socle {
       ) {
         id
         subject_id
+      }
+      templates {
+        id
       }
     }
   }
@@ -109,6 +121,9 @@ query Socle {
           id
           subject_id
         }
+        templates {
+          id
+        }
       }
     }
     competencies(
@@ -122,6 +137,9 @@ query Socle {
       ) {
         id
         subject_id
+      }
+      templates {
+        id
       }
     }
   }
@@ -151,6 +169,9 @@ query Socle {
           id
           subject_id
         }
+        templates {
+          id
+        }
       }
     }
     competencies(
@@ -164,6 +185,9 @@ query Socle {
       ) {
         id
         subject_id
+      }
+      templates {
+        id
       }
     }
   }
@@ -181,6 +205,9 @@ query Socle {
       id
       subject_id
     }
+    templates {
+      id
+    }
   }
   containers: socle_container(where: { active: { _eq: true } }) {
     id
@@ -193,5 +220,12 @@ query Socle {
   subjects: socle_subject(where: { active: { _eq: true } }) {
     id
     title
+  }
+  templates: socle_competency_template(where: { active: { _eq: true } }) {
+    competency_id
+    created_at
+    id
+    text
+    updated_at
   }
 }
