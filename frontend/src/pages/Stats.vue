@@ -74,6 +74,16 @@
           {{ competencyById(selectedCompetency).rank }}.
           {{ competencyById(selectedCompetency).text }}
         </div>
+        <div class="mt-2 pl-2">
+          <HashSubjects
+            :subjects="competencyById(selectedCompetency).subjects"
+          />
+        </div>
+        <div class="mt-2 pl-2">
+          <CompetencyTemplates
+            :templates="competencyById(selectedCompetency).templates"
+          />
+        </div>
       </div>
     </Modal>
   </div>
@@ -95,6 +105,8 @@ import {
   DialogTitle,
 } from "@headlessui/vue";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import HashSubjects from "../components/HashSubjects.vue";
+import CompetencyTemplates from "../components/CompetencyTemplates.vue";
 
 const store = useStore();
 const route = useRoute();

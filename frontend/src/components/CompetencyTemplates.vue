@@ -1,9 +1,13 @@
 <template>
   <div v-if="templates.length > 0" class="group">
-    <div v-for="template in templates" class="text-sm text-gray-700">
+    <div v-for="template in templates" class="text-sm text-gray-700 mt-1">
       {{ templateById(template.id).text }}
     </div>
-    <button @click="edit" class="text-gray-200 group-hover:text-gray-700">
+    <button
+      v-if="editable"
+      @click="edit"
+      class="text-gray-200 group-hover:text-gray-700"
+    >
       <IconPencil class="hover:text-teal-500 h-3" />
     </button>
   </div>
@@ -17,6 +21,10 @@ import IconPencil from "../icons/IconPencil.vue";
 const store = useStore();
 
 const props = defineProps({
+  editable: {
+    type: Boolean,
+    default: false,
+  },
   templates: Array,
 });
 const emit = defineEmit(["edit"]);

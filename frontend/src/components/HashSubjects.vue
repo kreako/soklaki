@@ -3,7 +3,11 @@
     <div v-for="subject in subjects" class="text-sm text-gray-700">
       #{{ subjectById(subject.subject_id).title }}
     </div>
-    <button @click="edit" class="text-gray-200 group-hover:text-gray-700">
+    <button
+      v-if="editable"
+      @click="edit"
+      class="text-gray-200 group-hover:text-gray-700"
+    >
       <IconPencil class="hover:text-teal-500 h-3" />
     </button>
   </div>
@@ -17,6 +21,10 @@ import IconPencil from "../icons/IconPencil.vue";
 const store = useStore();
 
 const props = defineProps({
+  editable: {
+    type: Boolean,
+    default: false,
+  },
   subjects: Array,
 });
 const emit = defineEmit(["edit"]);
