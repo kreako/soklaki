@@ -1,0 +1,58 @@
+table:
+  name: socle_competency_template
+  schema: public
+object_relationships:
+- name: competency
+  using:
+    foreign_key_constraint_on: competency_id
+- name: group
+  using:
+    foreign_key_constraint_on: group_id
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - group_id:
+          _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+    columns:
+    - active
+    - competency_id
+    - group_id
+    - text
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - group_id
+    - active
+    - competency_id
+    - id
+    - text
+    - created_at
+    - updated_at
+    filter:
+      _and:
+      - group_id:
+          _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - active
+    - text
+    filter:
+      _and:
+      - group_id:
+          _eq: X-Hasura-User-Group
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user

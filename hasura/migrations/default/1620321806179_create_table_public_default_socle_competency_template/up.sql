@@ -1,0 +1,1 @@
+CREATE TABLE "public"."default_socle_competency_template" ("id" serial NOT NULL, "text" text NOT NULL, "competency_id" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("competency_id") REFERENCES "public"."default_socle_competency"("id") ON UPDATE cascade ON DELETE cascade);

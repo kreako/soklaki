@@ -35,7 +35,7 @@ array_relationships:
     foreign_key_constraint_on:
       column: competency_id
       table:
-        name: eval_observation_template_competency
+        name: socle_competency_template
         schema: public
 insert_permissions:
 - permission:

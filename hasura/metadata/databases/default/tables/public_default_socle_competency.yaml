@@ -13,6 +13,13 @@ array_relationships:
       table:
         name: default_socle_competency_subject
         schema: public
+- name: templates
+  using:
+    foreign_key_constraint_on:
+      column: competency_id
+      table:
+        name: default_socle_competency_template
+        schema: public
 select_permissions:
 - permission:
     columns:

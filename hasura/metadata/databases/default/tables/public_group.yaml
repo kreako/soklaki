@@ -44,6 +44,13 @@ array_relationships:
       table:
         name: socle_subject
         schema: public
+- name: templates
+  using:
+    foreign_key_constraint_on:
+      column: group_id
+      table:
+        name: socle_competency_template
+        schema: public
 - name: users
   using:
     foreign_key_constraint_on:
