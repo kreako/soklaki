@@ -22,12 +22,8 @@
           <div><router-link to="/students">Élèves</router-link></div>
           <div>Rapports</div>
           <div>
-            <router-link to="/socle">Socle</router-link>
+            <router-link to="/settings"> Réglages </router-link>
           </div>
-          <div>
-            <router-link to="/stats">Statistiques</router-link>
-          </div>
-          <div>Réglages</div>
           <div>Aide</div>
         </div>
         <div v-if="!mobile" class="mt-12 px-1">

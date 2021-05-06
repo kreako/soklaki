@@ -69,6 +69,10 @@ const routes = [
         path: "/evaluation/:cycle/:id",
         component: () => import("./pages/EvaluationCompetency.vue"),
       },
+      {
+        path: "/settings",
+        component: () => import("./pages/Settings.vue"),
+      },
     ],
   },
 ];
