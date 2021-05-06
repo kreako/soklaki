@@ -1293,3 +1293,16 @@
             updated_at
           }
         }
+    - name: evaluation-single
+      query: |-
+        query EvaluationSingle($competency_id: Int!, $period_id: Int!, $student_id: bigint!) {
+          eval_evaluation(where: {active: {_eq: true}, competency_id: {_eq: $competency_id}, eval_period_id: {_eq: $period_id}, student_id: {_eq: $student_id}}, order_by: {date: desc}, limit: 1) {
+            comment
+            created_at
+            date
+            id
+            status
+            updated_at
+            user_id
+          }
+        }

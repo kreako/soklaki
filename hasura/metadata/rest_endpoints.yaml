@@ -28,6 +28,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: evaluation-single
+  url: evaluation-single
+  methods:
+  - POST
+  name: evaluation-single
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: evaluations
   url: evaluations
   methods:
