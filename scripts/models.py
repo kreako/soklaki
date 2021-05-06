@@ -5,11 +5,6 @@ database = PostgresqlDatabase(
 )
 
 
-class UnknownField(object):
-    def __init__(self, *_, **__):
-        pass
-
-
 class BaseModel(Model):
     class Meta:
         database = database
@@ -62,6 +57,16 @@ class DefaultSocleCompetencySubject(BaseModel):
         table_name = "default_socle_competency_subject"
 
 
+class DefaultSocleCompetencyTemplate(BaseModel):
+    competency = ForeignKeyField(
+        column_name="competency_id", field="id", model=DefaultSocleCompetency
+    )
+    text = TextField()
+
+    class Meta:
+        table_name = "default_socle_competency_template"
+
+
 class Group(BaseModel):
     id = BigAutoField()
     is_school = BooleanField()
@@ -73,6 +78,7 @@ class Group(BaseModel):
 
 
 class EvalPeriod(BaseModel):
+    active = BooleanField(constraints=[SQL("DEFAULT true")])
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
     end = DateField()
     group = ForeignKeyField(column_name="group_id", field="id", model=Group)
@@ -85,12 +91,13 @@ class EvalPeriod(BaseModel):
 
 
 class Student(BaseModel):
+    active = BooleanField(constraints=[SQL("DEFAULT true")])
     birthdate = DateField()
     firstname = TextField()
     group = ForeignKeyField(column_name="group_id", field="id", model=Group)
     id = BigAutoField()
     lastname = TextField()
-    school_entry = DateField(null=True)
+    school_entry = DateField()
     school_exit = DateField(null=True)
 
     class Meta:
@@ -113,10 +120,11 @@ class User(BaseModel):
 
 
 class EvalComment(BaseModel):
+    active = BooleanField(constraints=[SQL("DEFAULT true")])
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
     date = DateField(constraints=[SQL("DEFAULT CURRENT_DATE")])
     eval_period = ForeignKeyField(
-        column_name="eval_period_id", field="id", model=EvalPeriod, null=True
+        column_name="eval_period_id", field="id", model=EvalPeriod
     )
     id = BigAutoField()
     student = ForeignKeyField(column_name="student_id", field="id", model=Student)
@@ -161,14 +169,15 @@ class SocleCompetency(BaseModel):
 
 
 class EvalEvaluation(BaseModel):
-    comment = TextField()
+    active = BooleanField(constraints=[SQL("DEFAULT true")])
+    comment = TextField(null=True)
     competency = ForeignKeyField(
         column_name="competency_id", field="id", model=SocleCompetency
     )
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
     date = DateField(constraints=[SQL("DEFAULT CURRENT_DATE")])
     eval_period = ForeignKeyField(
-        column_name="eval_period_id", field="id", model=EvalPeriod, null=True
+        column_name="eval_period_id", field="id", model=EvalPeriod
     )
     id = BigAutoField()
     status = TextField()  # USER-DEFINED
@@ -181,10 +190,11 @@ class EvalEvaluation(BaseModel):
 
 
 class EvalObservation(BaseModel):
+    active = BooleanField(constraints=[SQL("DEFAULT true")])
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
     date = DateField(constraints=[SQL("DEFAULT CURRENT_DATE")])
     eval_period = ForeignKeyField(
-        column_name="eval_period_id", field="id", model=EvalPeriod, null=True
+        column_name="eval_period_id", field="id", model=EvalPeriod
     )
     id = BigAutoField()
     text = TextField()
@@ -219,27 +229,6 @@ class EvalObservationStudent(BaseModel):
     class Meta:
         table_name = "eval_observation_student"
         indexes = ((("observation", "student"), True),)
-
-
-class EvalObservationTemplate(BaseModel):
-    created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
-    text = TextField()
-    updated_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
-
-    class Meta:
-        table_name = "eval_observation_template"
-
-
-class EvalObservationTemplateCompetency(BaseModel):
-    competency = ForeignKeyField(
-        column_name="competency_id", field="id", model=SocleCompetency
-    )
-    template = ForeignKeyField(
-        column_name="template_id", field="id", model=EvalObservationTemplate
-    )
-
-    class Meta:
-        table_name = "eval_observation_template_competency"
 
 
 class FrontendStoreError(BaseModel):
@@ -283,8 +272,10 @@ class PricingDetail(BaseModel):
 
 
 class Report(BaseModel):
+    active = BooleanField(constraints=[SQL("DEFAULT true")])
     created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
     cycle = TextField()  # USER-DEFINED
+    date = DateField(constraints=[SQL("DEFAULT now()")])
     eval_period = ForeignKeyField(
         column_name="eval_period_id", field="id", model=EvalPeriod
     )
@@ -315,6 +306,20 @@ class SocleCompetencySubject(BaseModel):
     class Meta:
         table_name = "socle_competency_subject"
         indexes = ((("competency", "subject"), True),)
+
+
+class SocleCompetencyTemplate(BaseModel):
+    active = BooleanField()
+    competency = ForeignKeyField(
+        column_name="competency_id", field="id", model=SocleCompetency
+    )
+    created_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
+    group = ForeignKeyField(column_name="group_id", field="id", model=Group)
+    text = TextField()
+    updated_at = DateTimeField(constraints=[SQL("DEFAULT now()")])
+
+    class Meta:
+        table_name = "socle_competency_template"
 
 
 class UserLogin(BaseModel):
