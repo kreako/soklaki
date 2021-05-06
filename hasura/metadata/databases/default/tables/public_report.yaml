@@ -11,15 +11,35 @@ object_relationships:
 select_permissions:
 - permission:
     columns:
+    - id
     - created_at
     - cycle
-    - eval_period_id
-    - id
     - json_path
     - pdf_path
     - student_id
+    - eval_period_id
+    - active
+    - date
     filter:
-      student:
-        group_id:
-          _eq: X-Hasura-User-Group
+      _and:
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - active
+    filter:
+      _and:
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
   role: user
