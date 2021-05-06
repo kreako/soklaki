@@ -36,6 +36,7 @@ const state = {
     containers: {},
     competencies: {},
     subjects: {},
+    templates: {},
     // Contains only id
     c1: [],
     c2: [],
@@ -258,6 +259,7 @@ const mutations = {
     state.socle.containers = fromArrayToIdObjects(socle.containers);
     state.socle.competencies = fromArrayToIdObjects(socle.competencies);
     state.socle.subjects = fromArrayToIdObjects(socle.subjects);
+    state.socle.templates = fromArrayToIdObjects(socle.templates);
   },
   setObservation(state, observation) {
     state.observation = observation;
