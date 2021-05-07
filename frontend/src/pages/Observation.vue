@@ -198,8 +198,8 @@
               :edit="true"
               :comment="e.comment"
               :status="e.status"
-              @save="saveEvaluation[c.competencyId][e.student_id]"
-              @cancel="cancelEvaluation[c.competencyId][e.student_id]"
+              @save="saveEvaluation($event, c.competencyId, e.student_id)"
+              @cancel="cancelEvaluation(c.competencyId, e.student_id)"
             />
           </div>
         </div>
@@ -380,15 +380,40 @@ const competenciesByCycle = computed(() =>
   )
 );
 
+const saveEvaluation = async ({ comment, status }, competencyId, studentId) => {
+  if (
+    competencyId in evaluationByCompetencyStudent.value &&
+    studentId in evaluationByCompetencyStudent.value[competencyId]
+  ) {
+    const evaluation =
+      evaluationByCompetencyStudent.value[competencyId][studentId];
+    await store.dispatch("updateEvaluation", {
+      id: evaluation.id,
+      comment: comment,
+      date: today(),
+      status: status,
+      periodId: store.state.currentPeriod,
+    });
+  } else {
+    await store.dispatch("insertEvaluation", {
+      studentId: studentId,
+      competencyId: competencyId,
+      periodId: store.state.currentPeriod,
+      date: today(),
+      status: status,
+      comment: comment,
+    });
+  }
+  await getObservation(observation.value.id);
+  evaluationInEdit.value[competencyId][studentId] = false;
+};
+const cancelEvaluation = (competencyId, studentId) => {
+  evaluationInEdit.value[competencyId][studentId] = false;
+};
+
 // competencyId -> studentId -> boolean
 // filled by competenciesByStudent above
 const evaluationInEdit = ref({});
-// competencyId -> studentId -> handler
-// filled by competenciesByStudent above
-const saveEvaluation = ref({});
-// competencyId -> studentId -> handler
-// filled by competenciesByStudent above
-const cancelEvaluation = ref({});
 
 const evaluationByCompetencyStudent = computed(() => {
   return evaluationByCompetencyIdStudentId(observation.value.last_evaluations);
@@ -411,8 +436,6 @@ const competenciesByStudent = computed(() => {
     // Fill edit helper
     if (!(competencyId in evaluationInEdit.value)) {
       evaluationInEdit.value[competencyId] = {};
-      saveEvaluation.value[competencyId] = {};
-      cancelEvaluation.value[competencyId] = {};
     }
     const evaluations = [];
     for (const s of observation.value.students) {
@@ -429,23 +452,6 @@ const competenciesByStudent = computed(() => {
           evaluations.push(evaluation);
           if (!(studentId in evaluationInEdit.value[competencyId])) {
             evaluationInEdit.value[competencyId][studentId] = false;
-            saveEvaluation.value[competencyId][studentId] = async ({
-              comment,
-              status,
-            }) => {
-              await store.dispatch("updateEvaluation", {
-                id: evaluation.id,
-                comment: comment,
-                date: today(),
-                status: status,
-                periodId: store.state.currentPeriod,
-              });
-              await getObservation(observation.value.id);
-              evaluationInEdit.value[competencyId][studentId] = false;
-            };
-            cancelEvaluation.value[competencyId][studentId] = () => {
-              evaluationInEdit.value[competencyId][studentId] = false;
-            };
           }
           continue;
         }
@@ -454,24 +460,6 @@ const competenciesByStudent = computed(() => {
       evaluations.push({ id: null, student_id: studentId });
       if (!(studentId in evaluationInEdit.value[competencyId])) {
         evaluationInEdit.value[competencyId][studentId] = false;
-        saveEvaluation.value[competencyId][studentId] = async ({
-          comment,
-          status,
-        }) => {
-          await store.dispatch("insertEvaluation", {
-            studentId: studentId,
-            competencyId: competencyId,
-            periodId: store.state.currentPeriod,
-            date: today(),
-            status: status,
-            comment: comment,
-          });
-          await getObservation(observation.value.id);
-          evaluationInEdit.value[competencyId][studentId] = false;
-        };
-        cancelEvaluation.value[competencyId][studentId] = () => {
-          evaluationInEdit.value[competencyId][studentId] = false;
-        };
       }
     }
     if (evaluations.length > 0) {
