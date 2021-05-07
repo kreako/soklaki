@@ -172,62 +172,35 @@
             <div>
               <div v-if="e.id == null">Non évalué</div>
               <div v-else>
-                <div v-if="e.status === 'Empty'">Non évalué</div>
-                <div v-else-if="e.status === 'InProgress'">En cours</div>
-                <div v-else-if="e.status === 'Acquired'">Acquis</div>
-                <div v-else-if="e.status === 'NotAcquired'">Non acquis</div>
-                <div v-else-if="e.status === 'TipTop'">Tip Top</div>
+                <div v-if="e.status === 'NotAcquired'">
+                  Maîtrise insuffisante
+                </div>
+                <div v-else-if="e.status === 'InProgress'">
+                  Maîtrise fragile
+                </div>
+                <div v-else-if="e.status === 'Acquired'">
+                  Maîtrise satisfaisante
+                </div>
+                <div v-else-if="e.status === 'TipTop'">Très bonne maîtrise</div>
+                <div v-else>Non évalué</div>
               </div>
             </div>
             <button @click="editEvaluation(c.competencyId, e.student_id)">
               <IconPencil class="h-4 text-gray-600 hover:text-teal-500" />
             </button>
           </div>
-          <div v-else class="mb-6 py-2 px-1 border-teal-300 border">
+          <div v-else class="mb-6 py-2">
             <div>
-              {{ competencyById(c.competencyId).full_rank }}
               {{ studentById(e.student_id).firstname }}
               {{ studentById(e.student_id).lastname }}
             </div>
-            <div>
-              <div class="form-sub-label">Commentaire</div>
-              <textarea
-                v-model="evaluationEditText[c.competencyId][e.student_id]"
-                class="mt-2 input w-full"
-                rows="5"
-              >
-              </textarea>
-            </div>
-            <div class="flex flex-row space-x-2">
-              <button
-                @click="
-                  doEvaluation(c.competencyId, e.student_id, 'NotAcquired')
-                "
-                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
-              >
-                Non acquis
-              </button>
-              <button
-                @click="
-                  doEvaluation(c.competencyId, e.student_id, 'InProgress')
-                "
-                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
-              >
-                En cours
-              </button>
-              <button
-                @click="doEvaluation(c.competencyId, e.student_id, 'Acquired')"
-                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
-              >
-                Acquis
-              </button>
-              <button
-                @click="doEvaluation(c.competencyId, e.student_id, 'TipTop')"
-                class="mt-2 rounded-md px-3 py-1 shadow-sm border border-teal-700"
-              >
-                Tip Top
-              </button>
-            </div>
+            <EvalCompetency
+              :edit="true"
+              :comment="e.comment"
+              :status="e.status"
+              @save="saveEvaluation[c.competencyId][e.student_id]"
+              @cancel="cancelEvaluation[c.competencyId][e.student_id]"
+            />
           </div>
         </div>
       </div>
@@ -265,7 +238,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { cycleNb, cycleFullName } from "../utils/cycle";
-import { dateToNiceString } from "../utils/date";
+import { dateToNiceString, today } from "../utils/date";
 import { nonSelectedStudents } from "../utils/observation";
 import { groupStudentsByCycle, studentsIdToCycle } from "../utils/student";
 import { groupCompetenciesByCycle } from "../utils/competency";
@@ -277,6 +250,7 @@ import IconXCircle from "../icons/IconXCircle.vue";
 import StudentSelector from "../components/StudentSelector.vue";
 import CompetencySelector from "../components/CompetencySelector.vue";
 import DatePicker from "../components/DatePicker.vue";
+import EvalCompetency from "../components/EvalCompetency.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -406,6 +380,16 @@ const competenciesByCycle = computed(() =>
   )
 );
 
+// competencyId -> studentId -> boolean
+// filled by competenciesByStudent above
+const evaluationInEdit = ref({});
+// competencyId -> studentId -> handler
+// filled by competenciesByStudent above
+const saveEvaluation = ref({});
+// competencyId -> studentId -> handler
+// filled by competenciesByStudent above
+const cancelEvaluation = ref({});
+
 const evaluationByCompetencyStudent = computed(() => {
   return evaluationByCompetencyIdStudentId(observation.value.last_evaluations);
 });
@@ -427,7 +411,8 @@ const competenciesByStudent = computed(() => {
     // Fill edit helper
     if (!(competencyId in evaluationInEdit.value)) {
       evaluationInEdit.value[competencyId] = {};
-      evaluationEditText.value[competencyId] = {};
+      saveEvaluation.value[competencyId] = {};
+      cancelEvaluation.value[competencyId] = {};
     }
     const evaluations = [];
     for (const s of observation.value.students) {
@@ -444,8 +429,23 @@ const competenciesByStudent = computed(() => {
           evaluations.push(evaluation);
           if (!(studentId in evaluationInEdit.value[competencyId])) {
             evaluationInEdit.value[competencyId][studentId] = false;
-            evaluationEditText.value[competencyId][studentId] =
-              evaluation.comment;
+            saveEvaluation.value[competencyId][studentId] = async ({
+              comment,
+              status,
+            }) => {
+              await store.dispatch("updateEvaluation", {
+                id: evaluation.id,
+                comment: comment,
+                date: today(),
+                status: status,
+                periodId: store.state.currentPeriod,
+              });
+              await getObservation(observation.value.id);
+              evaluationInEdit.value[competencyId][studentId] = false;
+            };
+            cancelEvaluation.value[competencyId][studentId] = () => {
+              evaluationInEdit.value[competencyId][studentId] = false;
+            };
           }
           continue;
         }
@@ -454,7 +454,24 @@ const competenciesByStudent = computed(() => {
       evaluations.push({ id: null, student_id: studentId });
       if (!(studentId in evaluationInEdit.value[competencyId])) {
         evaluationInEdit.value[competencyId][studentId] = false;
-        evaluationEditText.value[competencyId][studentId] = "";
+        saveEvaluation.value[competencyId][studentId] = async ({
+          comment,
+          status,
+        }) => {
+          await store.dispatch("insertEvaluation", {
+            studentId: studentId,
+            competencyId: competencyId,
+            periodId: store.state.currentPeriod,
+            date: today(),
+            status: status,
+            comment: comment,
+          });
+          await getObservation(observation.value.id);
+          evaluationInEdit.value[competencyId][studentId] = false;
+        };
+        cancelEvaluation.value[competencyId][studentId] = () => {
+          evaluationInEdit.value[competencyId][studentId] = false;
+        };
       }
     }
     if (evaluations.length > 0) {
@@ -469,28 +486,8 @@ const competenciesByStudent = computed(() => {
   return competencies;
 });
 const competencyById = computed(() => store.getters.competencyById);
-// competencyId -> studentId -> boolean
-// filled by competenciesByStudent above
-const evaluationInEdit = ref({});
-// competencyId -> studentId -> text
-// filled by competenciesByStudent above
-const evaluationEditText = ref({});
 const editEvaluation = (competencyId, studentId) => {
   evaluationInEdit.value[competencyId][studentId] = true;
-};
-const doEvaluation = async (competencyId, studentId, status) => {
-  const comment = evaluationEditText.value[competencyId][studentId];
-  await store.dispatch("insertEvaluation", {
-    competencyId: competencyId,
-    studentId: studentId,
-    status: status,
-    comment: comment,
-    date: observation.value.date,
-    periodId: observation.value.period_id,
-  });
-  // refresh observation
-  await getObservation(observation.value.id);
-  evaluationInEdit.value[competencyId][studentId] = false;
 };
 
 const userById = computed(() => store.getters.userById);
