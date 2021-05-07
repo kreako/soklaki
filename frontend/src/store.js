@@ -1192,7 +1192,6 @@ const actions = {
       period_id: periodId,
       user_id: state.login.userId,
     });
-    await dispatch("evaluations", { periodId });
   },
 
   async insertComment(
@@ -1273,9 +1272,6 @@ const actions = {
       comment: comment,
       status: status,
     });
-    // TODO not sure about period.id and periodId
-    // OK for now but maybe in the future...
-    await dispatch("evaluations", { periodId });
   },
 
   async updateComment({ state, dispatch }, { id, date, periodId, text }) {
