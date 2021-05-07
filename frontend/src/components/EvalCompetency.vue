@@ -81,7 +81,7 @@
       </div>
       <div class="font-serif">
         <div v-if="comment == null">Sans commentaire</div>
-        <div v-else>
+        <div v-else class="whitespace-pre-line">
           {{ comment }}
         </div>
       </div>
