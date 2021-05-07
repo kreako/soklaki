@@ -125,22 +125,28 @@ const competencyFathers = computed(() => fathers(store, competencyId.value));
 const evaluationByStudent = ref({});
 const fillEvaluationByStudent = () => {
   for (const student of students.value) {
-    const filtered = Object.values(store.state.evaluations.store).filter(
-      (e) =>
-        e.student_id === student.id && e.competency_id === competencyId.value
-    );
-    if (filtered.length > 0) {
-      const evaluation = filtered[0];
-      evaluationByStudent.value[student.id] = {
-        id: evaluation.id,
-        comment: evaluation.comment,
-        status: evaluation.status,
-      };
-    } else {
+    const evaluationId = store.state.evaluations.sorted.find((i) => {
+      const e = store.state.evaluations.store[i];
+      if (
+        e.student_id === student.id &&
+        e.competency_id === competencyId.value
+      ) {
+        return true;
+      }
+      return false;
+    });
+    if (evaluationId == null) {
       evaluationByStudent.value[student.id] = {
         id: null,
         comment: null,
         status: "Emtpy",
+      };
+    } else {
+      const evaluation = store.state.evaluations.store[evaluationId];
+      evaluationByStudent.value[student.id] = {
+        id: evaluation.id,
+        comment: evaluation.comment,
+        status: evaluation.status,
       };
     }
   }
