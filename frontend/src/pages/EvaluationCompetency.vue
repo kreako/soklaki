@@ -170,6 +170,9 @@ const fillSaveEvaluationByStudent = () => {
           periodId: store.state.currentPeriod,
         });
       }
+      await store.dispatch("evaluations", {
+        periodId: store.state.currentPeriod,
+      });
       fillEvaluationByStudent();
       editByStudent.value[student.id] = false;
     };
