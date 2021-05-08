@@ -219,6 +219,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: reports
+  url: reports
+  methods:
+  - POST
+  name: reports
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: set-user-name
   url: set-user-name
   methods:
@@ -399,6 +408,15 @@
   methods:
   - POST
   name: update-period-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-report-active
+  url: update-report-active
+  methods:
+  - POST
+  name: update-report-active
   comment: null
 - definition:
     query:

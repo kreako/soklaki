@@ -1308,3 +1308,24 @@
             }
           }
         }
+    - name: reports
+      query: |-
+        query Reports {
+          report(where: {active: {_eq: true}}) {
+            id
+            eval_period_id
+            date
+            cycle
+            created_at
+            json_path
+            pdf_path
+            student_id
+          }
+        }
+    - name: update-report-active
+      query: |-
+        mutation UpdateReportActive($id: Int!, $active: Boolean!) {
+          update_report_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
+            id
+          }
+        }
