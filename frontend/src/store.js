@@ -447,8 +447,9 @@ const getters = {
     };
   },
   containerById: (state) => (containerId) => {
-    if (containerId in state.socle.containers) {
-      return state.socle.containers[containerId];
+    const id = Number(containerId);
+    if (id in state.socle.containers) {
+      return state.socle.containers[id];
     }
     return {
       full_rank: null,
@@ -457,8 +458,9 @@ const getters = {
     };
   },
   competencyById: (state) => (competencyId) => {
-    if (competencyId in state.socle.competencies) {
-      return state.socle.competencies[competencyId];
+    const id = Number(competencyId);
+    if (id in state.socle.competencies) {
+      return state.socle.competencies[id];
     }
     return {
       full_rank: null,
@@ -467,8 +469,9 @@ const getters = {
     };
   },
   userById: (state) => (userId) => {
-    if (userId in state.users) {
-      return state.users[userId];
+    const id = Number(userId);
+    if (id in state.users) {
+      return state.users[id];
     }
     return {
       email_confirmed: false,
@@ -478,8 +481,9 @@ const getters = {
     };
   },
   periodById: (state) => (periodId) => {
-    if (periodId != null && periodId in state.periods) {
-      return state.periods[periodId];
+    const id = Number(periodId);
+    if (id != null && id in state.periods) {
+      return state.periods[id];
     }
     return {
       created_at: null,
@@ -491,16 +495,18 @@ const getters = {
     };
   },
   subjectById: (state) => (subjectId) => {
-    if (subjectId != null && subjectId in state.socle.subjects) {
-      return state.socle.subjects[subjectId];
+    const id = Number(subjectId);
+    if (id != null && id in state.socle.subjects) {
+      return state.socle.subjects[id];
     }
     return {
       title: null,
     };
   },
   templateById: (state) => (templateId) => {
-    if (templateId != null && templateId in state.socle.templates) {
-      return state.socle.templates[templateId];
+    const id = Number(templateId);
+    if (id != null && id in state.socle.templates) {
+      return state.socle.templates[id];
     }
     return {
       text: null,
