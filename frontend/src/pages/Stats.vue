@@ -27,6 +27,7 @@
             </div>
             <div v-for="studentId in slice" class="flex flex-row space-x-1 w-8">
               <button
+                @click="selectObservation(competencyId, studentId)"
                 :class="
                   statByStudents[studentId].observations > 0
                     ? 'bg-green-500'
@@ -87,6 +88,58 @@
         </div>
       </div>
     </Modal>
+    <Modal
+      :title="observationModalTitle"
+      :show="showObservationModal"
+      @close="closeObservationModal"
+    >
+      <div>
+        <div class="uppercase tracking-wide text-gray-700 text-xs">
+          {{ competencyFathers[0].rank }}.
+          {{ competencyFathers[0].text }}
+        </div>
+        <div
+          v-if="competencyFathers[1].rank != null"
+          class="text-gray-700 text-xs"
+        >
+          {{ competencyFathers[1].rank }}.
+          {{ competencyFathers[1].text }}
+        </div>
+        <div class="text-sm">
+          {{ competencyById(selectedCompetency).rank }}.
+          {{ competencyById(selectedCompetency).text }}
+        </div>
+        <div class="pl-2">
+          <HashSubjects
+            :subjects="competencyById(selectedCompetency).subjects"
+          />
+        </div>
+        <div class="mt-8 pl-2">
+          <div class="font-bold">
+            Créer une nouvelle observation à partir d'un modèle
+          </div>
+          <ul class="mt-2">
+            <li
+              v-for="template in competencyById(selectedCompetency).templates"
+              class="mt-1 hover:text-teal-500"
+            >
+              <router-link
+                :to="`/new-observation-from-template/${selectedStudent}/${selectedCompetency}/${template.id}`"
+              >
+                {{ templateById(template.id).text }}
+              </router-link>
+            </li>
+            <li class="mt-3 hover:text-teal-500">
+              <router-link
+                :to="`/new-observation-from-template/${selectedStudent}/${selectedCompetency}/${-1}`"
+              >
+                Sans modèle
+              </router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -98,16 +151,10 @@ import { until } from "@vueuse/core";
 import { cycleNb } from "../utils/cycle";
 import { fathers } from "../utils/competency";
 import Modal from "../components/Modal.vue";
-import {
-  TransitionRoot,
-  TransitionChild,
-  Dialog,
-  DialogOverlay,
-  DialogTitle,
-} from "@headlessui/vue";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import HashSubjects from "../components/HashSubjects.vue";
 import CompetencyTemplates from "../components/CompetencyTemplates.vue";
+import IconPlusCircle from "../icons/IconPlusCircle.vue";
 
 const store = useStore();
 const route = useRoute();
@@ -121,6 +168,27 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const mobile = breakpoints.smaller("md");
 
 const selectedCompetency = ref(null);
+const selectedStudent = ref(null);
+
+const showObservationModal = ref(false);
+const selectObservation = (competencyId, studentId) => {
+  selectedCompetency.value = competencyId;
+  selectedStudent.value = studentId;
+  showObservationModal.value = true;
+};
+const closeObservationModal = () => {
+  showObservationModal.value = false;
+};
+const observationModalTitle = computed(() => {
+  if (selectedCompetency.value == null) {
+    return null;
+  }
+  const competency = competencyById.value(selectedCompetency.value);
+  const student = studentById.value(selectedStudent.value);
+  return `Observation de ${competency.full_rank} pour ${student.firstname} ${student.lastname}`;
+});
+const templateById = computed(() => store.getters.templateById);
+
 const showCompetencyModal = ref(false);
 const selectCompetency = (id) => {
   selectedCompetency.value = id;

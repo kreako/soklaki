@@ -22,6 +22,11 @@ const routes = [
         component: () => import("./pages/NewObservation.vue"),
       },
       {
+        path:
+          "/new-observation-from-template/:studentId/:competencyId/:templateId",
+        component: () => import("./pages/NewObservationFromTemplate.vue"),
+      },
+      {
         path: "/observation/:id",
         component: () => import("./pages/Observation.vue"),
       },
