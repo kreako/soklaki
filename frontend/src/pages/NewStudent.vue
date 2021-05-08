@@ -11,14 +11,29 @@
     </div>
     <div class="mt-8">
       <div class="form-sub-label">Date d'anniversaire</div>
+      <DatePicker
+        :value="birthdate"
+        @selected="birthdate = $event"
+        class="mt-2"
+      />
       <input type="text" v-model="birthdate" class="mt-2 input w-full" />
     </div>
     <div class="mt-8">
       <div class="form-sub-label">Date d'entrée à l'école</div>
+      <DatePicker
+        :value="schoolEntry"
+        @selected="schoolEntry = $event"
+        class="mt-2"
+      />
       <input type="text" v-model="schoolEntry" class="mt-2 input w-full" />
     </div>
     <div class="mt-8">
       <div class="form-sub-label">Date de sortie de l'école</div>
+      <DatePicker
+        :value="schoolExit"
+        @selected="schoolExit = $event"
+        class="mt-2"
+      />
       <input type="text" v-model="schoolExit" class="mt-2 input w-full" />
     </div>
     <div class="flex flex-row space-x-2 items-center mt-8">
@@ -35,6 +50,7 @@
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
+import DatePicker from "../components/DatePicker.vue";
 
 const store = useStore();
 const router = useRouter();
