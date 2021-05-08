@@ -26,7 +26,8 @@
           </div>
           <div>Aide</div>
         </div>
-        <div v-if="!mobile" class="mt-12 px-1">
+        <div v-if="!mobile" class="mt-12 px-1 self-start">
+          <div></div>
           <router-link to="/new-observation">
             <div
               class="bg-white rounded-md text-teal-700 shadow-sm px-3 py-1 text-base"
