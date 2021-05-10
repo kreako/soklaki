@@ -1329,3 +1329,36 @@
             student_id
           }
         }
+    - name: report
+      query: |-
+        query Report($period_id: Int!, $student_id: bigint!) {
+          observations: eval_observation(where: {eval_period_id: {_eq: $period_id}, active: {_eq: true}, students: {student_id: {_eq: $student_id}}, complete: {complete: {_eq: true}}}, order_by: {date: desc}) {
+            id
+            created_at
+            updated_at
+            date
+            competencies {
+              competency_id
+            }
+            text
+            user_id
+          }
+          evaluations: eval_evaluation(where: {eval_period_id: {_eq: $period_id}, active: {_eq: true}, student_id: {_eq: $student_id}}, order_by: {date: desc}) {
+            id
+            created_at
+            updated_at
+            date
+            competency_id
+            status
+            user_id
+            comment
+          }
+          comments: eval_comment(order_by: {date: desc}, where: {active: {_eq: true}, student_id: {_eq: $student_id}, eval_period_id: {_eq: $period_id}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+          }
+        }

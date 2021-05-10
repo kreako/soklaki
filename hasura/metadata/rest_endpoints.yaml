@@ -219,6 +219,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: report
+  url: report
+  methods:
+  - POST
+  name: report
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: reports
   url: reports
   methods:
