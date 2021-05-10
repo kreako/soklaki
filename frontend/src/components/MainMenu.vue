@@ -20,7 +20,9 @@
             <router-link to="/evaluations"> Évaluations </router-link>
           </div>
           <div><router-link to="/students">Élèves</router-link></div>
-          <div>Rapports</div>
+          <div>
+            <router-link to="/reports"> Rapports </router-link>
+          </div>
           <div>
             <router-link to="/settings"> Réglages </router-link>
           </div>
