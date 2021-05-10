@@ -13,6 +13,8 @@ module.exports = {
       gray: colors.coolGray,
       teal: colors.teal,
       rose: colors.rose,
+      orange: colors.orange,
+      yellow: colors.yellow,
       blue: colors.blue,
       transparent: colors.transparent,
     },
