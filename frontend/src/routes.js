@@ -83,6 +83,18 @@ const routes = [
         component: () => import("./pages/Settings.vue"),
       },
       {
+        path: "/settings/profile",
+        component: () => import("./pages/SettingsProfile.vue"),
+      },
+      {
+        path: "/settings/team",
+        component: () => import("./pages/SettingsTeam.vue"),
+      },
+      {
+        path: "/settings/periods",
+        component: () => import("./pages/SettingsPeriods.vue"),
+      },
+      {
         path: "/reports",
         component: () => import("./pages/Reports.vue"),
       },
