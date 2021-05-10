@@ -5,6 +5,14 @@
     </div>
     <div class="mt-12">
       <div>
+        <div class="form-sub-label">École</div>
+        <div>{{ groupName }}</div>
+      </div>
+      <div class="mt-3">
+        <div class="form-sub-label">Date du rapport</div>
+        <div>{{ today() }}</div>
+      </div>
+      <div class="mt-3">
         <div class="form-sub-label">Nom</div>
         <div>{{ student.lastname }}</div>
       </div>
@@ -95,6 +103,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { cycleNb } from "../utils/cycle";
+import { today } from "../utils/date";
 import ReportPerCompetency from "../components/ReportPerCompetency.vue";
 
 const store = useStore();
@@ -102,6 +111,8 @@ const route = useRoute();
 
 const containerById = computed(() => store.getters.containerById);
 const competencyById = computed(() => store.getters.competencyById);
+
+const groupName = computed(() => store.state.group.name);
 
 const period = computed(() => store.getters.periodById(route.params.periodId));
 const student = computed(() =>
