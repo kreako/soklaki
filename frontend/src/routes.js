@@ -82,6 +82,18 @@ const routes = [
         path: "/settings",
         component: () => import("./pages/Settings.vue"),
       },
+      {
+        path: "/reports",
+        component: () => import("./pages/Reports.vue"),
+      },
+      {
+        path: "/reports-by-period/:periodId",
+        component: () => import("./pages/ReportsByPeriod.vue"),
+      },
+      {
+        path: "/report-draft/:periodId/:cycle/:studentId",
+        component: () => import("./pages/ReportDraft.vue"),
+      },
     ],
   },
 ];
