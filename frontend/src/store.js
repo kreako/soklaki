@@ -174,6 +174,18 @@ const state = {
       },
     },
   },
+  reports: {
+    // id -> reports
+    store: {},
+    // period_id -> student (sorted fullname)
+    sorted: {},
+  },
+  // Single period/user report
+  report: {
+    observations: [],
+    evaluations: [],
+    comments: [],
+  },
 };
 
 /// Return an object from an array
@@ -383,6 +395,21 @@ const mutations = {
     state.comments.store = fromArrayToIdObjects(comments);
     state.comments.sorted = comments.map((x) => x.id);
   },
+  setReports(state, reports) {
+    state.reports.store = fromArrayToIdObjects(reports);
+    state.reports.sorted = {};
+    for (const report of reports) {
+      if (!(report.eval_period_id in state.reports.sorted)) {
+        state.reports.sorted[report.eval_period_id] = [];
+      }
+      state.reports.sorted[report.eval_period_id].push(report.id);
+    }
+  },
+  setReport(state, report) {
+    state.report.observations = report.observations;
+    state.report.evaluations = report.evaluations;
+    state.report.comments = report.comments;
+  },
 };
 
 const getters = {
@@ -510,6 +537,22 @@ const getters = {
     }
     return {
       text: null,
+    };
+  },
+  reportById: (state) => (reportId) => {
+    const id = Number(reportId);
+    if (id != null && id in state.reports.store) {
+      return state.reports.store[id];
+    }
+    return {
+      id: null,
+      eval_period_id: null,
+      date: null,
+      cycle: null,
+      created_at: null,
+      json_path: null,
+      pdf_path: null,
+      student_id: null,
     };
   },
 };
@@ -1308,6 +1351,26 @@ const actions = {
     } else {
       commit("setEvaluationSingle", null);
     }
+  },
+
+  async reports({ commit }) {
+    const answer = await axios.post("reports");
+    const data = answer.data.report;
+    commit("setReports", data);
+  },
+
+  async updateReportActive({ dispatch }, { id, active }) {
+    await axios.post("update-report-active", { id, active });
+    await dispatch("reports");
+  },
+
+  async report({ commit }, { periodId, studentId }) {
+    const answer = await axios.post("report", {
+      period_id: periodId,
+      student_id: studentId,
+    });
+    const data = answer.data;
+    commit("setReport", data);
   },
 };
 
