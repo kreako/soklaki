@@ -574,6 +574,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: update-user-active
+  url: update-user-active
+  methods:
+  - POST
+  name: update-user-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: users
   url: users
   methods:

@@ -60,21 +60,17 @@ select_permissions:
     - lastname
     - manager
     filter:
-      _or:
-      - id:
-          _eq: X-Hasura-User-Id
-      - group:
-          users:
-            id:
-              _eq: X-Hasura-User-Id
+      group_id:
+        _eq: X-Hasura-User-Group
   role: user
 update_permissions:
 - permission:
     check: null
     columns:
+    - active
     - firstname
     - lastname
     filter:
-      id:
-        _eq: X-Hasura-User-Id
+      group_id:
+        _eq: X-Hasura-User-Group
   role: user

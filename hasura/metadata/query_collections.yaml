@@ -1362,3 +1362,10 @@
             user_id
           }
         }
+    - name: update-user-active
+      query: |-
+        mutation UpdateUserActive($id: bigint!, $active: Boolean!) {
+          update_user_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
+            id
+          }
+        }
