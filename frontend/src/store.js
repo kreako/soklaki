@@ -581,6 +581,11 @@ const actions = {
     commit("setStudents", answer.data.students);
   },
 
+  async updateUserActive({ dispatch }, { id, active }) {
+    await axios.post("update-user-active", { id, active });
+    await dispatch("boot");
+  },
+
   async login({ commit }, { email, password }) {
     const answer = await axios.post("login", { email, password });
     commit("setLoginToken", answer.data.login.token);
