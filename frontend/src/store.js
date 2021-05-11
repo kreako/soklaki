@@ -19,6 +19,10 @@ const state = {
     token: null,
     groupId: null,
     email: null,
+    invitation: {
+      tokenValid: null,
+      tokenTooOld: null,
+    },
   },
   group: {},
   users: [],
@@ -246,6 +250,12 @@ const mutations = {
   },
   setLoginErrorWeakPassword(state, errorWeakPassword) {
     state.login.error.weakPassword = errorWeakPassword;
+  },
+  setLoginErrorInvitationTokenValid(state, valid) {
+    state.login.invitation.tokenValid = valid;
+  },
+  setLoginErrorInvitationTokenTooOld(state, tooOld) {
+    state.login.invitation.tokenTooOld = tooOld;
   },
   setLoginToken(state, token) {
     state.login.token = token;
@@ -1376,6 +1386,36 @@ const actions = {
     });
     const data = answer.data;
     commit("setReport", data);
+  },
+
+  async invitationGenerateToken({ state }) {
+    const answer = await axios.post("invitation-generate-token", {
+      user_id: state.login.userId,
+      group_id: state.login.groupId,
+    });
+    return answer.data.invitation_generate_token.token;
+  },
+
+  async invitationVerifyToken({}, token) {
+    const answer = await axios.post("invitation-verify-token", { token });
+    return answer.data.invitation_verify_token;
+  },
+
+  async invitationSignupToken({}, { token, email, password }) {
+    const answer = await axios.post("invitation-signup-token", {
+      token,
+      email,
+      password,
+    });
+    const data = answer.data.invitation_signup_token;
+    commit("setLoginToken", data.token);
+    commit("setLoginErrorKnownEmail", data.error_known_email);
+    commit("setLoginErrorWeakPassword", data.error_weak_password);
+    commit("setLoginUserId", data.user_id);
+    commit("setLoginGroupId", data.group_id);
+    commit("setLoginEmail", email);
+    commit("setLoginErrorInvitationTokenValid", data.valid);
+    commit("setLoginErrorInvitationTokenTooOld", data.too_old);
   },
 };
 
