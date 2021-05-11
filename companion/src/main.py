@@ -109,7 +109,7 @@ class LoginOutput(BaseModel):
 
 def rehash_and_save_password_if_needed(user, plaintext_password):
     if Password.check_needs_rehash(user["password"]):
-        client.update_password(user["id"], Password.hash(plaintext_password))
+        gql_client.update_password(user["id"], Password.hash(plaintext_password))
 
 
 @app.post("/login")
