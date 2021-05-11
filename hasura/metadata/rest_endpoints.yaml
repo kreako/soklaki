@@ -154,6 +154,33 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: invitation-generate-token
+  url: invitation-generate-token
+  methods:
+  - POST
+  name: invitation-generate-token
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: invitation-signup-token
+  url: invitation-signup-token
+  methods:
+  - POST
+  name: invitation-signup-token
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: invitation-verify-token
+  url: invitation-verify-token
+  methods:
+  - POST
+  name: invitation-verify-token
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: load-socle
   url: load-socle
   methods:

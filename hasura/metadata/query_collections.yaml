@@ -1369,3 +1369,36 @@
             id
           }
         }
+    - name: invitation-generate-token
+      query: |-
+        mutation InvitationGenerateToken($group_id: bigint!, $user_id: bigint!) {
+          invitation_generate_token(group_id: $group_id, user_id: $user_id) {
+            token
+          }
+        }
+    - name: invitation-verify-token
+      query: |-
+        mutation InvitationVerifyToken($token: String!) {
+          invitation_verify_token(token: $token) {
+            valid
+            user_lastname
+            user_id
+            user_firstname
+            too_old
+            group_name
+            group_id
+          }
+        }
+    - name: invitation-signup-token
+      query: |-
+        mutation InvitationSignupToken($token: String!, $email: String!, $password: String!) {
+          invitation_signup_token(email: $email, password: $password, token: $token) {
+            error_known_email
+            error_weak_password
+            group_id
+            token
+            too_old
+            user_id
+            valid
+          }
+        }
