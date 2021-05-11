@@ -14,3 +14,4 @@ backend_tests/env
 backend_tests/.env
 backend_tests/__pycache__
 *.swp
+.env
