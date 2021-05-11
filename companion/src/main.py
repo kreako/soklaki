@@ -9,6 +9,7 @@ import jwt
 
 from gql_client import GqlClient, GqlClientException
 import socle
+import invitation
 
 load_dotenv()
 # Secret to hash password
@@ -129,6 +130,21 @@ async def login(login: LoginInput):
 @app.post("/load_socle")
 async def load_socle(input: socle.LoadSocleInput):
     return await socle.load(gql_client, input)
+
+
+@app.post("/invitation_generate_token")
+async def invitation_generate_token(input: invitation.GenerateTokenInput):
+    return await invitation.generate_token(gql_client, input)
+
+
+@app.post("/invitation_verify_token")
+async def invitation_verify_token(input: invitation.VerifyTokenInput):
+    return await invitation.verify_token(gql_client, input)
+
+
+@app.post("/invitation_signup_token")
+async def invitation_signup_token(input: invitation.SignupTokenInput):
+    return await invitation.signup_token(gql_client, input)
 
 
 # For email confirmation
