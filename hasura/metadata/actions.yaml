@@ -1,4 +1,27 @@
 actions:
+- name: invitation_generate_token
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/invitation_generate_token
+    forward_client_headers: true
+  permissions:
+  - role: user
+- name: invitation_signup_token
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/invitation_signup_token
+    forward_client_headers: true
+  permissions:
+  - role: anonymous
+  - role: user
+- name: invitation_verify_token
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/invitation_verify_token
+    forward_client_headers: true
+  permissions:
+  - role: anonymous
+  - role: user
 - name: load_socle
   definition:
     kind: synchronous
@@ -29,4 +52,7 @@ custom_types:
   - name: SignupOutput
   - name: LoginOutput
   - name: LoadSocleOutput
+  - name: GenerateTokenOutput
+  - name: VerifyTokenOutput
+  - name: SignupTokenOutput
   scalars: []

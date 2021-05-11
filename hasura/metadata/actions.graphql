@@ -1,4 +1,28 @@
 type Mutation {
+  invitation_generate_token (
+    user_id: bigint!
+    group_id: bigint!
+  ): GenerateTokenOutput
+}
+
+
+type Mutation {
+  invitation_signup_token (
+    token: String!
+    email: String!
+    password: String!
+  ): SignupTokenOutput
+}
+
+
+type Mutation {
+  invitation_verify_token (
+    token: String!
+  ): VerifyTokenOutput
+}
+
+
+type Mutation {
   load_socle (
     group_id: bigint!
   ): LoadSocleOutput
@@ -42,5 +66,29 @@ type LoadSocleOutput {
   errorUnknownGroupId : Boolean!
   errorNonEmptySocle : Boolean!
   errorUnknown : Boolean!
+}
+
+type GenerateTokenOutput {
+  token : String!
+}
+
+type VerifyTokenOutput {
+  valid : Boolean!
+  too_old : Boolean!
+  group_id : Int
+  group_name : String
+  user_id : Int
+  user_firstname : String
+  user_lastname : String
+}
+
+type SignupTokenOutput {
+  valid : Boolean!
+  too_old : Boolean!
+  error_known_email : Boolean!
+  error_weak_password : Boolean!
+  token : String
+  user_id : Int
+  group_id : Int
 }
 
