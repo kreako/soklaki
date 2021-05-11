@@ -67,11 +67,11 @@ class SignupTokenInput(BaseModel):
 class SignupTokenOutput(BaseModel):
     valid: bool
     too_old: bool
-    errorKnownEmail: bool
-    errorWeakPassword: bool
+    error_known_email: bool
+    error_weak_password: bool
     token: Optional[str]
     user_id: Optional[int]
-    user_group: Optional[int]
+    group_id: Optional[int]
 
 
 async def signup_token(gql_client, input: SignupTokenInput):
