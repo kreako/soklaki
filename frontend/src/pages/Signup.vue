@@ -56,8 +56,6 @@
           <br />Identifiez-vous !
         </router-link>
       </div>
-      <div>{{ errorKnownEmail }}</div>
-      <div>{{ errorWeakPassword }}</div>
     </div>
     <div class="flex-grow"></div>
   </div>
