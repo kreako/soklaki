@@ -80,8 +80,6 @@ const password = ref("");
 const emailValid = ref(true);
 const passwordValid = ref(true);
 
-const emailRe = /[^@]+@[^@]+\.[^@]+/;
-
 const errorKnownEmail = computed(() => store.state.login.error.knownEmail);
 const errorWeakPassword = computed(() => store.state.login.error.weakPassword);
 
