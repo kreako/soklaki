@@ -1,6 +1,11 @@
 <template>
   <div class="my-4 px-2">
-    <div class="form-label">Mon équipe</div>
+    <div class="flex flex-row items-center space-x-4">
+      <div class="form-label">Mon équipe</div>
+      <button @click="openInvitationModal" class="text-gray-700 text-sm">
+        Inviter de nouveaux membres
+      </button>
+    </div>
     <div class="mt-12">
       <div v-for="user in users" class="mt-4">
         <div class="flex flex-row items-center space-x-4">
@@ -20,6 +25,11 @@
           {{ user.email }}
         </div>
       </div>
+      <div class="mt-12">
+        <button @click="openInvitationModal" class="button-minor-action">
+          Inviter de nouveaux membres
+        </button>
+      </div>
     </div>
     <ModalConfirmCancel
       title="Confirmation"
@@ -33,6 +43,23 @@
         {{ userById(selectedUserId).lastname }} ?
       </div>
     </ModalConfirmCancel>
+    <Modal
+      title="Invitation"
+      :show="showInvitationModal"
+      @close="closeInvitationModal"
+    >
+      <div>
+        Pour inviter de nouveaux membres à participer à l'évaluation du socle,
+        envoyez leur le lien d'inscription suivant (bien en entier!) :
+      </div>
+      <div class="font-mono mt-8 overflow-y-auto">
+        {{ invitationLink }}
+      </div>
+      <div class="mt-8">
+        Le lien sera valable pendant les 3 prochains jours (à partir de
+        maintenant...)
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -42,6 +69,7 @@ import { useStore } from "vuex";
 import { userInitials } from "../utils/user";
 import IconTrash from "../icons/IconTrash.vue";
 import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
+import Modal from "../components/Modal.vue";
 
 const store = useStore();
 
@@ -67,5 +95,16 @@ const confirmRemoveUser = async () => {
   });
   selectedUserId.value = null;
   showRemoveUserModal.value = false;
+};
+
+const showInvitationModal = ref(false);
+const invitationLink = ref("");
+const openInvitationModal = async () => {
+  const token = await store.dispatch("invitationGenerateToken");
+  invitationLink.value = `${window.location.origin}/#/invitation-signup?token=${token}`;
+  showInvitationModal.value = true;
+};
+const closeInvitationModal = () => {
+  showInvitationModal.value = false;
 };
 </script>

@@ -10,6 +10,10 @@ const routes = [
   { path: "/lost-password", component: LostPassword },
   { path: "/signup", component: Signup },
   {
+    path: "/invitation-signup",
+    component: () => import("./pages/InvitationSignup.vue"),
+  },
+  {
     path: "/",
     component: Home,
     children: [
@@ -22,8 +26,7 @@ const routes = [
         component: () => import("./pages/NewObservation.vue"),
       },
       {
-        path:
-          "/new-observation-from-template/:studentId/:competencyId/:templateId",
+        path: "/new-observation-from-template/:studentId/:competencyId/:templateId",
         component: () => import("./pages/NewObservationFromTemplate.vue"),
       },
       {

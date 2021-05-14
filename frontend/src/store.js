@@ -1401,7 +1401,7 @@ const actions = {
     return answer.data.invitation_verify_token;
   },
 
-  async invitationSignupToken({}, { token, email, password }) {
+  async invitationSignupToken({ commit }, { token, email, password }) {
     const answer = await axios.post("invitation-signup-token", {
       token,
       email,
