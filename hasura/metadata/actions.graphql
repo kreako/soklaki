@@ -85,7 +85,6 @@ type VerifyTokenOutput {
 type SignupTokenOutput {
   valid : Boolean!
   too_old : Boolean!
-  error_known_email : Boolean!
   error_weak_password : Boolean!
   token : String
   user_id : Int

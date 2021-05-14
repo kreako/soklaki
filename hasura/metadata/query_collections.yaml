@@ -1393,7 +1393,6 @@
       query: |-
         mutation InvitationSignupToken($token: String!, $email: String!, $password: String!) {
           invitation_signup_token(email: $email, password: $password, token: $token) {
-            error_known_email
             error_weak_password
             group_id
             token
