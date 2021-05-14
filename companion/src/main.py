@@ -5,11 +5,11 @@ from typing import Optional
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from pydantic import BaseModel
-import jwt
 
 from gql_client import GqlClient, GqlClientException
 import socle
 import invitation
+from jwt_token import generate_jwt_token
 
 load_dotenv()
 # Secret to hash password
@@ -20,27 +20,13 @@ HASURA_GRAPHQL_ADMIN_SECRET = os.getenv("HASURA_GRAPHQL_ADMIN_SECRET")
 HASURA_GRAPHQL_JWT_SECRET = os.getenv("HASURA_GRAPHQL_JWT_SECRET")
 # Graphql endpoint
 HASURA_GRAPHQL_ENDPOINT = os.getenv("HASURA_GRAPHQL_ENDPOINT")
+# Invitation secret
+INVITATION_SECRET = os.getenv("INVITATION_SECRET")
 
 
 app = FastAPI()
 Password = PasswordHasher()
 gql_client = GqlClient(HASURA_GRAPHQL_ENDPOINT, HASURA_GRAPHQL_ADMIN_SECRET)
-
-
-def generate_token(user_id, group_id) -> str:
-    """
-    Generates a JWT compliant with the Hasura spec, given a User object with field "id"
-    """
-    payload = {
-        "https://hasura.io/jwt/claims": {
-            "x-hasura-allowed-roles": ["user"],
-            "x-hasura-default-role": "user",
-            "x-hasura-user-id": str(user_id),
-            "x-hasura-user-group": str(group_id),
-        }
-    }
-    token = jwt.encode(payload, HASURA_GRAPHQL_JWT_SECRET, "HS256")
-    return token
 
 
 class SignupData(BaseModel):
@@ -82,7 +68,7 @@ async def signup(signup: SignupInput):
             group=None,
         )
     # Now compute jwt
-    token = generate_token(user_id, group_id)
+    token = generate_jwt_token(HASURA_GRAPHQL_JWT_SECRET, user_id, group_id)
     return SignupOutput(
         errorKnownEmail=False,
         errorWeakPassword=False,
@@ -119,7 +105,9 @@ async def login(login: LoginInput):
     try:
         Password.verify(user["hash"], login.input.password)
         # TODO rehash if needed
-        token = generate_token(user["id"], user["group_id"])
+        token = generate_jwt_token(
+            HASURA_GRAPHQL_JWT_SECRET, user["id"], user["group_id"]
+        )
         return LoginOutput(
             error=False, token=token, id=user["id"], group_id=user["group_id"]
         )
@@ -134,17 +122,19 @@ async def load_socle(input: socle.LoadSocleInput):
 
 @app.post("/invitation_generate_token")
 async def invitation_generate_token(input: invitation.GenerateTokenInput):
-    return await invitation.generate_token(gql_client, input)
+    return await invitation.generate_token(gql_client, INVITATION_SECRET, input)
 
 
 @app.post("/invitation_verify_token")
 async def invitation_verify_token(input: invitation.VerifyTokenInput):
-    return await invitation.verify_token(gql_client, input)
+    return await invitation.verify_token(gql_client, INVITATION_SECRET, input)
 
 
 @app.post("/invitation_signup_token")
 async def invitation_signup_token(input: invitation.SignupTokenInput):
-    return await invitation.signup_token(gql_client, input)
+    return await invitation.signup_token(
+        gql_client, INVITATION_SECRET, Password, HASURA_GRAPHQL_JWT_SECRET, input
+    )
 
 
 # For email confirmation

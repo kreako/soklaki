@@ -239,3 +239,49 @@ class GqlClient(object):
             },
         )
         return r["data"]["insert_socle_competency_template"]["returning"]
+
+    async def group_by_id(self, group_id):
+        r = await self.run_query(
+            """ query GroupById($id: bigint!) {
+                    group_by_pk(id: $id) {
+                        id
+                        name
+                    }
+                }""",
+            {"id": group_id},
+        )
+        return r["data"]["group_by_pk"]
+
+    async def user_by_id(self, user_id):
+        r = await self.run_query(
+            """ query UserById($id: bigint!) {
+                    user_by_pk(id: $id) {
+                        firstname
+                        lastname
+                    }
+                }""",
+            {"id": user_id},
+        )
+        return r["data"]["user_by_pk"]
+
+    async def user_by_email(self, email):
+        r = await self.run_query(
+            """ query UserByEmail($email: String!) {
+                    user(where: {email: {_eq: $email}}) {
+                        id
+                    }
+                }""",
+            {"email": email},
+        )
+        return r["data"]["user"]
+
+    async def update_user(self, user_id, active, email):
+        r = await self.run_query(
+            """ mutation UserUpdate($id: bigint!, $email: String!, $active: Boolean!) {
+                    update_user_by_pk(pk_columns: {id: $id}, _set: {email: $email, active: $active}) {
+                        id
+                    }
+                }""",
+            {"id": user_id, "active": active, "email": email},
+        )
+        return r["data"]["update_user_by_pk"]
