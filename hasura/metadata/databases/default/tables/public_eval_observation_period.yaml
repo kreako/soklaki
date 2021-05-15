@@ -20,3 +20,18 @@ object_relationships:
       remote_table:
         name: eval_period
         schema: public
+select_permissions:
+- permission:
+    columns:
+    - eval_period_id
+    - observation_id
+    filter:
+      _and:
+      - observation:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user

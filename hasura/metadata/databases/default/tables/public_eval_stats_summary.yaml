@@ -1,3 +1,26 @@
 table:
   name: eval_stats_summary
   schema: public
+object_relationships:
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - period_id
+    - cycle
+    - total
+    - observations
+    - evaluations
+    filter:
+      period:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
