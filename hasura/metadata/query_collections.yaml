@@ -1090,42 +1090,6 @@
             user_id
           }
         }
-    - name: evaluations
-      query: |-
-        query Evaluations($period_id: Int!) {
-          comments: eval_comment(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
-            id
-            period {
-              eval_period_id
-            }
-            date
-            created_at
-            student_id
-            text
-            updated_at
-            user_id
-            student_cycle {
-              cycle
-            }
-          }
-          evaluations: eval_evaluation(where: {active: {_eq: true}, eval_period_id: {_eq: $period_id}}, order_by: {date: desc}) {
-            comment
-            competency_id
-            created_at
-            date
-            period {
-              eval_period_id
-            }
-            id
-            status
-            student_id
-            updated_at
-            user_id
-            student_cycle {
-              cycle
-            }
-          }
-        }
     - name: insert-comment
       query: |-
         mutation InsertComment($date: date!, $student_id: bigint!, $text: String!, $user_id: bigint!) {
@@ -1447,6 +1411,42 @@
                 updated_at
                 user_id
               }
+            }
+          }
+        }
+    - name: evaluations
+      query: |-
+        query Evaluations($period_id: Int!) {
+          comments: eval_comment(where: {active: {_eq: true}, period: { eval_period_id: {_eq: $period_id}}}, order_by: {date: desc}) {
+            id
+            period {
+              eval_period_id
+            }
+            date
+            created_at
+            student_id
+            text
+            updated_at
+            user_id
+            student_cycle {
+              cycle
+            }
+          }
+          evaluations: eval_evaluation(where: {active: {_eq: true}, period: { eval_period_id: {_eq: $period_id}}}, order_by: {date: desc}) {
+            comment
+            competency_id
+            created_at
+            date
+            period {
+              eval_period_id
+            }
+            id
+            status
+            student_id
+            updated_at
+            user_id
+            student_cycle {
+              cycle
             }
           }
         }
