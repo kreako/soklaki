@@ -6,20 +6,6 @@ object_relationships:
   using:
     foreign_key_constraint_on: group_id
 array_relationships:
-- name: comments
-  using:
-    foreign_key_constraint_on:
-      column: eval_period_id
-      table:
-        name: eval_comment
-        schema: public
-- name: evaluations
-  using:
-    foreign_key_constraint_on:
-      column: eval_period_id
-      table:
-        name: eval_evaluation
-        schema: public
 - name: observations
   using:
     manual_configuration:
@@ -28,13 +14,6 @@ array_relationships:
       insertion_order: null
       remote_table:
         name: eval_observation_period
-        schema: public
-- name: reports
-  using:
-    foreign_key_constraint_on:
-      column: eval_period_id
-      table:
-        name: report
         schema: public
 - name: students
   using:

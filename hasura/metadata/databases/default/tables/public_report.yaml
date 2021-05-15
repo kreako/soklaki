@@ -2,32 +2,24 @@ table:
   name: report
   schema: public
 object_relationships:
-- name: period
-  using:
-    foreign_key_constraint_on: eval_period_id
 - name: student
   using:
     foreign_key_constraint_on: student_id
 select_permissions:
 - permission:
     columns:
-    - id
+    - active
     - created_at
     - cycle
+    - date
+    - id
     - json_path
     - pdf_path
     - student_id
-    - eval_period_id
-    - active
-    - date
     filter:
-      _and:
-      - period:
-          group_id:
-            _eq: X-Hasura-User-Group
-      - student:
-          group_id:
-            _eq: X-Hasura-User-Group
+      student:
+        group_id:
+          _eq: X-Hasura-User-Group
   role: user
 update_permissions:
 - permission:
@@ -35,11 +27,7 @@ update_permissions:
     columns:
     - active
     filter:
-      _and:
-      - period:
-          group_id:
-            _eq: X-Hasura-User-Group
-      - student:
-          group_id:
-            _eq: X-Hasura-User-Group
+      student:
+        group_id:
+          _eq: X-Hasura-User-Group
   role: user

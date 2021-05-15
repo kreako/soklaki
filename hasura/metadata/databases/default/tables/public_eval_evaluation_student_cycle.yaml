@@ -32,7 +32,7 @@ select_permissions:
           group_id:
             _eq: X-Hasura-User-Group
       - evaluation:
-          period:
+          user:
             group_id:
               _eq: X-Hasura-User-Group
   role: user
