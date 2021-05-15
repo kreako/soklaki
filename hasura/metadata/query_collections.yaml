@@ -79,376 +79,6 @@
             id
           }
         }
-    - name: observations-by-user
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {user_id: {_eq: $user_id}}) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            period_id: eval_period_id
-            complete {
-              complete
-            }
-            competencies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            students_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, user_id: {_eq: $user_id}}) {
-            aggregate {
-              count
-            }
-          }
-        }
-    - name: observations-sorted-created-at
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            period_id: eval_period_id
-            complete {
-              complete
-            }
-            competencies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            students_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
-            aggregate {
-              count
-            }
-          }
-        }
-    - name: delete-observation-competency
-      query: |-
-        mutation DeleteObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
-          delete_eval_observation_competency(where: {competency_id: {_eq: $competency_id}, observation_id: {_eq: $observation_id}}) {
-            returning {
-              observation {
-                id
-                created_at
-                text
-                date
-                updated_at
-                user_id
-                period_id: eval_period_id
-                complete {
-                  complete
-                }
-                competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-                  id
-                  competency_id
-                }
-                students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-                  student_id
-                  cycle
-                }
-                last_evaluations {
-                  evaluation {
-                    comment
-                    competency_id
-                    created_at
-                    date
-                    eval_period_id
-                    id
-                    status
-                    student_id
-                    updated_at
-                    user_id
-                  }
-                }
-              }
-            }
-          }
-        }
-    - name: delete-observation-student
-      query: |-
-        mutation DeleteObservationStudent($observation_id: bigint!, $student_id: bigint!) {
-          delete_eval_observation_student(where: {student_id: {_eq: $student_id}, observation_id: {_eq: $observation_id}}) {
-            returning {
-              observation {
-                id
-                created_at
-                text
-                date
-                updated_at
-                user_id
-                period_id: eval_period_id
-                complete {
-                  complete
-                }
-                competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-                  id
-                  competency_id
-                }
-                students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-                  student_id
-                  cycle
-                }
-                last_evaluations {
-                  evaluation {
-                    comment
-                    competency_id
-                    created_at
-                    date
-                    eval_period_id
-                    id
-                    status
-                    student_id
-                    updated_at
-                    user_id
-                  }
-                }
-              }
-            }
-          }
-        }
-    - name: insert-observation
-      query: |-
-        mutation InsertEvalObservation($text: String!, $user_id: bigint!, $date: date!, $eval_period_id: Int) {
-          insert_eval_observation_one(object: {text: $text, user_id: $user_id, eval_period_id: $eval_period_id, date: $date}) {
-            id
-            created_at
-            text
-            date
-            updated_at
-            user_id
-            period_id: eval_period_id
-            complete {
-              complete
-            }
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              id
-              competency_id
-            }
-            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-              student_id
-              cycle
-            }
-            last_evaluations {
-              evaluation {
-                comment
-                competency_id
-                created_at
-                date
-                eval_period_id
-                id
-                status
-                student_id
-                updated_at
-                user_id
-              }
-            }
-          }
-        }
-    - name: insert-observation-competency
-      query: |-
-        mutation InsertObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
-          insert_eval_observation_competency_one(object: {competency_id: $competency_id, observation_id: $observation_id}) {
-            observation {
-              id
-              created_at
-              text
-              date
-              updated_at
-              user_id
-              period_id: eval_period_id
-              complete {
-                complete
-              }
-              competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-                id
-                competency_id
-              }
-              students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-                student_id
-                cycle
-              }
-              last_evaluations {
-                evaluation {
-                  comment
-                  competency_id
-                  created_at
-                  date
-                  eval_period_id
-                  id
-                  status
-                  student_id
-                  updated_at
-                  user_id
-                }
-              }
-            }
-          }
-        }
-    - name: insert-observation-student
-      query: |-
-        mutation InsertObservationStudent($observation_id: bigint!, $student_id: bigint!) {
-          insert_eval_observation_student_one(object: {observation_id: $observation_id, student_id: $student_id}) {
-            observation {
-              id
-              created_at
-              text
-              date
-              updated_at
-              user_id
-              period_id: eval_period_id
-              complete {
-                complete
-              }
-              competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-                id
-                competency_id
-              }
-              students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-                student_id
-                cycle
-              }
-              last_evaluations {
-                evaluation {
-                  comment
-                  competency_id
-                  created_at
-                  date
-                  eval_period_id
-                  id
-                  status
-                  student_id
-                  updated_at
-                  user_id
-                }
-              }
-            }
-          }
-        }
-    - name: update-observation-date
-      query: |-
-        mutation UpdatebservationDate($id: bigint!, $date: date!, $eval_period_id: Int) {
-          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id}) {
-            id
-            created_at
-            text
-            date
-            updated_at
-            user_id
-            period_id: eval_period_id
-            complete {
-              complete
-            }
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              id
-              competency_id
-            }
-            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-              student_id
-              cycle
-            }
-            last_evaluations {
-              evaluation {
-                comment
-                competency_id
-                created_at
-                date
-                eval_period_id
-                id
-                status
-                student_id
-                updated_at
-                user_id
-              }
-            }
-          }
-        }
-    - name: observation
-      query: |-
-        query ObservationByPk($id: bigint!) {
-          eval_observation_by_pk(id: $id) {
-            id
-            created_at
-            text
-            date
-            updated_at
-            user_id
-            period_id: eval_period_id
-            complete {
-              complete
-            }
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              competency_id
-            }
-            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-              student_id
-              cycle
-            }
-            last_evaluations {
-              evaluation {
-                comment
-                competency_id
-                created_at
-                date
-                eval_period_id
-                id
-                status
-                student_id
-                updated_at
-                user_id
-              }
-            }
-          }
-        }
-    - name: observations-incomplete
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {complete: {complete: {_eq: false}}}) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            period_id: eval_period_id
-            complete {
-              complete
-            }
-            competencies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            students_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, complete: {complete: {_eq: false}}}) {
-            aggregate {
-              count
-            }
-          }
-        }
     - name: stats-summary
       query: |-
         query StatsSummary($period_id: Int) {
@@ -1399,5 +1029,395 @@
             too_old
             user_id
             valid
+          }
+        }
+    - name: delete-observation-competency
+      query: |-
+        mutation DeleteObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
+          delete_eval_observation_competency(where: {competency_id: {_eq: $competency_id}, observation_id: {_eq: $observation_id}}) {
+            returning {
+              observation {
+                id
+                created_at
+                text
+                date
+                updated_at
+                user_id
+                complete {
+                  complete
+                }
+                competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+                  id
+                  competency_id
+                }
+                students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+                  student_id
+                  cycle
+                }
+                last_evaluations {
+                  evaluation {
+                    comment
+                    competency_id
+                    created_at
+                    date
+                    eval_period_id
+                    id
+                    status
+                    student_id
+                    updated_at
+                    user_id
+                  }
+                }
+                period {
+                  eval_period_id
+                }
+              }
+            }
+          }
+        }
+    - name: delete-observation-student
+      query: |-
+        mutation DeleteObservationStudent($observation_id: bigint!, $student_id: bigint!) {
+          delete_eval_observation_student(where: {student_id: {_eq: $student_id}, observation_id: {_eq: $observation_id}}) {
+            returning {
+              observation {
+                id
+                created_at
+                text
+                date
+                updated_at
+                user_id
+                period {
+                  eval_period_id
+                }
+                complete {
+                  complete
+                }
+                competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+                  id
+                  competency_id
+                }
+                students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+                  student_id
+                  cycle
+                }
+                last_evaluations {
+                  evaluation {
+                    comment
+                    competency_id
+                    created_at
+                    date
+                    eval_period_id
+                    id
+                    status
+                    student_id
+                    updated_at
+                    user_id
+                  }
+                }
+              }
+            }
+          }
+        }
+    - name: insert-observation
+      query: |-
+        mutation InsertEvalObservation($text: String!, $user_id: bigint!, $date: date!, $eval_period_id: Int) {
+          insert_eval_observation_one(object: {text: $text, user_id: $user_id, eval_period_id: $eval_period_id, date: $date}) {
+            id
+            created_at
+            text
+            date
+            updated_at
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+              id
+              competency_id
+            }
+            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+              student_id
+              cycle
+            }
+            last_evaluations {
+              evaluation {
+                comment
+                competency_id
+                created_at
+                date
+                eval_period_id
+                id
+                status
+                student_id
+                updated_at
+                user_id
+              }
+            }
+          }
+        }
+    - name: insert-observation-competency
+      query: |-
+        mutation InsertObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
+          insert_eval_observation_competency_one(object: {competency_id: $competency_id, observation_id: $observation_id}) {
+            observation {
+              id
+              created_at
+              text
+              date
+              updated_at
+              user_id
+              period {
+                eval_period_id
+              }
+              complete {
+                complete
+              }
+              competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+                id
+                competency_id
+              }
+              students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+                student_id
+                cycle
+              }
+              last_evaluations {
+                evaluation {
+                  comment
+                  competency_id
+                  created_at
+                  date
+                  eval_period_id
+                  id
+                  status
+                  student_id
+                  updated_at
+                  user_id
+                }
+              }
+            }
+          }
+        }
+    - name: insert-observation-student
+      query: |-
+        mutation InsertObservationStudent($observation_id: bigint!, $student_id: bigint!) {
+          insert_eval_observation_student_one(object: {observation_id: $observation_id, student_id: $student_id}) {
+            observation {
+              id
+              created_at
+              text
+              date
+              updated_at
+              user_id
+              period {
+                eval_period_id
+              }
+              complete {
+                complete
+              }
+              competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+                id
+                competency_id
+              }
+              students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+                student_id
+                cycle
+              }
+              last_evaluations {
+                evaluation {
+                  comment
+                  competency_id
+                  created_at
+                  date
+                  eval_period_id
+                  id
+                  status
+                  student_id
+                  updated_at
+                  user_id
+                }
+              }
+            }
+          }
+        }
+    - name: observation
+      query: |-
+        query ObservationByPk($id: bigint!) {
+          eval_observation_by_pk(id: $id) {
+            id
+            created_at
+            text
+            date
+            updated_at
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+              competency_id
+            }
+            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+              student_id
+              cycle
+            }
+            last_evaluations {
+              evaluation {
+                comment
+                competency_id
+                created_at
+                date
+                eval_period_id
+                id
+                status
+                student_id
+                updated_at
+                user_id
+              }
+            }
+          }
+        }
+    - name: observations-by-user
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {user_id: {_eq: $user_id}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, user_id: {_eq: $user_id}}) {
+            aggregate {
+              count
+            }
+          }
+        }
+    - name: observations-incomplete
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {complete: {complete: {_eq: false}}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, complete: {complete: {_eq: false}}}) {
+            aggregate {
+              count
+            }
+          }
+        }
+    - name: observations-sorted-created-at
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
+            aggregate {
+              count
+            }
+          }
+        }
+    - name: update-observation-date
+      query: |-
+        mutation UpdatebservationDate($id: bigint!, $date: date!, $eval_period_id: Int) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id}) {
+            id
+            created_at
+            text
+            date
+            updated_at
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+              id
+              competency_id
+            }
+            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+              student_id
+              cycle
+            }
+            last_evaluations {
+              evaluation {
+                comment
+                competency_id
+                created_at
+                date
+                eval_period_id
+                id
+                status
+                student_id
+                updated_at
+                user_id
+              }
+            }
           }
         }
