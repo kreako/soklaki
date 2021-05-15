@@ -1,7 +1,7 @@
 <template>
   <div class="my-4 px-2">
     <div class="form-label">Quelques statistiques...</div>
-    <div class="mt-4">
+    <div v-if="stats.incompleteObservationsCount > 0" class="mt-4">
       <router-link
         :to="{
           path: '/observations',
@@ -11,7 +11,15 @@
         <span class="text-xl">
           {{ stats.incompleteObservationsCount }}
         </span>
-        <span> observations incomplètes </span>
+        <span v-if="stats.incompleteObservationsCount > 1">
+          observations incomplètes
+        </span>
+        <span v-else> observation incomplète </span>
+      </router-link>
+    </div>
+    <div v-else class="mt-4">
+      <router-link to="/observations">
+        Pas d'observations incomplètes ! 👍
       </router-link>
     </div>
     <router-link to="/stats/c1">
