@@ -403,58 +403,6 @@
             id
           }
         }
-    - name: periods
-      query: |-
-        query Periods($group_id: bigint!) {
-          current_period: eval_period_current(where: {period: {group_id: {_eq: $group_id}}}) {
-            id
-          }
-          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}, active: {_eq: true}}) {
-            created_at
-            end
-            id
-            name
-            start
-            updated_at
-            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}, active: {_eq: true}}}) {
-              student {
-                id
-              }
-            }
-          }
-        }
-    - name: students
-      query: |-
-        query Student($group_id: bigint!) {
-        students: student(order_by: {fullname: {fullname: asc}}, where: {group_id: {_eq: $group_id}, active: {_eq: true}}) {
-            birthdate
-            firstname
-            group_id
-            id
-            lastname
-            school_entry
-            school_exit
-            current_cycle {
-              current_cycle
-            }
-          }
-          current_period: eval_period_current(where: {period: {group_id: {_eq: $group_id}}}) {
-            id
-          }
-          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}, active: {_eq: true}}) {
-            created_at
-            end
-            id
-            name
-            start
-            updated_at
-            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}, active: {_eq: true}}}) {
-              student {
-                id
-              }
-            }
-          }
-        }
     - name: update-period
       query: |-
         mutation UpdatePeriod($id: Int!, $name: String!, $start: date!, $end: date!) {
@@ -1447,6 +1395,62 @@
             user_id
             student_cycle {
               cycle
+            }
+          }
+        }
+    - name: students
+      query: |-
+        query Student($group_id: bigint!) {
+        students: student(order_by: {fullname: {fullname: asc}}, where: {group_id: {_eq: $group_id}, active: {_eq: true}}) {
+            birthdate
+            firstname
+            group_id
+            id
+            lastname
+            school_entry
+            school_exit
+            current_cycle {
+              current_cycle
+            }
+          }
+          current_period: eval_period_current(where: {period: {group_id: {_eq: $group_id}}}) {
+            id
+          }
+          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}, active: {_eq: true}}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}, active: {_eq: true}}}) {
+              student {
+                id
+              }
+              cycle
+              student_id
+            }
+          }
+        }
+    - name: periods
+      query: |-
+        query Periods($group_id: bigint!) {
+          current_period: eval_period_current(where: {period: {group_id: {_eq: $group_id}}}) {
+            id
+          }
+          periods: eval_period(order_by: {end: desc}, where: {group_id: {_eq: $group_id}, active: {_eq: true}}) {
+            created_at
+            end
+            id
+            name
+            start
+            updated_at
+            students(order_by: {student: {fullname: {fullname: asc}}}, where: {student: {group_id: {_eq: $group_id}, active: {_eq: true}}}) {
+              student {
+                id
+              }
+              cycle
+              student_id
             }
           }
         }
