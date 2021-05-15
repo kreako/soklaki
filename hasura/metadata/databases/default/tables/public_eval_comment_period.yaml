@@ -1,0 +1,37 @@
+table:
+  name: eval_comment_period
+  schema: public
+object_relationships:
+- name: comment
+  using:
+    manual_configuration:
+      column_mapping:
+        comment_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_comment
+        schema: public
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        eval_period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - eval_period_id
+    - comment_id
+    filter:
+      _and:
+      - comment:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user

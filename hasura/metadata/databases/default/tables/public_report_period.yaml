@@ -1,0 +1,37 @@
+table:
+  name: report_period
+  schema: public
+object_relationships:
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        eval_period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
+- name: report
+  using:
+    manual_configuration:
+      column_mapping:
+        report_id: id
+      insertion_order: null
+      remote_table:
+        name: report
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - eval_period_id
+    - report_id
+    filter:
+      _and:
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - report:
+          student:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user
