@@ -1259,46 +1259,6 @@
             }
           }
         }
-    - name: update-observation-date
-      query: |-
-        mutation UpdatebservationDate($id: bigint!, $date: date!, $eval_period_id: Int) {
-          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date, eval_period_id: $eval_period_id}) {
-            id
-            created_at
-            text
-            date
-            updated_at
-            user_id
-            period {
-              eval_period_id
-            }
-            complete {
-              complete
-            }
-            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
-              id
-              competency_id
-            }
-            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
-              student_id
-              cycle
-            }
-            last_evaluations {
-              evaluation {
-                comment
-                competency_id
-                created_at
-                date
-                eval_period_id
-                id
-                status
-                student_id
-                updated_at
-                user_id
-              }
-            }
-          }
-        }
     - name: insert-observation
       query: |-
         mutation InsertEvalObservation($text: String!, $user_id: bigint!, $date: date!) {
@@ -1424,5 +1384,45 @@
             evaluations
             observations
             total
+          }
+        }
+    - name: update-observation-date
+      query: |-
+        mutation UpdatebservationDate($id: bigint!, $date: date!) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {date: $date}) {
+            id
+            created_at
+            text
+            date
+            updated_at
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies(order_by: {competency: {alpha_full_rank: asc}}) {
+              id
+              competency_id
+            }
+            students: students_cycles(order_by: {student: {fullname: {fullname: asc}}}) {
+              student_id
+              cycle
+            }
+            last_evaluations {
+              evaluation {
+                comment
+                competency_id
+                created_at
+                date
+                eval_period_id
+                id
+                status
+                student_id
+                updated_at
+                user_id
+              }
+            }
           }
         }
