@@ -1,14 +1,13 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from . import client
 
 
-def insert_observation(text, user_id, period_id, dt, token):
+def insert_observation(text, user_id, dt, token):
     status, data = client.post(
         "insert-observation",
         {
             "text": text,
             "user_id": user_id,
-            "eval_period_id": period_id,
             "date": str(dt),
         },
         token,
@@ -85,13 +84,13 @@ def test_insert_observation(login, periods):
     today = date.today()
     current_period_id = periods["current_period"]["id"]
     data = insert_observation(
-        "Babou le bibi baba", login["user_id"], current_period_id, today, login["token"]
+        "Babou le bibi baba", login["user_id"], today, login["token"]
     )
     id = data["id"]
 
     assert data["text"] == "Babou le bibi baba"
     assert data["user_id"] == login["user_id"]
-    assert data["period_id"] == current_period_id
+    assert data["period"]["eval_period_id"] == current_period_id
     assert data["date"] == str(today)
     assert data["complete"]["complete"] == False
     assert data["competencies"] == []
@@ -105,7 +104,7 @@ def test_insert_observation(login, periods):
     data_by_pk = data_by_pk["eval_observation_by_pk"]
     assert data["text"] == data_by_pk["text"]
     assert data["user_id"] == data_by_pk["user_id"]
-    assert data["period_id"] == data_by_pk["period_id"]
+    assert data["period"]["eval_period_id"] == data_by_pk["period"]["eval_period_id"]
     assert data["date"] == data_by_pk["date"]
     assert data["complete"]["complete"] == data_by_pk["complete"]["complete"]
     assert data["competencies"] == data_by_pk["competencies"]
@@ -121,13 +120,13 @@ def test_update_observation_date(login, periods, students):
     today = date.today()
     current_period_id = periods["current_period"]["id"]
     data = insert_observation(
-        "Babou le bibi baba", login["user_id"], current_period_id, today, login["token"]
+        "Babou le bibi baba", login["user_id"], today, login["token"]
     )
     id = data["id"]
 
     assert data["text"] == "Babou le bibi baba"
     assert data["user_id"] == login["user_id"]
-    assert data["period_id"] == current_period_id
+    assert data["period"]["eval_period_id"] == current_period_id
     assert data["date"] == str(today)
     assert data["complete"]["complete"] == False
     assert data["competencies"] == []
@@ -140,7 +139,7 @@ def test_update_observation_date(login, periods, students):
 
     assert data_student["text"] == "Babou le bibi baba"
     assert data_student["user_id"] == login["user_id"]
-    assert data_student["period_id"] == current_period_id
+    assert data_student["period"]["eval_period_id"] == current_period_id
     assert data_student["date"] == str(today)
     assert data_student["complete"]["complete"] == False
     assert data_student["competencies"] == []
@@ -154,7 +153,6 @@ def test_update_observation_date(login, periods, students):
         {
             "id": data["id"],
             "date": str(d),
-            "eval_period_id": data["period_id"],
         },
         login["token"],
     )
@@ -162,7 +160,12 @@ def test_update_observation_date(login, periods, students):
 
     assert data_after["text"] == "Babou le bibi baba"
     assert data_after["user_id"] == login["user_id"]
-    assert data_after["period_id"] == current_period_id
+    for period in periods["periods"]:
+        start = date.fromisoformat(period["start"])
+        end = date.fromisoformat(period["end"])
+        if start <= d and d <= end:
+            break
+    assert data_after["period"]["eval_period_id"] == period["id"]
     assert data_after["date"] == str(d)
     assert data_after["complete"]["complete"] == False
     assert data_after["competencies"] == []
@@ -178,13 +181,13 @@ def test_update_observation_text(login, periods):
     today = date.today()
     current_period_id = periods["current_period"]["id"]
     data = insert_observation(
-        "Babou le bibi baba", login["user_id"], current_period_id, today, login["token"]
+        "Babou le bibi baba", login["user_id"], today, login["token"]
     )
     id = data["id"]
 
     assert data["text"] == "Babou le bibi baba"
     assert data["user_id"] == login["user_id"]
-    assert data["period_id"] == current_period_id
+    assert data["period"]["eval_period_id"] == current_period_id
     assert data["date"] == str(today)
     assert data["complete"]["complete"] == False
     assert data["competencies"] == []
@@ -208,7 +211,7 @@ def test_update_observation_text(login, periods):
     data_by_pk = data_by_pk["eval_observation_by_pk"]
     assert "Babou le bibi bobo" == data_by_pk["text"]
     assert data["user_id"] == data_by_pk["user_id"]
-    assert data["period_id"] == data_by_pk["period_id"]
+    assert data["period"]["eval_period_id"] == data_by_pk["period"]["eval_period_id"]
     assert data["date"] == data_by_pk["date"]
     assert data["complete"]["complete"] == data_by_pk["complete"]["complete"]
     assert data["competencies"] == data_by_pk["competencies"]
@@ -238,7 +241,6 @@ def test_incomplete_complete(login, periods, students, socle):
     data = insert_observation(
         "Babou le bibi baba",
         login["user_id"],
-        current_period_id,
         today,
         token,
     )
@@ -299,7 +301,6 @@ def test_observations(login, coworker, periods, students, socle):
     data = insert_observation(
         "B",
         login["user_id"],
-        current_period_id,
         today,
         token,
     )
@@ -307,15 +308,14 @@ def test_observations(login, coworker, periods, students, socle):
 
     # By coworker
     data = client.admin_gql(
-        """mutation InsertUser($eval_period_id: Int!, $date: date!, $user_id: bigint!) {
+        """mutation InsertUser($date: date!, $user_id: bigint!) {
         insert_eval_observation_one(object: {date: $date,
-                                             eval_period_id: $eval_period_id,
                                              text: "meuh",
                                              user_id: $user_id}) {
             id
         }
     }""",
-        {"eval_period_id": current_period_id, "date": str(today), "user_id": coworker},
+        {"date": str(today), "user_id": coworker},
     )
     observation_id_2 = data["data"]["insert_eval_observation_one"]["id"]
 
@@ -323,7 +323,6 @@ def test_observations(login, coworker, periods, students, socle):
     data = insert_observation(
         "B",
         login["user_id"],
-        current_period_id,
         today,
         token,
     )
