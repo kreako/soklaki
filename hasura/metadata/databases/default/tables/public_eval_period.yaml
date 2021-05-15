@@ -22,10 +22,12 @@ array_relationships:
         schema: public
 - name: observations
   using:
-    foreign_key_constraint_on:
-      column: eval_period_id
-      table:
-        name: eval_observation
+    manual_configuration:
+      column_mapping:
+        id: eval_period_id
+      insertion_order: null
+      remote_table:
+        name: eval_observation_period
         schema: public
 - name: reports
   using:

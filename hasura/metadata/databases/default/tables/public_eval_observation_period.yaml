@@ -1,0 +1,22 @@
+table:
+  name: eval_observation_period
+  schema: public
+object_relationships:
+- name: observation
+  using:
+    manual_configuration:
+      column_mapping:
+        observation_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_observation
+        schema: public
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        eval_period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
