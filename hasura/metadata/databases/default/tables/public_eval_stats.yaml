@@ -41,10 +41,10 @@ select_permissions:
     - evaluation_status
     filter:
       _and:
-      - period:
+      - competency:
           group_id:
             _eq: X-Hasura-User-Group
-      - competency:
+      - period:
           group_id:
             _eq: X-Hasura-User-Group
       - student:

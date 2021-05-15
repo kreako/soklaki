@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW eval_stats AS
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE OR REPLACE VIEW eval_stats AS
 SELECT
   eval_period.id as period_id,
   student.id as student_id,
@@ -91,4 +93,4 @@ FROM student
     ON evaluation_status.competency_id = socle_competency.id 
       AND evaluation_status.student_id = student.id
 
-ORDER BY socle_competency.alpha_full_rank
+ORDER BY socle_competency.alpha_full_rank;
