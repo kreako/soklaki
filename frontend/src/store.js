@@ -673,11 +673,10 @@ const actions = {
   },
 
   async updateObservationDate({ commit, state, dispatch }, { id, date }) {
-    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await searchOrCreatePeriod(date, state, dispatch);
     const answer = await axios.post("update-observation-date", {
       id: id,
       date: date,
-      eval_period_id: period.id,
     });
 
     const data = answer.data.update_eval_observation_by_pk;
@@ -1242,26 +1241,22 @@ const actions = {
 
   async insertEvaluation(
     { commit, state, dispatch },
-    { studentId, competencyId, periodId, date, status, comment }
+    { studentId, competencyId, date, status, comment }
   ) {
+    await searchOrCreatePeriod(date, state, dispatch);
     const answer = await axios.post("insert-evaluation", {
       student_id: studentId,
       competency_id: competencyId,
       status: status,
       comment: comment,
       date: date,
-      period_id: periodId,
       user_id: state.login.userId,
     });
   },
 
-  async insertComment(
-    { commit, state, dispatch },
-    { periodId, date, studentId, text }
-  ) {
-    const period = await searchOrCreatePeriod(date, state, dispatch);
+  async insertComment({ commit, state, dispatch }, { date, studentId, text }) {
+    await searchOrCreatePeriod(date, state, dispatch);
     const answer = await axios.post("insert-comment", {
-      period_id: period.id,
       date: date,
       student_id: studentId,
       text: text,
@@ -1282,11 +1277,10 @@ const actions = {
   },
 
   async updateCommentDate({ state, dispatch }, { id, date, periodId }) {
-    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await searchOrCreatePeriod(date, state, dispatch);
     await axios.post("update-comment-date", {
       id: id,
       date: date,
-      eval_period_id: period.id,
     });
     await dispatch("evaluations", { periodId });
   },
@@ -1302,11 +1296,10 @@ const actions = {
   },
 
   async updateEvaluationDate({ state, dispatch }, { id, date, periodId }) {
-    const period = await searchOrCreatePeriod(date, state, dispatch);
+    await searchOrCreatePeriod(date, state, dispatch);
     await axios.post("update-evaluation-date", {
       id: id,
       date: date,
-      eval_period_id: period.id,
     });
     await dispatch("evaluations", { periodId });
   },
@@ -1321,26 +1314,21 @@ const actions = {
     await dispatch("evaluations", { periodId });
   },
 
-  async updateEvaluation(
-    { state, dispatch },
-    { id, date, periodId, comment, status }
-  ) {
-    const period = await searchOrCreatePeriod(date, state, dispatch);
+  async updateEvaluation({ state, dispatch }, { id, date, comment, status }) {
+    await searchOrCreatePeriod(date, state, dispatch);
     await axios.post("update-evaluation", {
       id: id,
       date: date,
-      eval_period_id: period.id,
       comment: comment,
       status: status,
     });
   },
 
-  async updateComment({ state, dispatch }, { id, date, periodId, text }) {
-    const period = await searchOrCreatePeriod(date, state, dispatch);
+  async updateComment({ state, dispatch }, { id, date, text }) {
+    await searchOrCreatePeriod(date, state, dispatch);
     await axios.post("update-comment", {
       id: id,
       date: date,
-      eval_period_id: period.id,
       text: text,
     });
     // TODO not sure about period.id and periodId
