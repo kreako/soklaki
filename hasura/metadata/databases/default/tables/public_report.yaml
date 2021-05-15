@@ -2,6 +2,15 @@ table:
   name: report
   schema: public
 object_relationships:
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        id: report_id
+      insertion_order: null
+      remote_table:
+        name: report_period
+        schema: public
 - name: student
   using:
     foreign_key_constraint_on: student_id
