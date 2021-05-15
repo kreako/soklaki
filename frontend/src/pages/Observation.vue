@@ -95,7 +95,13 @@
       <div v-else>
         <button
           @click="showStudentSelector = true"
-          class="mt-1 rounded-md px-3 border border-teal-700 hover:border-teal-300"
+          class="
+            mt-1
+            rounded-md
+            px-3
+            border border-teal-700
+            hover:border-teal-300
+          "
         >
           Ajouter un élève
         </button>
@@ -143,7 +149,13 @@
         <div v-else>
           <button
             @click="showCompetencySelector[cycle] = true"
-            class="mt-1 rounded-md px-3 border border-teal-700 hover:border-teal-300"
+            class="
+              mt-1
+              rounded-md
+              px-3
+              border border-teal-700
+              hover:border-teal-300
+            "
           >
             Lier une compétence
           </button>
@@ -261,20 +273,7 @@ const observation = computed(() => {
     store.state.observation == null ||
     store.state.observation.id != route.params.id
   ) {
-    return {
-      date: null,
-      created_at: null,
-      updated_at: null,
-      text: null,
-      user_id: null,
-      complete: null,
-      competencies: [],
-      students: [],
-      period_id: null,
-      complete: {
-        complete: null,
-      },
-    };
+    return store.getters.observationById(null);
   }
 
   return store.state.observation;
@@ -312,7 +311,11 @@ const saveObservationDate = async () => {
   observationDateInEdit.value = false;
 };
 const period = computed(() => {
-  return store.getters.periodById(observation.value.period_id);
+  const id =
+    observation.value.period == null
+      ? null
+      : observation.value.period.eval_period_id;
+  return store.getters.periodById(id);
 });
 
 const showStudentSelector = ref(false);
@@ -324,8 +327,8 @@ const studentById = computed(() => store.getters.studentById);
 const studentsCycle = computed(() =>
   studentsIdToCycle(observation.value.students)
 );
-const studentCycle = computed(() => (studentId) =>
-  studentsCycle.value[studentId]
+const studentCycle = computed(
+  () => (studentId) => studentsCycle.value[studentId]
 );
 const addStudent = async (id) => {
   await store.dispatch("insertObservationStudent", {

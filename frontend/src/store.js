@@ -467,7 +467,7 @@ const getters = {
       complete: null,
       competencies: [],
       students: [],
-      period_id: null,
+      period: null,
       complete: {
         complete: null,
       },
@@ -631,16 +631,13 @@ const actions = {
 
   async insertObservation({ commit, state, dispatch }, { text }) {
     const date = today();
-    const period = await searchOrCreatePeriod(date, state, dispatch);
-    const periodId = period == null ? null : period.id;
+    await searchOrCreatePeriod(date, state, dispatch);
     const answer = await axios.post("insert-observation", {
       text: text,
       user_id: state.login.userId,
       date: date,
-      eval_period_id: periodId,
     });
     const data = answer.data.insert_eval_observation_one;
-    const periodObj = period == null ? null : { id: period.id };
     commit("setObservation", data);
     return data.id;
   },

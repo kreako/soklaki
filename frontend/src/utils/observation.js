@@ -11,9 +11,9 @@ export const isStudentSelected = (observation, studentId) => {
 /// For an observation, returns the list of non selected students
 /// Taking in account the period of the observation (if any)
 export const nonSelectedStudents = (store, observation) => {
-  if (observation.period_id != null) {
+  if (observation.period != null) {
     // There is an associated period
-    const period = store.getters.periodById(observation.period_id);
+    const period = store.getters.periodById(observation.period.eval_period_id);
     return period.students
       .map((x) => x.student.id)
       .filter((id) => !isStudentSelected(observation, id));
