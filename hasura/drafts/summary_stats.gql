@@ -1,4 +1,14 @@
 query StatsSummary($period_id: Int) {
+  incomplete_observations: eval_observation_complete_aggregate(
+    where: {
+      observation: { period: { eval_period_id: { _eq: $period_id } } }
+      complete: { _eq: false }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
   students_c1: student_aggregate(
     where: {
       current_cycle: { current_cycle: { _eq: "c1" } }

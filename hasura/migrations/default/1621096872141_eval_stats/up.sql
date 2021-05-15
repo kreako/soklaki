@@ -28,7 +28,6 @@ FROM student
         ON eval_observation_student.observation_id = eval_observation_competency.observation_id
       JOIN eval_observation
         ON eval_observation.id = eval_observation_competency.observation_id
-          AND eval_observation.active = true
       JOIN eval_observation_period
         ON eval_observation.id = eval_observation_period.observation_id
     GROUP BY competency_id, student_id, period_id
@@ -91,4 +90,4 @@ FROM student
       AND evaluation_status.student_id = student.id
       AND evaluation_status.period_id = eval_period.id 
 
-ORDER BY socle_competency.alpha_full_rank
+ORDER BY socle_competency.alpha_full_rank;

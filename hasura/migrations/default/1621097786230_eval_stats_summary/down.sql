@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW eval_stats_summary AS
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE OR REPLACE VIEW eval_stats_summary AS
 SELECT
   total.period_id as period_id,
   total.cycle as cycle,
