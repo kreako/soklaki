@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW eval_comment_stats AS
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE OR REPLACE VIEW eval_comment_stats AS
 SELECT
   eval_period.id as period_id,
   student.id as student_id,
@@ -22,4 +24,4 @@ FROM student
     GROUP BY student_id, period_id
   ) as comment
     ON comment.student_id = student.id
-      AND comment.period_id = eval_period.id
+      AND comment.period_id = eval_period.id;

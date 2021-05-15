@@ -5,6 +5,8 @@
 - "!include public_default_socle_subject.yaml"
 - "!include public_eval_comment.yaml"
 - "!include public_eval_comment_period.yaml"
+- "!include public_eval_comment_stats.yaml"
+- "!include public_eval_comment_stats_summary.yaml"
 - "!include public_eval_comment_student_cycle.yaml"
 - "!include public_eval_evaluation.yaml"
 - "!include public_eval_evaluation_period.yaml"

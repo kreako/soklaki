@@ -22,4 +22,4 @@ FROM student
     GROUP BY student_id, period_id
   ) as comment
     ON comment.student_id = student.id
-      AND comment.period_id = eval_period.id
+      AND comment.period_id = eval_period.id;
