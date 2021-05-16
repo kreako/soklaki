@@ -102,6 +102,10 @@ const routes = [
         component: () => import("./pages/SettingsPeriod.vue"),
       },
       {
+        path: "/settings/new-period",
+        component: () => import("./pages/SettingsNewPeriod.vue"),
+      },
+      {
         path: "/reports",
         component: () => import("./pages/Reports.vue"),
       },

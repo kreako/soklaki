@@ -1,6 +1,14 @@
 <template>
   <div class="my-4 px-2">
-    <div class="form-label">Les périodes d'évaluation</div>
+    <div class="flex flex-row space-x-4 items-center">
+      <div class="form-label">Les périodes d'évaluation</div>
+      <router-link
+        to="/settings/new-period"
+        class="text-gray-700 text-xs hover:text-teal-500"
+      >
+        Ajouter une période
+      </router-link>
+    </div>
     <div class="mt-12">
       <div v-for="periodId in periods">
         <div class="flex flex-row space-x-4 items-center mt-4">
@@ -18,12 +26,23 @@
         </div>
       </div>
     </div>
+    <div class="mt-8">
+      <div class="flex flex-row items-center space-x-2 button-minor-action">
+        <router-link to="/settings/new-period">
+          <IconPlus class="h-4" />
+        </router-link>
+        <router-link to="/settings/new-period">
+          Ajouter une période
+        </router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
+import IconPlus from "../icons/IconPlus.vue";
 
 const store = useStore();
 

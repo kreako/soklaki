@@ -20,17 +20,27 @@
       @save="savePeriodEnd"
     />
   </div>
+  <div class="mt-12">
+    <div class="flex flex-row items-center space-x-2 button-minor-action">
+      <button @click="deletePeriod">
+        <IconTrash class="h-4" />
+      </button>
+      <button @click="deletePeriod">Supprimer cette période</button>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
 import InputDateWithLabel from "../components/InputDateWithLabel.vue";
+import IconTrash from "../icons/IconTrash.vue";
 
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
 
 const period = computed(() => store.getters.periodById(route.params.periodId));
 
@@ -62,5 +72,11 @@ const savePeriodEnd = async (value) => {
     end: value,
     name: period.value.name,
   });
+};
+
+const deletePeriod = async () => {
+  const id = Number(route.params.periodId);
+  await store.dispatch("updatePeriodActive", { id: id, active: false });
+  router.push("/settings/periods");
 };
 </script>
