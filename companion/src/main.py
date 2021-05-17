@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from gql_client import GqlClient, GqlClientException
 import socle
 import invitation
+import ping
 from jwt_token import generate_jwt_token
 
 load_dotenv()
@@ -22,6 +23,8 @@ HASURA_GRAPHQL_JWT_SECRET = os.getenv("HASURA_GRAPHQL_JWT_SECRET")
 HASURA_GRAPHQL_ENDPOINT = os.getenv("HASURA_GRAPHQL_ENDPOINT")
 # Invitation secret
 INVITATION_SECRET = os.getenv("INVITATION_SECRET")
+# Ping secret
+PING_SECRET = os.getenv("PING_SECRET")
 
 
 app = FastAPI()
@@ -137,17 +140,6 @@ async def invitation_signup_token(input: invitation.SignupTokenInput):
     )
 
 
-# For email confirmation
-# from cryptography.fernet import Fernet
-# import base64
-# k = Fernet.generate_key()
-# f = Fernet(k)
-# token = base64.urlsafe_b64encode(f.encrypt(f"{user.id}-{timestamp}".encode()))
-# ...
-# user_id, timestamp = f.decrypt(base64.urlsafe_b64decode(token)).split("-")
-# if now() - timestamp > 1 DAY:
-#     ...
-
-# For login needs to set :
-# X-hasura-User-Id
-# X-hasura-User-Group
+@app.post("/ping")
+async def do_ping(input: ping.PingInput):
+    return await ping.ping(gql_client, PING_SECRET, input)
