@@ -608,6 +608,14 @@ const actions = {
     commit("setErrorMessage", "");
   },
 
+  async logout({ commit }) {
+    commit("setLoginToken", null);
+    commit("setLoginUserId", null);
+    commit("setLoginGroupId", null);
+    commit("setLoginEmail", null);
+    localStorage.clear();
+  },
+
   async signup({ commit }, { email, password }) {
     const answer = await axios.post("signup", { email, password });
     commit("setLoginToken", answer.data.signup.token);
