@@ -246,6 +246,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: ping
+  url: ping
+  methods:
+  - POST
+  name: ping
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: report
   url: report
   methods:

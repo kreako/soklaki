@@ -37,6 +37,14 @@ actions:
   permissions:
   - role: user
   - role: anonymous
+- name: ping
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/ping
+    forward_client_headers: true
+  permissions:
+  - role: user
+  - role: anonymous
 - name: signup
   definition:
     kind: synchronous
@@ -55,4 +63,5 @@ custom_types:
   - name: GenerateTokenOutput
   - name: VerifyTokenOutput
   - name: SignupTokenOutput
+  - name: PingOutput
   scalars: []

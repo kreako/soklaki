@@ -1454,3 +1454,27 @@
             }
           }
         }
+    - name: ping
+      query: |-
+        mutation Ping($secret: String!) {
+          ping(secret: $secret) {
+            default_socle_competency
+            default_socle_competency_subject
+            default_socle_competency_template
+            default_socle_container
+            default_socle_subject
+            eval_comment
+            eval_evaluation
+            eval_observation
+            eval_period
+            group
+            report
+            socle_competency
+            socle_competency_template
+            socle_competency_subject
+            socle_container
+            socle_subject
+            student
+            user
+          }
+        }

@@ -38,6 +38,13 @@ type Mutation {
 
 
 type Mutation {
+  ping (
+    secret: String!
+  ): PingOutput
+}
+
+
+type Mutation {
   signup (
     email: String!
     password: String!
@@ -89,5 +96,26 @@ type SignupTokenOutput {
   token : String
   user_id : Int
   group_id : Int
+}
+
+type PingOutput {
+  default_socle_competency : Int!
+  default_socle_competency_subject : Int!
+  default_socle_competency_template : Int!
+  default_socle_container : Int!
+  default_socle_subject : Int!
+  eval_comment : Int!
+  eval_evaluation : Int!
+  eval_observation : Int!
+  eval_period : Int!
+  group : Int!
+  report : Int!
+  socle_competency : Int!
+  socle_competency_subject : Int!
+  socle_competency_template : Int!
+  socle_container : Int!
+  socle_subject : Int!
+  student : Int!
+  user : Int!
 }
 
