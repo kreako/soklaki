@@ -32,4 +32,7 @@
 
 <script setup>
 import IconCog from "../icons/IconCog.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Réglages - soklaki.fr");
 </script>

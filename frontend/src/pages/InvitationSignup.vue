@@ -91,6 +91,9 @@ import { computed, ref, watch, onMounted } from "vue";
 import { isEmailValid, isPasswordValid } from "../utils/form-validation.js";
 import MascotteTip from "../components/MascotteTip.vue";
 import MyEmailInput from "../components/MyEmailInput.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Invitation - soklaki.fr");
 
 const store = useStore();
 const router = useRouter();

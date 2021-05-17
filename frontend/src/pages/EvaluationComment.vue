@@ -42,19 +42,37 @@
     <div class="mt-20 flex flex-row justify-center space-x-4">
       <router-link
         :to="previousCompetency"
-        class="border border-gray-300 rounded-md shadow-md hover:text-teal-500 hover:border-teal-500"
+        class="
+          border border-gray-300
+          rounded-md
+          shadow-md
+          hover:text-teal-500
+          hover:border-teal-500
+        "
       >
         <IconChevronLeft class="h-8" />
       </router-link>
       <router-link
         :to="`/evaluations-by-cycle/${route.params.cycle}`"
-        class="border border-gray-300 rounded-md shadow-md hover:text-teal-500 hover:border-teal-500"
+        class="
+          border border-gray-300
+          rounded-md
+          shadow-md
+          hover:text-teal-500
+          hover:border-teal-500
+        "
       >
         <IconChevronUp class="h-8" />
       </router-link>
       <router-link
         :to="`/evaluations-by-cycle/${route.params.cycle}`"
-        class="border border-gray-300 rounded-md shadow-md hover:text-teal-500 hover:border-teal-500"
+        class="
+          border border-gray-300
+          rounded-md
+          shadow-md
+          hover:text-teal-500
+          hover:border-teal-500
+        "
       >
         <IconChevronRight class="h-8" />
       </router-link>
@@ -73,6 +91,9 @@ import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconChevronUp from "../icons/IconChevronUp.vue";
 import IconPencil from "../icons/IconPencil.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Commentaires généraux - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

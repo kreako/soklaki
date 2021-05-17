@@ -43,6 +43,9 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import IconPlus from "../icons/IconPlus.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Périodes - soklaki.fr");
 
 const store = useStore();
 

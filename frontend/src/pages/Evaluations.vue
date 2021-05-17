@@ -32,6 +32,9 @@ import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { until } from "@vueuse/core";
 import EvalSummaryStats from "../components/EvalSummaryStats.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Évaluations - soklaki.fr");
 
 const store = useStore();
 

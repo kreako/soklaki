@@ -37,6 +37,9 @@ import { useRoute, useRouter } from "vue-router";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
 import InputDateWithLabel from "../components/InputDateWithLabel.vue";
 import IconTrash from "../icons/IconTrash.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Période - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

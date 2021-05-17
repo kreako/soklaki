@@ -29,6 +29,9 @@ import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import HashSubjects from "../components/HashSubjects.vue";
 import CompetencyTemplates from "../components/CompetencyTemplates.vue";
 import IconPlusCircle from "../icons/IconPlusCircle.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Nouvelle observation - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

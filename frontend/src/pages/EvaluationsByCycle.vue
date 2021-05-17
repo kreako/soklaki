@@ -52,9 +52,12 @@ import { useRoute, useRouter } from "vue-router";
 import { until } from "@vueuse/core";
 import { cycleNb } from "../utils/cycle";
 import ProgressBar from "../components/ProgressBar.vue";
+import { useTitle } from "@vueuse/core";
 
 const store = useStore();
 const route = useRoute();
+
+useTitle(`Évaluations ${route.params.cycle} - soklaki.fr`);
 
 const cycle = computed(() => cycleNb(route.params.cycle));
 

@@ -45,6 +45,9 @@ import { until } from "@vueuse/core";
 import { today } from "../utils/date";
 import { fathers } from "../utils/competency";
 import EvalCompetency from "../components/EvalCompetency.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Évaluation - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

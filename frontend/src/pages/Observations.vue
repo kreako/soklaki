@@ -79,6 +79,9 @@ import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconUser from "../icons/IconUser.vue";
 import IconCompetency from "../icons/IconCompetency.vue";
 import ElegantSelect from "../components/ElegantSelect.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Observations - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

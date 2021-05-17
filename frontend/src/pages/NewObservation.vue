@@ -14,6 +14,9 @@
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Nouvelle observation - soklaki.fr");
 
 const router = useRouter();
 const store = useStore();

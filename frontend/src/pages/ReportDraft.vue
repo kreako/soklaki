@@ -105,6 +105,9 @@ import { useRoute, useRouter } from "vue-router";
 import { cycleNb } from "../utils/cycle";
 import { today } from "../utils/date";
 import ReportPerCompetency from "../components/ReportPerCompetency.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Rapport brouillon - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

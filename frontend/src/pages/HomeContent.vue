@@ -64,8 +64,10 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
-import { until } from "@vueuse/core";
+import { until, useTitle } from "@vueuse/core";
 import StatsSummary from "../components/StatsSummary.vue";
+
+useTitle("Accueil - soklaki.fr");
 
 const store = useStore();
 

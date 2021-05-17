@@ -23,6 +23,9 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { until } from "@vueuse/core";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Rapports - soklaki.fr");
 
 const store = useStore();
 

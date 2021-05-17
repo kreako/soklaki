@@ -56,6 +56,9 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import IconDocumentReport from "../icons/IconDocumentReport.vue";
 import ProgressBar from "../components/ProgressBar.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Rapports - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

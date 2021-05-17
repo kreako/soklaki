@@ -27,6 +27,9 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Informations - soklaki.fr");
 
 const store = useStore();
 

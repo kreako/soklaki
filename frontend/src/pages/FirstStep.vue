@@ -57,6 +57,9 @@ import MascotteTip from "../components/MascotteTip.vue";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Premiers pas - soklaki.fr");
 
 const store = useStore();
 const router = useRouter();

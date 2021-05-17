@@ -248,6 +248,7 @@
 <script setup>
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
+import { useTitle } from "@vueuse/core";
 import { computed, ref, onMounted, watch } from "vue";
 import { cycleNb, cycleFullName } from "../utils/cycle";
 import { dateToNiceString, today } from "../utils/date";
@@ -263,6 +264,8 @@ import StudentSelector from "../components/StudentSelector.vue";
 import CompetencySelector from "../components/CompetencySelector.vue";
 import DatePicker from "../components/DatePicker.vue";
 import EvalCompetency from "../components/EvalCompetency.vue";
+
+useTitle("Observation - soklaki.fr");
 
 const store = useStore();
 const router = useRouter();

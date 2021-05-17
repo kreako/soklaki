@@ -31,6 +31,9 @@ import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import DatePicker from "../components/DatePicker.vue";
+import { useTitle } from "@vueuse/core";
+
+useTitle("Nouvelle période - soklaki.fr");
 
 const store = useStore();
 const router = useRouter();
