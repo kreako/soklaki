@@ -114,7 +114,10 @@
             :subjects="competencyById(selectedCompetency).subjects"
           />
         </div>
-        <div class="mt-8 pl-2">
+        <div
+          v-if="competencyById(selectedCompetency).templates.length > 0"
+          class="mt-8 pl-2"
+        >
           <div class="font-bold">
             Créer une nouvelle observation à partir d'un modèle
           </div>
@@ -137,6 +140,15 @@
               </router-link>
             </li>
           </ul>
+        </div>
+        <div v-else class="mt-8 pl-2">
+          <div class="hover:text-teal-500">
+            <router-link
+              :to="`/new-observation-from-template/${selectedStudent}/${selectedCompetency}/${-1}`"
+            >
+              Créer une nouvelle observation
+            </router-link>
+          </div>
         </div>
       </div>
     </Modal>
