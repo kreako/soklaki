@@ -8,7 +8,7 @@
     "serve": "vite preview",
     "test:unit": "node --experimental-vm-modules node_modules/.bin/jest ./src/",
     "test:integration": "folio tests --param browserName=firefox --param screenshotOnFailure",
-    "test:integration:headful": "folio tests/new-observation.spec.js --param browserName=firefox --param screenshotOnFailure --param headful",
+    "test:integration:headful": "folio tests/new-observation.spec.ts --param browserName=firefox --param screenshotOnFailure --param headful",
     "test:integration:codegen": "playwright codegen http://127.0.0.1:3000"
   },
   "dependencies": {
