@@ -16,3 +16,4 @@ backend_tests/__pycache__
 *.swp
 .env
 frontend/test-results/
+frontend/tests/signup-data.json
