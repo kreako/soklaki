@@ -1,6 +1,6 @@
 import { it, expect } from "./fixtures";
 
-it("is a basic test with the page", async ({ page }) => {
+it("is able to create an observation", async ({ page }) => {
   await page.goto("http://127.0.0.1:3000/");
   await page.waitForFunction(() => document.title === "Accueil - soklaki.fr");
   await Promise.all([
