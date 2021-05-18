@@ -17,3 +17,5 @@ backend_tests/__pycache__
 .env
 frontend/test-results/
 frontend/tests/signup-data.json
+ansible/inventory/production.yml
+ansible/inventory/staging.yml
