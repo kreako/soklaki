@@ -133,11 +133,11 @@ alter table "public"."user_group" add column "is_school" boolean
 alter table "public"."user" add column "manager" boolean
  not null;
 
-CREATE VIEW user_manager AS
+CREATE OR REPLACE VIEW user_manager AS
   SELECT id, name, active, manager, email
     FROM public.user;
 
-CREATE VIEW user_manager AS
+CREATE OR REPLACE VIEW user_manager AS
   SELECT id, name, active, manager, email, user_group_id
     FROM public.user;
 
@@ -163,7 +163,7 @@ alter table "public"."student" rename column "user_group_id" to "group_id";
 
 alter table "public"."user" rename column "user_group_id" to "group_id";
 
-CREATE VIEW user_manager AS
+CREATE OR REPLACE VIEW user_manager AS
   SELECT id, name, active, manager, email, group_id
     FROM public.user;
 
