@@ -11,3 +11,5 @@ COPY . .
 
 # Build
 RUN npm run build
+
+CMD [ "cp", "-rf", "/app/dist/*", "/dist" ]
