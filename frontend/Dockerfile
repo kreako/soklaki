@@ -12,5 +12,5 @@ COPY . .
 # Build
 RUN npm run build
 
-ENTRYPOINT /bin/bash -c
+ENTRYPOINT
 CMD cp -rf /app/dist/* /dist
