@@ -133,13 +133,6 @@ alter table "public"."user_group" add column "is_school" boolean
 alter table "public"."user" add column "manager" boolean
  not null;
 
-CREATE OR REPLACE VIEW user_manager AS
-  SELECT id, name, active, manager, email
-    FROM public.user;
-
-CREATE OR REPLACE VIEW user_manager AS
-  SELECT id, name, active, manager, email, user_group_id
-    FROM public.user;
 
 CREATE TABLE "public"."eval_observation_template" ("id" serial NOT NULL, "text" text NOT NULL, PRIMARY KEY ("id") );
 
