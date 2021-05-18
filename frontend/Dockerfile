@@ -12,4 +12,4 @@ COPY . .
 # Build
 RUN npm run build
 
-CMD [ "cp", "-rf", "/app/dist/*", "/dist" ]
+ENTRYPOINT [ "cp", "-rf", "/app/dist/*", "/dist" ]
