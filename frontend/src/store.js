@@ -5,10 +5,6 @@ import { searchOrCreatePeriod } from "./utils/period";
 import { computeRanks } from "./utils/socle";
 
 const state = {
-  error: {
-    inError: false,
-    message: "",
-  },
   login: {
     error: {
       invalid: false,
@@ -205,12 +201,6 @@ const fromArrayToIdObjects = (array) => {
 };
 
 const mutations = {
-  setInError(state, error) {
-    state.error.inError = error;
-  },
-  setErrorMessage(state, message) {
-    state.error.message = message;
-  },
   setGroup(state, group) {
     state.group = group;
   },
@@ -570,16 +560,6 @@ const getters = {
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 const actions = {
-  setError({ commit }, message) {
-    commit("setInError", true);
-    commit("setErrorMessage", message);
-  },
-
-  clearError({ commit }) {
-    commit("setInError", false);
-    commit("setErrorMessage", "");
-  },
-
   async boot({ commit, state }) {
     const answer = await axios.post("boot", { group_id: state.login.groupId });
     commit("setGroup", answer.data.group[0]);
@@ -603,9 +583,6 @@ const actions = {
     commit("setLoginUserId", answer.data.login.id);
     commit("setLoginGroupId", answer.data.login.group_id);
     commit("setLoginEmail", email);
-    // Clear errors after login...
-    commit("setInError", false);
-    commit("setErrorMessage", "");
   },
 
   async logout({ commit }) {
@@ -624,9 +601,6 @@ const actions = {
     commit("setLoginUserId", answer.data.signup.id);
     commit("setLoginGroupId", answer.data.signup.group);
     commit("setLoginEmail", email);
-    // Clear errors after signup...
-    commit("setInError", false);
-    commit("setErrorMessage", "");
   },
 
   async resetPassword({ commit }, { email }) {
@@ -1422,34 +1396,6 @@ const buildStore = () => {
     actions,
     getters,
   });
-
-  // Set error handler
-  store.subscribeAction({
-    error: (action, state, error) => {
-      console.log(`error action ${action.type}`);
-      console.log("action", action);
-      console.error("error", error);
-      console.error("response", error.response);
-      const actionStr = JSON.stringify(action, null, 2);
-      const errorProperties = Object.getOwnPropertyNames(error);
-      errorProperties.push("stack");
-      const errorStr = JSON.stringify(error, errorProperties, 2);
-      const responseStr = JSON.stringify(error.response, null, 2);
-      const message = `Action: ${actionStr}\nError: ${errorStr}\nResponse: ${responseStr}`;
-      store.dispatch("setError", message);
-      try {
-        axios.post("insert-frontend-store-error", {
-          user_id: state.login.userId,
-          error: errorStr,
-          action: actionStr,
-          response: responseStr,
-        });
-      } catch (error) {
-        // Not even able to post the error in backend :(
-      }
-    },
-  });
-
   return store;
 };
 
