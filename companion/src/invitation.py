@@ -52,7 +52,6 @@ class VerifyTokenData(BaseModel):
 
 class VerifyTokenInput(BaseModel):
     input: VerifyTokenData
-    session_variables: HasuraHeaders
 
 
 class VerifyTokenOutput(BaseModel):
@@ -139,7 +138,6 @@ class SignupTokenData(BaseModel):
 
 class SignupTokenInput(BaseModel):
     input: SignupTokenData
-    session_variables: HasuraHeaders
 
 
 class SignupTokenOutput(BaseModel):
