@@ -624,6 +624,9 @@ const actions = {
     commit("setLoginUserId", answer.data.signup.id);
     commit("setLoginGroupId", answer.data.signup.group);
     commit("setLoginEmail", email);
+    // Clear errors after signup...
+    commit("setInError", false);
+    commit("setErrorMessage", "");
   },
 
   async resetPassword({ commit }, { email }) {
