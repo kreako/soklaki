@@ -1,3 +1,8 @@
+- name: report directory
+  ansible.builtin.file:
+    path: "{{ reports_dir }}"
+    state: directory
+
 - name: Create an empty .env file
   ansible.builtin.file:
     path: "{{ soklaki_co_dir }}/companion/.env"
@@ -5,15 +10,20 @@
     modification_time: preserve
     access_time: preserve
 
+- name: Remove companion container
+  containers.podman.podman_container:
+    name: soklaki-companion
+    state: absent
+
+- name: Remove soklaki companion image
+  containers.podman.podman_image:
+    name: soklaki-companion
+    state: absent
+
 - name: Build soklaki companion image
   containers.podman.podman_image:
     name: soklaki-companion
     path: "{{ soklaki_co_dir }}/companion"
-
-- name: report directory
-  ansible.builtin.file:
-    path: "{{ reports_dir }}"
-    state: directory
 
 - name: Create a companion container
   containers.podman.podman_container:
@@ -32,7 +42,6 @@
       PING_SECRET: "{{ ping_secret }}"
     log_opt: path={{podman_logs_dir}}/companion.json max_size=100mb
     state: started
-    recreate: yes
 
 - name: report directory permissions
   ansible.builtin.file:

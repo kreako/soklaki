@@ -2,16 +2,9 @@
 - hosts: all
   roles:
     - config
-    - firewall
-    - swap
-    - tools
-    - podman
-    - git_install
     - git
     - db
-    - hasura_install
     - hasura
     - companion
     - frontend
-    - nginx_install
     - nginx
