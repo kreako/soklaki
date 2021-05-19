@@ -77,3 +77,27 @@ podman stop soklaki-hasura && podman rm soklaki-hasura
 ### Run inside the container
 
 podman exec -it soklaki-hasura /bin/bash
+
+## Ansible
+
+### Installation
+
+#### Ansible
+
+sudo dnf install ansible
+
+### Podman modules
+
+ansible-galaxy collection install containers.podman
+
+### Snaps module
+
+ansible-galaxy collection install community.general
+
+### Selinux module
+
+ansible-galaxy collection install ansible.posix
+
+### Ssh key copy
+
+ssh-copy-id <user>@<ip>
