@@ -1,0 +1,42 @@
+- name: Download hasura cli
+  get_url:
+    url: https://github.com/hasura/graphql-engine/releases/download/v2.0.0-alpha.10/cli-hasura-linux-amd64
+    dest: "{{ hasura_cli }}"
+    mode: "0700"
+
+- name: Create a hasura container
+  containers.podman.podman_container:
+    name: soklaki-hasura
+    image: hasura/graphql-engine:v2.0.0-alpha.10
+    restart_policy: always
+    pod: soklaki
+    env:
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:{{ postgres_password }}@127.0.0.1:5432/postgres"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
+      HASURA_GRAPHQL_ADMIN_SECRET: "{{ hasura_admin_secret }}"
+      # Note the space between ' { and don't remove it otherwise this mess up the quotation
+      HASURA_GRAPHQL_JWT_SECRET: ' {"type": "HS256", "key": "{{ hasura_graphql_jwt_secret }}"}'
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
+      HASURA_GRAPHQL_CORS_DOMAIN: "https://*.soklaki.fr"
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+      HASURA_GRAPHQL_DEV_MODE: "false"
+    log_opt: path={{podman_logs_dir}}/hasura.json max_size=100mb
+    state: started
+
+- name: Apply metadata
+  ansible.builtin.shell:
+  args:
+    cmd: "{{ hasura_cli }} metadata apply --admin-secret {{ hasura_admin_secret }}"
+    chdir: "{{ soklaki_co_dir }}/hasura"
+
+- name: Apply migration
+  ansible.builtin.shell:
+  args:
+    cmd: "{{ hasura_cli }} migrate apply --admin-secret {{ hasura_admin_secret }} --database-name default"
+    chdir: "{{ soklaki_co_dir }}/hasura"
+
+- name: Reload metadata
+  ansible.builtin.shell:
+  args:
+    cmd: "{{ hasura_cli }} metadata reload --admin-secret {{ hasura_admin_secret }}"
+    chdir: "{{ soklaki_co_dir }}/hasura"

@@ -1,0 +1,19 @@
+- name: Create a checkout directory variable
+  set_fact:
+    soklaki_co_dir: "{{ ansible_user_dir }}/soklaki"
+
+- name: Create an hasura cli binary variable
+  set_fact:
+    hasura_cli: "{{ ansible_user_dir }}/hasura-cli"
+
+- name: Create a report directory variable
+  set_fact:
+    reports_dir: "{{ ansible_user_dir }}/reports"
+
+- name: Set a variable for logs directory
+  set_fact:
+    podman_logs_dir: "{{ ansible_user_dir }}/logs"
+
+- name: Create a frontend dist directory variable
+  set_fact:
+    frontend_dist_dir: "{{ ansible_user_dir }}/frontend_dist"

@@ -1,0 +1,10 @@
+- name: Install git
+  dnf:
+    name: git
+    state: latest
+  become: yes
+
+- name: git checkout/pull
+  ansible.builtin.git:
+    repo: "https://github.com/kreako/soklaki"
+    dest: "{{ soklaki_co_dir }}"

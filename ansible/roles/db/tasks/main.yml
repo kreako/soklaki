@@ -1,0 +1,24 @@
+- name: Postgresql data directory
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/pgdata"
+    state: directory
+
+- name: Create a postgresql container
+  containers.podman.podman_container:
+    name: soklaki-db
+    image: postgres
+    restart_policy: always
+    pod: soklaki
+    volume:
+      - "{{ansible_user_dir}}/pgdata:/var/lib/postgresql/data:z"
+    env:
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+    log_opt: path={{podman_logs_dir}}/db.json max_size=100mb
+    state: started
+
+- name: Postgresql data directory permissions
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/pgdata"
+    state: directory
+    mode: 0755
+  become: yes

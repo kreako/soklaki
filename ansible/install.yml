@@ -1,0 +1,14 @@
+---
+- hosts: all
+  roles:
+    - config
+    #- firewall
+    #- swap
+    #- tools
+    #- podman
+    - git
+    #- db
+    #- hasura
+    - companion
+    #- frontend
+    #- nginx

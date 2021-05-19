@@ -1,0 +1,45 @@
+- name: frontend dist directory deletion
+  ansible.builtin.file:
+    path: "{{ frontend_dist_dir }}"
+    state: absent
+
+- name: frontend dist directory re-creation
+  ansible.builtin.file:
+    path: "{{ frontend_dist_dir }}"
+    state: directory
+
+- name: Remove previous build image
+  containers.podman.podman_image:
+    name: soklaki-frontend
+    state: absent
+
+- name: Create a .env for vite build
+  ansible.builtin.template:
+    src: env.production.j2
+    dest: "{{ soklaki_co_dir }}/frontend/.env.production"
+  become: yes
+
+- name: Build soklaki frontend image
+  containers.podman.podman_image:
+    name: soklaki-frontend
+    path: "{{ soklaki_co_dir }}/frontend"
+
+- name: Copy dist from soklaki-frontend container
+  containers.podman.podman_container:
+    name: soklaki-frontend
+    image: soklaki-frontend
+    rm: yes
+    volume:
+      - "{{frontend_dist_dir}}:/dist:z"
+    log_opt: path={{podman_logs_dir}}/soklaki-frontend.json max_size=100mb
+    state: started
+
+- name: stat of index.html
+  ansible.builtin.stat:
+    path: "{{ frontend_dist_dir }}/index.html"
+  register: sym
+
+- name: Make sure index.html is here
+  assert:
+    that:
+      - sym.stat.exists == True

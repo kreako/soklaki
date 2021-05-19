@@ -1,0 +1,42 @@
+- name: Create an empty .env file
+  ansible.builtin.file:
+    path: "{{ soklaki_co_dir }}/companion/.env"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Build soklaki companion image
+  containers.podman.podman_image:
+    name: soklaki-companion
+    path: "{{ soklaki_co_dir }}/companion"
+
+- name: report directory
+  ansible.builtin.file:
+    path: "{{ reports_dir }}"
+    state: directory
+
+- name: Create a companion container
+  containers.podman.podman_container:
+    name: soklaki-companion
+    image: soklaki-companion
+    restart_policy: always
+    pod: soklaki
+    volume:
+      - "{{reports_dir}}:/reports:z"
+    env:
+      ARGON2_SECRET: "{{ argon2_secret }}"
+      HASURA_GRAPHQL_ADMIN_SECRET: "{{ hasura_admin_secret }}"
+      HASURA_GRAPHQL_JWT_SECRET: "{{ hasura_graphql_jwt_secret }}"
+      HASURA_GRAPHQL_ENDPOINT: "http://localhost:8080/v1/graphql"
+      INVITATION_SECRET: "{{ invitation_secret }}"
+      PING_SECRET: "{{ ping_secret }}"
+    log_opt: path={{podman_logs_dir}}/companion.json max_size=100mb
+    state: started
+    recreate: yes
+
+- name: report directory permissions
+  ansible.builtin.file:
+    path: "{{ reports_dir }}"
+    state: directory
+    mode: 0755
+  become: yes

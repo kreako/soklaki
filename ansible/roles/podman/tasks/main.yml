@@ -1,0 +1,20 @@
+- name: Install podman
+  dnf:
+    name: podman
+    state: latest
+  become: yes
+
+- name: Create the pod
+  containers.podman.podman_pod:
+    name: soklaki
+    state: created
+    ports:
+      - 8080:8080 # hasura graphql end point port
+      - 5432:5432 # postgresql port
+      - 8000:8000 # companion port
+
+- name: logs directory
+  ansible.builtin.file:
+    path: "{{ podman_logs_dir }}"
+    state: directory
+    mode: "0755"

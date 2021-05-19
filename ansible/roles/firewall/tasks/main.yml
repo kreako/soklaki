@@ -1,0 +1,49 @@
+- name: Install firewalld
+  dnf:
+    name: firewalld
+    state: latest
+  become: yes
+
+- name: Make sure firewalld is running
+  ansible.builtin.systemd:
+    state: started
+    name: firewalld
+  become: yes
+
+- name: Enable https
+  firewalld:
+    service: https
+    permanent: yes
+    immediate: yes
+    state: enabled
+  become: yes
+
+- name: Enable http
+  firewalld:
+    service: http
+    permanent: yes
+    immediate: yes
+    state: enabled
+  become: yes
+
+- name: Enable ssh
+  firewalld:
+    service: ssh
+    permanent: yes
+    immediate: yes
+    state: enabled
+  become: yes
+
+- name: Disable cockpit
+  firewalld:
+    service: cockpit
+    permanent: yes
+    immediate: yes
+    state: disabled
+  become: yes
+
+- name: Make sure firewalld is enable at boot
+  ansible.builtin.systemd:
+    enabled: yes
+    name: firewalld
+  become: yes

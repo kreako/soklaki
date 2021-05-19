@@ -1,0 +1,99 @@
+- name: Install nginx
+  dnf:
+    name: nginx
+    state: latest
+  become: yes
+
+- name: Install snapd
+  dnf:
+    name: snapd
+    state: latest
+  become: yes
+
+- name: Enable snapd
+  ansible.builtin.systemd:
+    name: snapd.socket
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Create the snapd symbolic link
+  ansible.builtin.file:
+    src: /var/lib/snapd/snap
+    dest: /snap
+    state: link
+  become: yes
+
+- name: Install certbot with --classic
+  community.general.snap:
+    name: certbot
+    classic: yes
+  become: yes
+
+- name: Create the certbot symbolic link
+  ansible.builtin.file:
+    src: /snap/bin/certbot
+    dest: /usr/bin/certbot
+    state: link
+  become: yes
+
+- name: Enable nginx
+  ansible.builtin.systemd:
+    name: nginx
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Allow nginx to proxy_pass
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  become: yes
+
+- name: Nginx configuration
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/nginx.conf"
+  become: yes
+
+- name: Reload nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: reloaded
+  become: yes
+
+- name: Certbot command variable
+  set_fact:
+    certbot_command: certbot --email olivier@soklaki.fr --redirect --agree-tos --domains {{ server_name }} --non-interactive --nginx
+  when: production == False
+
+- name: Certbot command variable
+  set_fact:
+    certbot_command: certbot --email olivier@soklaki.fr --redirect --agree-tos --domains {{ server_name }} --domains soklaki.fr --non-interactive --nginx
+  when: production == True
+
+- name: Ask certificate
+  ansible.builtin.shell: "{{ certbot_command }}"
+  become: yes
+
+- name: Add a cron to renew certificate automatically
+  ansible.builtin.cron:
+    name: certbot
+    job: "{{ certbot_command }}"
+    special_time: weekly
+  become: yes
+
+- name: Copy frontend distribution to root
+  ansible.builtin.shell: "cp -rf {{ frontend_dist_dir }}/* {{ nginx_root }}"
+  become: yes
+
+- name: Root directory
+  ansible.builtin.file:
+    path: "{{ nginx_root }}/root"
+    state: directory
+  become: yes
+
+- name: Simple index.html for root
+  ansible.builtin.shell: "echo 'Bienvenue sur soklaki.fr...' > {{ nginx_root }}/root/index.html"
+  become: yes
