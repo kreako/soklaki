@@ -19,4 +19,5 @@ frontend/test-results/
 frontend/tests/signup-data.json
 ansible/inventory/production.yml
 ansible/inventory/staging.yml
+ansible/inventory/prom.yml
 frontend/dist
