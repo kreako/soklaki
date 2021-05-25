@@ -101,3 +101,9 @@ ansible-galaxy collection install ansible.posix
 ### Ssh key copy
 
 ssh-copy-id <user>@<ip>
+
+## Supervision
+
+### Prometheus
+
+podman run -p 9090:9090 -v $HOME/prometheus/config:/etc/prometheus/:z prom/prometheus
