@@ -1,0 +1,34 @@
+- name: Create an empty .env file
+  ansible.builtin.file:
+    path: "{{ soklaki_co_dir }}/exporter/.env"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Remove exporter container
+  containers.podman.podman_container:
+    name: soklaki-exporter
+    state: absent
+
+- name: Remove soklaki exporter image
+  containers.podman.podman_image:
+    name: soklaki-exporter
+    state: absent
+
+- name: Build soklaki exporter image
+  containers.podman.podman_image:
+    name: soklaki-exporter
+    path: "{{ soklaki_co_dir }}/exporter"
+
+- name: Create an exporter container
+  containers.podman.podman_container:
+    name: soklaki-exporter
+    image: soklaki-exporter
+    restart_policy: always
+    pod: soklaki
+    env:
+      EXPORTER_PORT: 8001
+      ENDPOINT: "https://{{server_name}}/api/ping"
+      PING_SECRET: "{{ ping_secret }}"
+    log_opt: path={{podman_logs_dir}}/exporter.json max_size=100mb
+    state: started

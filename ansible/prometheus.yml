@@ -13,7 +13,12 @@
 - hosts: all
   roles:
     - firewall-prometheus
-    - prometheus-node-exporter
+    prometheus-node-exporter
+
+- hosts: app
+  roles:
+    - git
+    - exporter
 
 - hosts: prom.soklaki.fr
   roles:

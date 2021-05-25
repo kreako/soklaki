@@ -6,5 +6,6 @@
     - db
     - hasura
     - companion
+    - exporter
     - frontend
     - nginx

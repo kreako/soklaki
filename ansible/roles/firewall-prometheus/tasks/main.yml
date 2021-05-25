@@ -33,6 +33,14 @@
     state: enabled
   become: yes
 
+- name: Add app exporter port
+  ansible.posix.firewalld:
+    zone: prometheus
+    port: 8001/tcp
+    permanent: yes
+    state: enabled
+  become: yes
+
 - name: Reload firewalld
   ansible.builtin.shell: firewall-cmd --reload
   become: yes

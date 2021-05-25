@@ -16,3 +16,4 @@
     - nginx_install
     - certbot_install
     - nginx
+    - exporter

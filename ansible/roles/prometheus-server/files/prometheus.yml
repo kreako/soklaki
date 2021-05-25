@@ -16,6 +16,14 @@ scrape_configs:
     static_configs:
       - targets: ["staging.soklaki.fr:9100"]
 
+  - job_name: "staging.app"
+    static_configs:
+      - targets: ["staging.soklaki.fr:8001"]
+
   - job_name: "ed.soklaki"
     static_configs:
       - targets: ["ed.soklaki.fr:9100"]
+
+  - job_name: "ed.app"
+    static_configs:
+      - targets: ["ed.soklaki.fr:8001"]
