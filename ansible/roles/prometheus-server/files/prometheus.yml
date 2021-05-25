@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  external_labels:
+    monitor: "soklaki-monitor"
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "prom.soklaki"
+    static_configs:
+      - targets: ["prom.soklaki.fr:9100"]
+
+  - job_name: "staging.soklaki"
+    static_configs:
+      - targets: ["staging.soklaki.fr:9100"]
+
+  - job_name: "ed.soklaki"
+    static_configs:
+      - targets: ["ed.soklaki.fr:9100"]

@@ -17,3 +17,11 @@
 - name: Create a frontend dist directory variable
   set_fact:
     frontend_dist_dir: "{{ ansible_user_dir }}/frontend_dist"
+
+- name: Create a bin_3rd_party variable
+  set_fact:
+    bin_3rd_party: "/opt"
+
+- name: Create a node_exporter variable
+  set_fact:
+    node_exporter: "{{ bin_3rd_party }}/node_exporter"

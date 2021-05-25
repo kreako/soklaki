@@ -1,0 +1,8 @@
+- name: Create the pod
+  containers.podman.podman_pod:
+    name: prometheus
+    state: created
+    ports:
+      - 9090:9090 # prometheus end point port
+      - 3000:3000 # grafana port
+

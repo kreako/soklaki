@@ -1,0 +1,38 @@
+- name: Add prometheus zone
+  ansible.posix.firewalld:
+    zone: prometheus
+    state: present
+    permanent: yes
+  become: yes
+
+- name: Reload firewalld
+  ansible.builtin.shell: firewall-cmd --reload
+  become: yes
+
+- name: Add prometheus server ipv4 source
+  ansible.posix.firewalld:
+    zone: prometheus
+    source: "{{ prom_server_v4 }}"
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Add prometheus server ipv6 source
+  ansible.posix.firewalld:
+    zone: prometheus
+    source: "{{ prom_server_v6 }}"
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Add node exporter port
+  ansible.posix.firewalld:
+    zone: prometheus
+    port: 9100/tcp
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Reload firewalld
+  ansible.builtin.shell: firewall-cmd --reload
+  become: yes

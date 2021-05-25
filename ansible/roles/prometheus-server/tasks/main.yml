@@ -1,0 +1,33 @@
+- name: Create a prometheus_config variable
+  set_fact:
+    prometheus_config: "{{ ansible_user_dir }}/prometheus-config"
+
+- name: Prometheus config directory
+  ansible.builtin.file:
+    path: "{{ prometheus_config }}"
+    state: directory
+
+- name: Install config file
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/prometheus.yml"
+    dest: "{{ prometheus_config }}"
+    mode: 0644
+  become: yes
+
+- name: Create a prometheus container
+  containers.podman.podman_container:
+    name: prometheus-server
+    image: prom/prometheus
+    restart_policy: always
+    pod: prometheus
+    volume:
+      - "{{prometheus_config}}:/etc/prometheus/:z"
+    log_opt: path={{podman_logs_dir}}/prometheus.json max_size=100mb
+    state: started
+
+- name: Prometheus config directory permissions
+  ansible.builtin.file:
+    path: "{{ prometheus_config }}"
+    state: directory
+    mode: 0755
+  become: yes

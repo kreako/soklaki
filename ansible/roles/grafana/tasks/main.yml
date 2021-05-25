@@ -1,0 +1,30 @@
+- name: Create a grafana_dir variable
+  set_fact:
+    grafana_dir: "{{ ansible_user_dir }}/grafana"
+
+- name: grafana directory
+  ansible.builtin.file:
+    path: "{{ grafana_dir }}"
+    state: directory
+    mode: 0777
+
+- name: Create a grafana container
+  containers.podman.podman_container:
+    name: prometheus-grafana
+    image: grafana/grafana
+    restart_policy: always
+    pod: prometheus
+    volume:
+      - "{{grafana_dir}}:/var/lib/grafana/:z"
+    env:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: "{{ admin_password }}"
+    log_opt: path={{podman_logs_dir}}/grafana.json max_size=100mb
+    state: started
+
+- name: grafana directory permissions
+  ansible.builtin.file:
+    path: "{{ grafana_dir }}"
+    state: directory
+    mode: 0777
+  become: yes

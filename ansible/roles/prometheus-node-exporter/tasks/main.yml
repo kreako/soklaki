@@ -1,0 +1,87 @@
+- name: Create bin_3rd_party directory
+  ansible.builtin.file:
+    path: "{{ bin_3rd_party }}"
+    state: directory
+    mode: 0755
+  become: yes
+
+- name: Check presence of node_exporter
+  ansible.builtin.stat:
+    path: "{{node_exporter}}"
+  register: sym
+
+- name: Download node exporter
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.1.2/node_exporter-1.1.2.linux-amd64.tar.gz
+    dest: "/tmp/node_exporter.tar.gz"
+    mode: "0700"
+  when: not sym.stat.exists
+
+- name: Extract node exporter archive
+  ansible.builtin.unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /tmp
+    remote_src: yes
+  when: not sym.stat.exists
+
+- name: Install node exporter in place
+  ansible.builtin.shell: "mv node_exporter-*.*-amd64/node_exporter {{ node_exporter }}"
+  args:
+    chdir: "/tmp"
+  become: yes
+  when: not sym.stat.exists
+
+- name: Cleanup temporary files
+  ansible.builtin.shell: "rm -rf node_exporter-*.*-amd64/ {{ node_exporter }}.tar.gz"
+  args:
+    chdir: "/tmp"
+  when: not sym.stat.exists
+
+- name: Add node_exporter account
+  ansible.builtin.user:
+    name: node_exporter
+    password: "!"
+    shell: /sbin/nologin
+    system: yes
+  become: yes
+
+- name: Create node_exporter working dir
+  ansible.builtin.file:
+    path: "/var/lib/node_exporter/textfile_collector"
+    state: directory
+    group: node_exporter
+    owner: node_exporter
+    mode: 0755
+  become: yes
+
+- name: Install sysconfig
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/sysconfig.node_exporter"
+    dest: /etc/sysconfig/node_exporter
+    mode: 0644
+  become: yes
+
+- name: Install systemd unit
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/node_exporter.service"
+    dest: /etc/systemd/system
+    mode: 0644
+  become: yes
+
+- name: Set SELinux permissions on node_exporter binary
+  sefcontext:
+    target: "{{ node_exporter }}"
+    setype: bin_t
+  become: yes
+
+- name: Reload SELinux policy to ensure that node_exporter is executable
+  ansible.builtin.shell: restorecon -irv {{ bin_3rd_party }}
+  become: yes
+
+- name: Enable and start node_exporter
+  ansible.builtin.systemd:
+    name: node_exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes # To pickup new unit
+  become: yes

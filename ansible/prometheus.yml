@@ -1,0 +1,24 @@
+---
+- hosts: all
+  roles:
+    - config
+
+- hosts: prom.soklaki.fr
+  roles:
+    - firewall
+    - swap
+    - tools
+    - podman
+
+- hosts: all
+  roles:
+    - firewall-prometheus
+    - prometheus-node-exporter
+
+- hosts: prom.soklaki.fr
+  roles:
+    - prometheus-pod
+    - prometheus-server
+    - grafana
+    - nginx_install
+    - certbot_install
