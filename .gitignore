@@ -21,3 +21,4 @@ ansible/inventory/production.yml
 ansible/inventory/staging.yml
 ansible/inventory/prom.yml
 frontend/dist
+exporter/env
