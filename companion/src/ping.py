@@ -34,8 +34,6 @@ class PingOutput(BaseModel):
 
 
 async def ping(gql_client, ping_secret, input: PingInput):
-    print(input.input.secret)
-    print(ping_secret)
     if input.input.secret != ping_secret:
         return None
     answer = await gql_client.run_query(
