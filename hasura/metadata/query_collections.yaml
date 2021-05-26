@@ -1478,3 +1478,12 @@
             user
           }
         }
+    - name: generate_report
+      query: |-
+        mutation GenerateReport($period_id: Int!, $student_id: Int!) {
+          generate_report(period_id: $period_id, student_id: $student_id) {
+            json_path
+            pdf_path
+            report_id
+          }
+        }

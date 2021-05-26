@@ -1,4 +1,12 @@
 type Mutation {
+  generate_report (
+    student_id: Int!
+    period_id: Int!
+  ): ReportOutput
+}
+
+
+type Mutation {
   invitation_generate_token (
     user_id: bigint!
     group_id: bigint!
@@ -117,5 +125,11 @@ type PingOutput {
   socle_subject : Int!
   student : Int!
   user : Int!
+}
+
+type ReportOutput {
+  report_id : Int!
+  pdf_path : String!
+  json_path : String!
 }
 

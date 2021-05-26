@@ -46,6 +46,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: generate_report
+  url: generate_report
+  methods:
+  - POST
+  name: generate_report
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-comment
   url: insert-comment
   methods:

@@ -1,4 +1,11 @@
 actions:
+- name: generate_report
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/generate_report
+    forward_client_headers: true
+  permissions:
+  - role: user
 - name: invitation_generate_token
   definition:
     kind: synchronous
@@ -64,4 +71,5 @@ custom_types:
   - name: VerifyTokenOutput
   - name: SignupTokenOutput
   - name: PingOutput
+  - name: ReportOutput
   scalars: []
