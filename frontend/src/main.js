@@ -7,24 +7,30 @@ import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
 import { version } from "../package.json";
 
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN,
-  release: "soklaki@" + version,
-  integrations: [new Integrations.BrowserTracing()],
-  tracesSampleRate: 1.0,
-});
+if (import.meta.env.PROD) {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN,
+    release: "soklaki@" + version,
+    integrations: [new Integrations.BrowserTracing()],
+    tracesSampleRate: 1.0,
+  });
+}
 
 const app = createApp(App).use(router).use(store);
 
-app.config.errorHandler = (err, vm, info) => {
-  Sentry.captureException(err);
-};
+if (import.meta.env.PROD) {
+  app.config.errorHandler = (err, vm, info) => {
+    Sentry.captureException(err);
+  };
+}
 
 app.mount("#app");
 
-window.addEventListener("error", (event) => {
-  Sentry.captureException(event);
-});
-window.addEventListener("unhandledrejection", (event) => {
-  Sentry.captureException(event);
-});
+if (import.meta.env.PROD) {
+  window.addEventListener("error", (event) => {
+    Sentry.captureException(event);
+  });
+  window.addEventListener("unhandledrejection", (event) => {
+    Sentry.captureException(event);
+  });
+}
