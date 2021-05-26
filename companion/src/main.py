@@ -10,6 +10,7 @@ from gql_client import GqlClient, GqlClientException
 import socle
 import invitation
 import ping
+import report
 from jwt_token import generate_jwt_token
 
 load_dotenv()
@@ -25,6 +26,8 @@ HASURA_GRAPHQL_ENDPOINT = os.getenv("HASURA_GRAPHQL_ENDPOINT")
 INVITATION_SECRET = os.getenv("INVITATION_SECRET")
 # Ping secret
 PING_SECRET = os.getenv("PING_SECRET")
+# Reports directory
+REPORTS_DIR = os.getenv("REPORTS_DIR")
 
 
 app = FastAPI()
@@ -143,3 +146,8 @@ async def invitation_signup_token(input: invitation.SignupTokenInput):
 @app.post("/ping")
 async def do_ping(input: ping.PingInput):
     return await ping.ping(gql_client, PING_SECRET, input)
+
+
+@app.post("/generate_report")
+async def generate_report(input: report.ReportInput):
+    return await report.report(gql_client, REPORTS_DIR, input)
