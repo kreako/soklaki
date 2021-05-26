@@ -1358,6 +1358,15 @@ const actions = {
     commit("setReport", data);
   },
 
+  async generateReport({}, { periodId, studentId }) {
+    const answer = await axios.post("generate_report", {
+      period_id: periodId,
+      student_id: studentId,
+    });
+    const data = answer.data;
+    return data;
+  },
+
   async invitationGenerateToken({ state }) {
     const answer = await axios.post("invitation-generate-token", {
       user_id: state.login.userId,

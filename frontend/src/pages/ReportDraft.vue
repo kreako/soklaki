@@ -3,6 +3,11 @@
     <div class="form-label">
       Rapport {{ student.firstname }} {{ student.lastname }} - {{ period.name }}
     </div>
+    <div class="flex flex-row justify-end">
+      <button @click="generateReport" class="button-minor-action">
+        Générer un rapport en pdf
+      </button>
+    </div>
     <div class="mt-12">
       <div>
         <div class="form-sub-label">École</div>
@@ -150,6 +155,13 @@ const evaluationPerCompetency = computed(() => {
   }
   return evaluations;
 });
+
+const generateReport = async () => {
+  await store.dispatch("generateReport", {
+    periodId: Number(route.params.periodId),
+    studentId: Number(route.params.studentId),
+  });
+};
 
 watch(route, async () => {
   if (route.path != "/report-draft") {
