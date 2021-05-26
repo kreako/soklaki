@@ -58,6 +58,7 @@ $ podman pod start soklaki
 podman run -it --rm \
  --pod soklaki \
  --name soklaki-companion \
+ -v ./reports/:/reports:z \
  soklaki-companion
 
 or copy file to the running container :
@@ -67,6 +68,10 @@ podman cp src/main.py soklaki-companion:/app/
 Rebuild with :
 
 podman build -t soklaki-companion -f ./Dockerfile .
+
+Full command :
+
+podman rm soklaki-companion; podman build -t soklaki-companion -f ./Dockerfile . && podman run -it --rm --pod soklaki --name soklaki-companion -v ./reports/:/reports:z soklaki-companion
 
 ### Stop/Delete individually
 
