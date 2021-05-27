@@ -51,8 +51,11 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
+import { useTitle } from "@vueuse/core";
 import SocleDisplay from "../components/SocleDisplay.vue";
 import ElegantSelect from "../components/ElegantSelect.vue";
+
+useTitle("Socle - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();

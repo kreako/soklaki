@@ -67,9 +67,12 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { userInitials } from "../utils/user";
+import { useTitle } from "@vueuse/core";
 import IconTrash from "../icons/IconTrash.vue";
 import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 import Modal from "../components/Modal.vue";
+
+useTitle("Mon équipe - soklaki.fr");
 
 const store = useStore();
 

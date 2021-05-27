@@ -52,6 +52,7 @@
 <script setup>
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
+import { useTitle } from "@vueuse/core";
 import { computed, ref, onMounted, watch } from "vue";
 import ElegantSelect from "../components/ElegantSelect.vue";
 import IconPlus from "../icons/IconPlus.vue";
@@ -59,6 +60,8 @@ import IconPlus from "../icons/IconPlus.vue";
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
+
+useTitle("Élèves - soklaki.fr");
 
 const allCyclesOptions = [
   { value: "all", text: "Tous" },

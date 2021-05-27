@@ -159,7 +159,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
-import { until } from "@vueuse/core";
+import { until, useTitle } from "@vueuse/core";
 import { cycleNb } from "../utils/cycle";
 import { fathers } from "../utils/competency";
 import Modal from "../components/Modal.vue";
@@ -170,6 +170,8 @@ import IconPlusCircle from "../icons/IconPlusCircle.vue";
 
 const store = useStore();
 const route = useRoute();
+
+useTitle(`Statistiques avancées ${route.params.cycle}  - soklaki.fr`);
 
 const studentById = computed(() => store.getters.studentById);
 const competencyById = computed(() => store.getters.competencyById);

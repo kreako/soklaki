@@ -62,10 +62,13 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
+import { useTitle } from "@vueuse/core";
 import IconCheck from "../icons/IconCheck.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
 import InputDateWithLabel from "../components/InputDateWithLabel.vue";
+
+useTitle("Élève - soklaki.fr");
 
 const store = useStore();
 const route = useRoute();
