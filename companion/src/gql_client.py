@@ -258,6 +258,7 @@ class GqlClient(object):
                     user_by_pk(id: $id) {
                         firstname
                         lastname
+                        group_id
                     }
                 }""",
             {"id": user_id},
@@ -285,3 +286,21 @@ class GqlClient(object):
             {"id": user_id, "active": active, "email": email},
         )
         return r["data"]["update_user_by_pk"]
+
+    async def student_by_id(self, student_id):
+        r = await self.run_query(
+            """ query StudentById($id: bigint!) {
+                    student_by_pk(id: $id) {
+                        active
+                        birthdate
+                        firstname
+                        group_id
+                        id
+                        lastname
+                        school_entry
+                        school_exit
+                    }
+                }""",
+            {"id": student_id},
+        )
+        return r["data"]["student_by_pk"]
