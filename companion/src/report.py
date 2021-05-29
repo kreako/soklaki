@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import date
 import re
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -222,11 +223,29 @@ async def report(gql_client, reports_dir, input: ReportInput):
     pdf_fname = make_safe_filename(pdf_fname)
     dirname = Path(reports_dir) / f"{group_id}" / f"{input.input.period_id}"
     dirname.makedirs_p()
-    pdf.output(dirname / pdf_fname)
+    pdf_path = dirname / pdf_fname
+    pdf.output(pdf_path)
+    json_path = "invalid"
+
+    # Make older report inactive
+    await inactivate_old_report(
+        gql_client, input.input.student_id, input.input.period_id
+    )
+    # Add the report to the database
+    today = date.today().isoformat()
+    id = await insert_report(
+        gql_client,
+        input.input.student_id,
+        student["cycle"],
+        today,
+        json_path,
+        pdf_path,
+    )
+
     return ReportOutput(
-        report_id=-1,
-        pdf_path="meuh.pdf",
-        json_path="meuh.json",
+        report_id=id,
+        pdf_path=pdf_path,
+        json_path=json_path,
     )
 
 
@@ -691,3 +710,51 @@ def make_safe_filename(s):
     fname = "".join(safe_char(c) for c in s).rstrip("_")
     fname = re.sub("_{2,}", "_", fname)
     return fname
+
+
+async def inactivate_old_report(gql_client, student_id, period_id):
+    r = await gql_client.run_query(
+        """
+mutation Inactivate($student_id: Int!, $period_id: Int!) {
+    update_report(
+        where: {
+            student_id: {_eq: $student_id},
+            period: {eval_period_id: {_eq: $period_id}}
+        }
+        _set: {active: false}
+    ) {
+        affected_rows
+    }
+}""",
+        {"student_id": student_id, "period_id": period_id},
+    )
+    return r["data"]["update_report"]["affected_rows"]
+
+
+async def insert_report(gql_client, student_id, cycle, date, json_path, pdf_path):
+    r = await gql_client.run_query(
+        """
+mutation InsertReport($student_id: Int!, $cycle: cycle!, $date: date!, $json_path: String!, $pdf_path: String!) {
+    insert_report_one(
+        object: {
+            active: true,
+            cycle: $cycle,
+            date: $date,
+            json_path: $json_path,
+            pdf_path: $pdf_path,
+            student_id: $student_id
+        }
+    ) {
+        id
+    }
+}
+""",
+        {
+            "student_id": student_id,
+            "cycle": cycle,
+            "date": date,
+            "json_path": json_path,
+            "pdf_path": pdf_path,
+        },
+    )
+    return r["data"]["insert_report_one"]["id"]
