@@ -14,10 +14,12 @@
   roles:
     - firewall-prometheus
     - prometheus-node-exporter
+    - git_install
+    - git
+    - backup_exporter
 
 - hosts: app
   roles:
-    - git
     - exporter
 
 - hosts: prom.soklaki.fr

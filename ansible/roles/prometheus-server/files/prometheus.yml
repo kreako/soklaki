@@ -27,3 +27,18 @@ scrape_configs:
   - job_name: "ed.app"
     static_configs:
       - targets: ["ed.soklaki.fr:8001"]
+
+  - job_name: "prom.backup"
+    scrape_interval: 60s
+    static_configs:
+      - targets: ["prom.soklaki.fr:8002"]
+
+  - job_name: "staging.backup"
+    scrape_interval: 60s
+    static_configs:
+      - targets: ["staging.soklaki.fr:8002"]
+
+  - job_name: "ed.backup"
+    scrape_interval: 60s
+    static_configs:
+      - targets: ["ed.soklaki.fr:8002"]

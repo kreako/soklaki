@@ -10,6 +10,10 @@
   set_fact:
     reports_dir: "{{ ansible_user_dir }}/reports"
 
+- name: Create a backup directory variable
+  set_fact:
+    backup_dir: "{{ ansible_user_dir }}/backup"
+
 - name: Set a variable for logs directory
   set_fact:
     podman_logs_dir: "{{ ansible_user_dir }}/logs"

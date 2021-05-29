@@ -1,0 +1,41 @@
+- name: Create an empty .env file
+  ansible.builtin.file:
+    path: "{{ soklaki_co_dir }}/backup_exporter/.env"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Remove backup exporter container
+  containers.podman.podman_container:
+    name: soklaki-backup-exporter
+    state: absent
+
+- name: Remove soklaki backup exporter image
+  containers.podman.podman_image:
+    name: soklaki-backup-exporter
+    state: absent
+
+- name: Build soklaki backup exporter image
+  containers.podman.podman_image:
+    name: soklaki-backup-exporter
+    path: "{{ soklaki_co_dir }}/backup_exporter"
+
+- name: Create a backup exporter container
+  containers.podman.podman_container:
+    name: soklaki-backup-exporter
+    image: soklaki-backup-exporter
+    restart_policy: always
+    env:
+      EXPORTER_PORT: 8002
+      BACKUP_PATH: "/backup"
+    volume:
+      - "{{backup_dir}}:/backup:z"
+    log_opt: path={{podman_logs_dir}}/backup_exporter.json max_size=100mb
+    state: started
+
+- name: backup directory permissions
+  ansible.builtin.file:
+    path: "{{ backup_dir }}"
+    state: directory
+    mode: 0755
+  become: yes
