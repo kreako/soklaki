@@ -80,7 +80,7 @@ def do_ping():
 
 if __name__ == "__main__":
     # Start up the server to expose the metrics.
-    start_http_server(8001)
+    start_http_server(int(EXPORTER_PORT))
     # Generate some ping requests.
     while True:
         try:
