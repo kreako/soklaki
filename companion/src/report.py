@@ -1,4 +1,5 @@
 from collections import defaultdict
+import re
 from pydantic import BaseModel, Field
 from typing import Optional
 from fpdf import FPDF
@@ -218,7 +219,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
 
     # Output
     pdf_fname = f"{period['group']['name']}_{period['name']}_{student['firstname']}_{student['lastname']}.pdf"
-    pdf_fname = pdf_fname.replace("/", "_").replace("-", "_").replace(" ", "_")
+    pdf_fname = make_safe_filename(pdf_fname)
     dirname = Path(reports_dir) / f"{group_id}" / f"{input.input.period_id}"
     dirname.makedirs_p()
     pdf.output(dirname / pdf_fname)
@@ -678,3 +679,15 @@ query Report(
     for evaluation in data["evaluations"]:
         data["evaluations_by_status"][evaluation["status"]] += 1
     return data
+
+
+def make_safe_filename(s):
+    def safe_char(c):
+        if c.isalnum():
+            return c
+        else:
+            return "_"
+
+    fname = "".join(safe_char(c) for c in s).rstrip("_")
+    fname = re.sub("_{2,}", "_", fname)
+    return fname
