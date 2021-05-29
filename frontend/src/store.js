@@ -399,10 +399,12 @@ const mutations = {
     state.reports.store = fromArrayToIdObjects(reports);
     state.reports.sorted = {};
     for (const report of reports) {
-      if (!(report.eval_period_id in state.reports.sorted)) {
-        state.reports.sorted[report.eval_period_id] = [];
+      if (report.period != null) {
+        if (!(report.period.eval_period_id in state.reports.sorted)) {
+          state.reports.sorted[report.period.eval_period_id] = [];
+        }
+        state.reports.sorted[report.period.eval_period_id].push(report.id);
       }
-      state.reports.sorted[report.eval_period_id].push(report.id);
     }
   },
   setReport(state, report) {
@@ -546,7 +548,7 @@ const getters = {
     }
     return {
       id: null,
-      eval_period_id: null,
+      period: null,
       date: null,
       cycle: null,
       created_at: null,
