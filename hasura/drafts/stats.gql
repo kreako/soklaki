@@ -19,6 +19,7 @@ query Stats($period_id: Int) {
   ) {
     competency_id
     evaluations_count
+    evaluation_status
     observations_count
     student_id
   }
@@ -48,6 +49,7 @@ query Stats($period_id: Int) {
   ) {
     competency_id
     evaluations_count
+    evaluation_status
     observations_count
     student_id
   }
@@ -77,6 +79,7 @@ query Stats($period_id: Int) {
   ) {
     competency_id
     evaluations_count
+    evaluation_status
     observations_count
     student_id
   }
@@ -106,6 +109,7 @@ query Stats($period_id: Int) {
   ) {
     competency_id
     evaluations_count
+    evaluation_status
     observations_count
     student_id
   }
