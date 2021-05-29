@@ -2,6 +2,7 @@
   ansible.builtin.file:
     path: "{{ reports_dir }}"
     state: directory
+  become: yes
 
 - name: Create an empty .env file
   ansible.builtin.file:
@@ -40,6 +41,7 @@
       HASURA_GRAPHQL_ENDPOINT: "http://localhost:8080/v1/graphql"
       INVITATION_SECRET: "{{ invitation_secret }}"
       PING_SECRET: "{{ ping_secret }}"
+      REPORTS_DIR: "/reports"
     log_opt: path={{podman_logs_dir}}/companion.json max_size=100mb
     state: started
 

@@ -1,0 +1,12 @@
+- name: nginx root directory
+  ansible.builtin.file:
+    path: "{{ nginx_root }}"
+    state: directory
+  become: yes
+
+- name: nginx root directory permissions
+  ansible.builtin.file:
+    path: "{{ nginx_root }}"
+    state: directory
+    mode: 0755
+  become: yes

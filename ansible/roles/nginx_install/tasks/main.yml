@@ -33,6 +33,10 @@
   become: yes
   loop: "{{ domains }}"
 
+- name: Allow nginx to serve from nginx_root
+  ansible.builtin.command: "chcon -Rt httpd_sys_content_t {{nginx_root}}"
+  become: yes
+
 - name: Install dependency
   dnf:
     name: python3-passlib

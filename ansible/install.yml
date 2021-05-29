@@ -1,7 +1,8 @@
 ---
-- hosts: all
+- hosts: app
   roles:
     - config
+    - nginx_root
     - firewall
     - swap
     - tools
