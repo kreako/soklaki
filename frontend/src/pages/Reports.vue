@@ -35,14 +35,16 @@ const studentById = computed(() => store.getters.studentById);
 
 /// return {period_id: count}
 const reportsNbPerPeriods = computed(() => {
+  console.log(store.state.reports.sorted);
   const reports = {};
   for (const periodId of store.state.sortedPeriods) {
     if (periodId in store.state.reports.sorted) {
-      reports[periodId] = store.state.reports.sorted.length;
+      reports[periodId] = store.state.reports.sorted[periodId].length;
     } else {
       reports[periodId] = 0;
     }
   }
+  console.log(reports);
   return reports;
 });
 
