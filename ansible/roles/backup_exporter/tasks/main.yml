@@ -30,6 +30,8 @@
       BACKUP_PATH: "/backup"
     volume:
       - "{{backup_dir}}:/backup:z"
+    ports:
+      - "8002:8002"
     log_opt: path={{podman_logs_dir}}/backup_exporter.json max_size=100mb
     state: started
 
