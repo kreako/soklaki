@@ -4,6 +4,8 @@ ansible/inventory/prom.yml
 backend_tests/env
 backend_tests/.env
 backend_tests/__pycache__
+backup_exporter/env
+backup_exporter/.env
 companion/env
 companion/src/__pycache__
 companion/.env
