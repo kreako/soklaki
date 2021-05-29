@@ -36,14 +36,21 @@
         </div>
         <div class="flex flex-row items-center space-x-6">
           <div class="flex-grow text-sm">
-            <div v-if="report.reportId == null" class="text-gray-700">
+            <div
+              v-if="report.reportId == null"
+              class="text-gray-700 hover:text-teal-500"
+            >
               <router-link
                 :to="`/report-draft/${route.params.periodId}/${report.cycle}/${report.studentId}`"
               >
                 Pas encore de rapport
               </router-link>
             </div>
-            <div v-else>Voir le rapport</div>
+            <div v-else class="hover:text-teal-500">
+              <a :href="reportById(report.reportId).pdf_path" target="_blank">
+                Voir le rapport
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -64,6 +71,7 @@ const store = useStore();
 const route = useRoute();
 
 const studentById = computed(() => store.getters.studentById);
+const reportById = computed(() => store.getters.reportById);
 const period = computed(() => store.getters.periodById(route.params.periodId));
 
 const reportsPerStudent = computed(() => {
@@ -75,9 +83,11 @@ const reportsPerStudent = computed(() => {
     const cycle = s.cycle;
     let reportId = null;
     if (src != null) {
-      const f = src.find((x) => x.student_id === studentId);
+      const f = src.find(
+        (x) => store.state.reports.store[x].student_id === studentId
+      );
       if (f != null) {
-        reportId = f.id;
+        reportId = f;
       }
     }
     reports.push({
