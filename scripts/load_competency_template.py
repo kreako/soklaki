@@ -42,3 +42,4 @@ def main(cycle, input_filename):
 
 if __name__ == "__main__":
     main("c2", "data/templates_cycle_2.csv")
+    main("c3", "data/templates_cycle_3.csv")
