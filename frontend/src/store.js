@@ -223,6 +223,7 @@ const mutations = {
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${state.login.token}`;
+      document.cookie = `token=${state.login.token}; SameSite=strict; Secure`;
     }
   },
   setLoginEmail(state, email) {
@@ -252,6 +253,7 @@ const mutations = {
     if (token) {
       localStorage.setItem("token", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      document.cookie = `token=${state.login.token}; SameSite=strict; Secure`;
     }
   },
   setLoginUserId(state, userId) {
