@@ -77,6 +77,16 @@
           caractères minimum !
         </div>
       </div>
+      <div class="mt-8 text-xs text-gray-700 text-right">
+        <div>
+          Il faut que je vous dise que je vais déposer un cookie dans votre
+          navigateur.🍪
+        </div>
+        <div>
+          Juste pour me rappeler que c'est bien vous (pour de
+          l'authentification). Rien de plus !
+        </div>
+      </div>
       <div class="mt-8">
         <button @click="signup" class="button-main-action">Inscription</button>
       </div>
