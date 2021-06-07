@@ -2,6 +2,11 @@
   <div class="my-4 px-2">
     <div class="form-label">Les rapports de la période {{ period.name }}</div>
     <div class="form-sub-label">{{ period.start }} - {{ period.end }}</div>
+    <div class="flex flex-row justify-end">
+      <button @click="updateReports" class="button-minor-action">
+        Générer les rapports
+      </button>
+    </div>
     <div class="mt-8">
       <div class="flex flex-row items-end">
         <div class="flex-grow">Rapports</div>
@@ -62,6 +67,23 @@
       Êtes-vous sûr de vouloir mettre à jour le rapport pour
       {{ studentById(selectedStudentId).firstname }}
       {{ studentById(selectedStudentId).lastname }} ?
+    </div>
+  </ModalConfirmCancel>
+  <ModalConfirmCancel
+    title="Confirmation"
+    :show="showUpdatesModal"
+    @confirm="confirmUpdates"
+    @cancel="cancelUpdates"
+  >
+    <div>Êtes-vous sûr de vouloir mettre à jour tous les rapports ?</div>
+    <div class="mt-4">
+      <div class="flex flex-row items-end">
+        <div class="flex-grow text-sm">Progression</div>
+        <div class="text-gray-700 text-xs">
+          {{ updatesCount }} / {{ period.students.length }}
+        </div>
+      </div>
+      <ProgressBar :current="updatesCount" :total="period.students.length" />
     </div>
   </ModalConfirmCancel>
 </template>
@@ -135,6 +157,28 @@ const confirmUpdate = async () => {
   selectedStudentId.value = null;
   showUpdateModal.value = false;
 };
+
+const showUpdatesModal = ref(false);
+const updateReports = (studentId) => {
+  updatesCount.value = 0;
+  showUpdatesModal.value = true;
+};
+const cancelUpdates = () => {
+  showUpdatesModal.value = false;
+};
+const confirmUpdates = async () => {
+  updatesCount.value = 0;
+  for (const student of period.value.students) {
+    await store.dispatch("generateReport", {
+      periodId: Number(route.params.periodId),
+      studentId: student.student_id,
+    });
+    updatesCount.value += 1;
+  }
+  await store.dispatch("reports");
+  showUpdatesModal.value = false;
+};
+const updatesCount = ref(0);
 
 const reportsStats = ref({ total: 0, current: 0 });
 watch(reportsPerStudent, () => {
