@@ -24,15 +24,6 @@
           <div class="text-sm text-gray-600 uppercase tracking-wide font-bold">
             {{ report.cycle }}
           </div>
-          <div>
-            <router-link
-              :to="`/report-draft/${route.params.periodId}/${report.cycle}/${report.studentId}`"
-            >
-              <IconDocumentReport
-                class="h-4 text-gray-400 hover:text-teal-500"
-              />
-            </router-link>
-          </div>
         </div>
         <div class="flex flex-row items-center space-x-6">
           <div class="flex-grow text-sm">
@@ -40,29 +31,47 @@
               v-if="report.reportId == null"
               class="text-gray-700 hover:text-teal-500"
             >
-              <router-link
-                :to="`/report-draft/${route.params.periodId}/${report.cycle}/${report.studentId}`"
-              >
-                Pas encore de rapport
-              </router-link>
+              <button @click="generateReport(report.studentId)">
+                Générer un rapport
+              </button>
             </div>
-            <div v-else class="hover:text-teal-500">
-              <a :href="reportById(report.reportId).pdf_path" target="_blank">
+            <div v-else class="flex items-center space-x-4">
+              <a
+                :href="reportById(report.reportId).pdf_path"
+                target="_blank"
+                class="hover:text-teal-500"
+              >
                 Voir le rapport
               </a>
+              <button @click="updateReport(report.studentId)">
+                <IconRefresh class="h-4 text-gray-400 hover:text-teal-500" />
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <ModalConfirmCancel
+    title="Confirmation"
+    :show="showUpdateModal"
+    @confirm="confirmUpdate"
+    @cancel="cancelUpdate"
+  >
+    <div>
+      Êtes-vous sûr de vouloir mettre à jour le rapport pour
+      {{ studentById(selectedStudentId).firstname }}
+      {{ studentById(selectedStudentId).lastname }} ?
+    </div>
+  </ModalConfirmCancel>
 </template>
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
-import IconDocumentReport from "../icons/IconDocumentReport.vue";
+import IconRefresh from "../icons/IconRefresh.vue";
 import ProgressBar from "../components/ProgressBar.vue";
+import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 import { useTitle } from "@vueuse/core";
 
 useTitle("Rapports - soklaki.fr");
@@ -98,6 +107,34 @@ const reportsPerStudent = computed(() => {
   }
   return reports;
 });
+
+const generateReport = async (studentId) => {
+  await store.dispatch("generateReport", {
+    periodId: Number(route.params.periodId),
+    studentId: studentId,
+  });
+  await store.dispatch("reports");
+};
+
+const showUpdateModal = ref(false);
+const selectedStudentId = ref(null);
+const updateReport = (studentId) => {
+  selectedStudentId.value = studentId;
+  showUpdateModal.value = true;
+};
+const cancelUpdate = () => {
+  selectedStudentId.value = null;
+  showUpdateModal.value = false;
+};
+const confirmUpdate = async () => {
+  await store.dispatch("generateReport", {
+    periodId: Number(route.params.periodId),
+    studentId: selectedStudentId.value,
+  });
+  await store.dispatch("reports");
+  selectedStudentId.value = null;
+  showUpdateModal.value = false;
+};
 
 const reportsStats = ref({ total: 0, current: 0 });
 watch(reportsPerStudent, () => {
