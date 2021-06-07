@@ -158,11 +158,22 @@ async def dl_report(
     group_id: int, period_id: int, filename: str, token: str = Cookie(None)
 ):
     return await report.dl_report(
-        gql_client,
         REPORTS_DIR,
         group_id,
         period_id,
         filename,
+        token,
+        HASURA_GRAPHQL_JWT_SECRET,
+    )
+
+
+@app.get("/dl_zip_reports/zip_reports/{group_id}/{period_id}")
+async def dl_zip_reports(group_id: int, period_id: int, token: str = Cookie(None)):
+    return await report.dl_zip_reports(
+        gql_client,
+        REPORTS_DIR,
+        group_id,
+        period_id,
         token,
         HASURA_GRAPHQL_JWT_SECRET,
     )

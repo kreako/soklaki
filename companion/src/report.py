@@ -1,4 +1,5 @@
 from collections import defaultdict
+from zipfile import ZipFile
 from datetime import date
 import re
 from pydantic import BaseModel, Field
@@ -713,7 +714,7 @@ query Report(
 
 def make_safe_filename(s):
     def safe_char(c):
-        if c.isalnum():
+        if c.isalnum() or c == ".":
             return c
         else:
             return "_"
@@ -772,7 +773,6 @@ mutation InsertReport($student_id: Int!, $cycle: cycle!, $date: date!, $json_pat
 
 
 async def dl_report(
-    gql_client,
     reports_dir,
     group_id: int,
     period_id: int,
@@ -786,3 +786,27 @@ async def dl_report(
         return None
     file_path = Path(reports_dir) / f"{group_id}" / f"{period_id}" / filename
     return FileResponse(file_path, media_type="application/pdf")
+
+
+async def dl_zip_reports(
+    gql_client,
+    reports_dir,
+    group_id: int,
+    period_id: int,
+    token: str,
+    hasura_graphql_jwt_secret,
+):
+    t = jwt.decode(token, hasura_graphql_jwt_secret, algorithms=["HS256"])
+    token_group_id = int(t["https://hasura.io/jwt/claims"]["x-hasura-user-group"])
+    if group_id != token_group_id:
+        return None
+    dir_path = Path(reports_dir) / f"{group_id}" / f"{period_id}"
+    group = await gql_client.group_by_id(group_id)
+    period = await gql_client.period_by_id(period_id)
+    zip_fname = make_safe_filename(f"{group['name']}_{period['name']}.zip")
+    virtual_path = Path(make_safe_filename(f"{group['name']}_{period['name']}"))
+    zip_path = dir_path / zip_fname
+    with ZipFile(zip_path, "w") as myzip:
+        for pdf in dir_path.listdir("*.pdf"):
+            myzip.write(pdf, arcname=virtual_path / pdf.basename())
+    return FileResponse(zip_path, media_type="application/zip", filename=zip_fname)

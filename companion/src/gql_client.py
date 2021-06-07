@@ -304,3 +304,15 @@ class GqlClient(object):
             {"id": student_id},
         )
         return r["data"]["student_by_pk"]
+
+    async def period_by_id(self, group_id):
+        r = await self.run_query(
+            """ query PeriodById($id: Int!) {
+                    eval_period_by_pk(id: $id) {
+                        id
+                        name
+                    }
+                }""",
+            {"id": group_id},
+        )
+        return r["data"]["eval_period_by_pk"]
