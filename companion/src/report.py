@@ -2,9 +2,11 @@ from collections import defaultdict
 from datetime import date
 import re
 from pydantic import BaseModel, Field
+from fastapi.responses import FileResponse
 from typing import Optional
 from fpdf import FPDF
 from path import Path
+import jwt
 
 from gql_client import GqlClientException
 
@@ -758,3 +760,20 @@ mutation InsertReport($student_id: Int!, $cycle: cycle!, $date: date!, $json_pat
         },
     )
     return r["data"]["insert_report_one"]["id"]
+
+
+async def dl_report(
+    gql_client,
+    reports_dir,
+    group_id: int,
+    period_id: int,
+    filename: str,
+    token: str,
+    hasura_graphql_jwt_secret,
+):
+    t = jwt.decode(token, hasura_graphql_jwt_secret, algorithms=["HS256"])
+    token_group_id = int(t["https://hasura.io/jwt/claims"]["x-hasura-user-group"])
+    if group_id != token_group_id:
+        return None
+    file_path = Path(reports_dir) / f"{group_id}" / f"{period_id}" / filename
+    return FileResponse(file_path, media_type="application/pdf")

@@ -2,7 +2,7 @@ import os
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from typing import Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, Cookie
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
@@ -151,3 +151,18 @@ async def do_ping(input: ping.PingInput):
 @app.post("/generate_report")
 async def generate_report(input: report.ReportInput):
     return await report.report(gql_client, REPORTS_DIR, input)
+
+
+@app.get("/dl_report/reports/{group_id}/{period_id}/{filename}")
+async def dl_report(
+    group_id: int, period_id: int, filename: str, token: str = Cookie(None)
+):
+    return await report.dl_report(
+        gql_client,
+        REPORTS_DIR,
+        group_id,
+        period_id,
+        filename,
+        token,
+        HASURA_GRAPHQL_JWT_SECRET,
+    )
