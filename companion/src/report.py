@@ -209,7 +209,6 @@ async def report(gql_client, reports_dir, input: ReportInput):
         e.write("Commentaire")
         e.empty_line()
     if data["comments"]:
-        print(data["comments"])
         with pdf.edit().style_normal().font_mono() as e:
             e.write(f"{data['comments'][0]['text']}")
 
