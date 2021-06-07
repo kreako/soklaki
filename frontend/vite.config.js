@@ -9,6 +9,9 @@ export default defineConfig({
       "^/reports/.*": {
         target: "http://127.0.0.1:8000/dl_report",
       },
+      "^/zip_reports/.*": {
+        target: "http://127.0.0.1:8000/dl_zip_reports",
+      },
     },
   },
 });
