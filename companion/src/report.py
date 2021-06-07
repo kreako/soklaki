@@ -203,10 +203,20 @@ async def report(gql_client, reports_dir, input: ReportInput):
             competency_id = competency_raw["id"]
             output_competency(pdf, competency_id, data, 1)
 
+    # Eval comments
+    pdf.add_page()
+    with pdf.edit().font_bold().text_lg().text_black() as e:
+        e.write("Commentaire")
+        e.empty_line()
+    if data["comments"]:
+        print(data["comments"])
+        with pdf.edit().style_normal().font_mono() as e:
+            e.write(f"{data['comments'][0]['text']}")
+
     # Observations
     pdf.add_page()
     with pdf.edit().font_bold().text_lg().text_black() as e:
-        e.write("Les observations")
+        e.write("Annexe - Les observations")
         e.empty_line()
     for observation in data["observations"]:
         with pdf.edit().style_normal() as e:
@@ -582,7 +592,7 @@ query Report(
             student_id: {_eq: $student_id},
             date: {_lte: $period_end}
         }
-        order_by: {date: desc},
+        order_by: {updated_at: desc},
     ) {
         id
         date
