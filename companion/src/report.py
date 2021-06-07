@@ -221,7 +221,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
             e.empty_line()
 
     # Output
-    pdf_fname = f"{period['group']['name']}_{period['name']}_{student['firstname']}_{student['lastname']}.pdf"
+    pdf_fname = f"{period['group']['name']}_{period['name']}_{student['cycle']}_{student['firstname']}_{student['lastname']}.pdf"
     pdf_fname = make_safe_filename(pdf_fname)
     dirname = Path(reports_dir) / f"{group_id}" / f"{input.input.period_id}"
     dirname.makedirs_p()
