@@ -7,6 +7,15 @@
         Générer les rapports
       </button>
     </div>
+    <div class="flex flex-row justify-end mt-1">
+      <a
+        :href="`/zip_reports/${groupId}/${period.id}`"
+        target="_blank"
+        class="button-minor-action"
+      >
+        Tous télécharger
+      </a>
+    </div>
     <div class="mt-8">
       <div class="flex flex-row items-end">
         <div class="flex-grow">Rapports</div>
@@ -104,6 +113,7 @@ const route = useRoute();
 const studentById = computed(() => store.getters.studentById);
 const reportById = computed(() => store.getters.reportById);
 const period = computed(() => store.getters.periodById(route.params.periodId));
+const groupId = computed(() => store.state.login.groupId);
 
 const reportsPerStudent = computed(() => {
   const reports = [];
