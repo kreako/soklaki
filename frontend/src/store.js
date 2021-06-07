@@ -1244,14 +1244,14 @@ const actions = {
   },
 
   async insertComment({ commit, state, dispatch }, { date, studentId, text }) {
-    await searchOrCreatePeriod(date, state, dispatch);
+    const period = await searchOrCreatePeriod(date, state, dispatch);
     const answer = await axios.post("insert-comment", {
       date: date,
       student_id: studentId,
       text: text,
       user_id: state.login.userId,
     });
-    await dispatch("evaluations", { periodId });
+    await dispatch("evaluations", { periodId: period.id });
   },
 
   async evaluations({ commit, state }, { periodId }) {
@@ -1314,7 +1314,7 @@ const actions = {
   },
 
   async updateComment({ state, dispatch }, { id, date, text }) {
-    await searchOrCreatePeriod(date, state, dispatch);
+    const period = await searchOrCreatePeriod(date, state, dispatch);
     await axios.post("update-comment", {
       id: id,
       date: date,
@@ -1322,7 +1322,7 @@ const actions = {
     });
     // TODO not sure about period.id and periodId
     // OK for now but maybe in the future...
-    await dispatch("evaluations", { periodId });
+    await dispatch("evaluations", { periodId: period.id });
   },
 
   async evaluationSingle(
