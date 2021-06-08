@@ -13,7 +13,7 @@
         target="_blank"
         class="button-minor-action"
       >
-        Tous télécharger
+        Tout télécharger
       </a>
     </div>
     <div class="mt-8">
