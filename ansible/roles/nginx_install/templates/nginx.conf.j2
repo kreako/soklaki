@@ -57,6 +57,16 @@ http {
                     proxy_set_header Upgrade $http_upgrade;
                     proxy_set_header Connection "upgrade";
                 }
+                
+                location /reports {
+                    rewrite /reports/(.*) /dl_report/reports/$1 break;
+                    proxy_pass http://127.0.0.1:8000/;
+                }
+
+                location /zip_reports {
+                    rewrite /zip_reports/(.*) /dl_zip_reports/zip_reports/$1 break;
+                    proxy_pass http://127.0.0.1:8000/;
+                }
             {% elif domain.proxy_pass == "root" %}
                 location / {
                     proxy_pass http://127.0.0.1:{{ domain.proxy_pass_port }}/;
