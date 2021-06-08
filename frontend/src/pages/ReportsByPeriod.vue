@@ -10,7 +10,6 @@
     <div class="flex flex-row justify-end mt-1">
       <a
         :href="`/zip_reports/${groupId}/${period.id}`"
-        target="_blank"
         class="button-minor-action"
       >
         Tout télécharger
