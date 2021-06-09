@@ -154,9 +154,20 @@
           <CompetencySelector
             :socle="socle"
             :cycle="cycle"
-            @cancel="showCompetencySelector[cycle] = false"
             @selected="selectCompetency(cycle, $event)"
           />
+          <button
+            @click="showCompetencySelector[cycle] = false"
+            class="
+              mt-1
+              rounded-md
+              px-3
+              border border-teal-700
+              hover:border-teal-300
+            "
+          >
+            C'est bon, je les ai toutes
+          </button>
         </div>
         <div v-else>
           <button
@@ -374,7 +385,6 @@ const selectCompetency = async (cycle, competencyId) => {
   for (const competency of observation.value.competencies) {
     if (competency.competency_id === competencyId) {
       // Yes, just ignore
-      showCompetencySelector.value[cycle] = false;
       return;
     }
   }
@@ -382,7 +392,6 @@ const selectCompetency = async (cycle, competencyId) => {
     observationId: observation.value.id,
     competencyId: competencyId,
   });
-  showCompetencySelector.value[cycle] = false;
 };
 const removeCompetency = async (competencyId) => {
   await store.dispatch("deleteObservationCompetency", {

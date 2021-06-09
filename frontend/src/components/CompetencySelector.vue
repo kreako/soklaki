@@ -8,7 +8,19 @@
       <div class="text-gray-800 flex flex-row items-center space-x-1">
         <select
           v-model="selectedSubject"
-          class="appearance-none block bg-transparent py-1 text-gray-500 font-medium text-sm focus:outline-none focus:text-gray-900 transition-colors duration-200"
+          class="
+            appearance-none
+            block
+            bg-transparent
+            py-1
+            text-gray-500
+            font-medium
+            text-sm
+            focus:outline-none
+            focus:text-gray-900
+            transition-colors
+            duration-200
+          "
         >
           <option :value="-1">Par matières</option>
           <option v-for="subject in socle.subjects" :value="subject.id">
@@ -17,13 +29,17 @@
         </select>
       </div>
     </div>
-    <div class="mt-2 text-sm space-x-1 space-y-1"></div>
-    <input
-      v-model="socleFilter"
-      class="input w-full mt-2"
-      type="text"
-      placeholder="Filtre..."
-    />
+    <div class="flex space-x-2 items-center">
+      <input
+        v-model="socleFilter"
+        class="input w-full mt-2"
+        type="text"
+        placeholder="Filtre..."
+      />
+      <button @click="resetAllFilters">
+        <IconBackSpace class="h-4 hover:text-teal-500 text-gray-700" />
+      </button>
+    </div>
     <div class="mt-2">
       <div v-if="filtered">
         <!-- At least one filter is selected so display the full thing -->
@@ -99,7 +115,13 @@
           <div v-for="container1 in socle[cycle]">
             <button
               @click="selectContainer1(container1.id)"
-              class="uppercase tracking-wide text-gray-700 text-left border border-white hover:border-teal-500"
+              class="
+                uppercase
+                tracking-wide
+                text-gray-700 text-left
+                border border-white
+                hover:border-teal-500
+              "
             >
               {{ socle.containers[container1.id].rank }}.
               {{ socle.containers[container1.id].text }}
@@ -125,18 +147,17 @@
           >
             <button
               @click="selectContainer2(container2.id)"
-              class="text-gray-700 text-left border border-white hover:border-teal-500"
+              class="
+                text-gray-700 text-left
+                border border-white
+                hover:border-teal-500
+              "
             >
               {{ socle.containers[container2.id].rank }}.
               {{ socle.containers[container2.id].text }}
             </button>
           </div>
         </div>
-      </div>
-      <div class="mt-4 text-right pr-2">
-        <button @click="$emit('cancel')" class="button-minor-action text-sm">
-          Annuler
-        </button>
       </div>
     </div>
   </div>
@@ -193,7 +214,7 @@ const deselectContainer2 = () => {
   selectedContainer2.value = null;
 };
 
-const emit = defineEmit(["selected", "cancel"]);
+const emit = defineEmit(["selected"]);
 
 const selectCompetency = (competencyId) => {
   emit("selected", competencyId);
