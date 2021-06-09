@@ -87,10 +87,22 @@
       <div v-if="showStudentSelector">
         <StudentSelector
           @select="addStudent"
-          @cancel="showStudentSelector = false"
           :sortedStudents="sortedStudents"
           :students="students"
+          class="mt-4"
         />
+        <button
+          @click="showStudentSelector = false"
+          class="
+            mt-4
+            rounded-md
+            px-3
+            border border-teal-700
+            hover:border-teal-300
+          "
+        >
+          C'est bon, j'ai tout le monde
+        </button>
       </div>
       <div v-else>
         <button
@@ -338,7 +350,6 @@ const addStudent = async (id) => {
     observationId: observation.value.id,
     studentId: id,
   });
-  showStudentSelector.value = false;
 };
 const removeStudent = async (id) => {
   await store.dispatch("deleteObservationStudent", {
