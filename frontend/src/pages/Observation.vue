@@ -180,7 +180,7 @@
               hover:border-teal-300
             "
           >
-            Lier une compétence
+            Lier des compétences
           </button>
         </div>
       </div>
