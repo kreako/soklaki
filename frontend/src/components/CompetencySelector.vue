@@ -29,14 +29,14 @@
         </select>
       </div>
     </div>
-    <div class="flex space-x-2 items-center">
+    <div class="flex space-x-2 items-center mt-2">
       <input
         v-model="socleFilter"
-        class="input w-full mt-2"
+        class="input w-full"
         type="text"
         placeholder="Filtre..."
       />
-      <button @click="resetAllFilters">
+      <button @click="resetAllFilters" title="Remettre les filtres à zéro">
         <IconBackSpace class="h-4 hover:text-teal-500 text-gray-700" />
       </button>
     </div>
