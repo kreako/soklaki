@@ -115,7 +115,7 @@
             hover:border-teal-300
           "
         >
-          Ajouter un élève
+          Ajouter des élèves
         </button>
       </div>
     </div>
