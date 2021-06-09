@@ -22,12 +22,15 @@ it("is able to create an observation", async ({ page }) => {
   await page.waitForSelector("text=Non..."); // Not complete
 
   // Add student
-  await page.click("text=Ajouter un élève");
+  await page.click("text=Ajouter des élèves");
   await page.click('button:has-text("Joan Meulou")');
   await page.waitForSelector("text=Joan Meulou (c1)");
+  await page.click("text=C'est bon, j'ai tout le monde");
+
+  // Add competencies
+  await page.click("text=Lier des compétences");
 
   // Add a competency by click
-  await page.click("text=Lier une compétence");
   await page.click(
     "text=4. Agir, s'exprimer, comprendre à travers l'activité physique"
   );
@@ -37,12 +40,12 @@ it("is able to create an observation", async ({ page }) => {
   await page.waitForSelector(
     "text=Je cours, saute, lance de différentes façons, dans des espaces différents et ave"
   );
+  await page.click('[title="Remettre les filtres à zéro"]');
 
   // Observation is now complete
   await page.waitForSelector("text=Oui !");
 
   // Add a competency by shortcut
-  await page.click("text=Lier une compétence");
   await page.click('[placeholder="Filtre..."]');
   await page.fill('[placeholder="Filtre..."]', "2.1.8");
   await page.click("text=8. Je fais des petits calculs de tête (+1, -1 etc.)");
@@ -51,7 +54,6 @@ it("is able to create an observation", async ({ page }) => {
   );
 
   // Add a competency by search
-  await page.click("text=Lier une compétence");
   await page.click('[placeholder="Filtre..."]');
   await page.fill('[placeholder="Filtre..."]', "respec");
   await page.click("text=10. Je respecte le matériel de l’école");
@@ -67,14 +69,14 @@ it("is able to create an observation", async ({ page }) => {
   await page.waitForSelector("text=Très bonne maîtrise");
 
   // Add another student
-  await page.click("text=Ajouter un élève");
+  await page.click("text=Ajouter des élèves");
   await page.click('button:has-text("Olivier Meu")');
 
   // Non complete again
   await page.waitForSelector("text=Non...");
 
   // Link a competency
-  await page.click("text=cycle 4 - 1 élève Lier une compétence >> button");
+  await page.click("text=cycle 4 - 1 élève Lier des compétences >> button");
   await page.click("text=2. Les méthodes et outils pour apprendre");
   await page.click("text=1. Organisation du travail personnel");
   await page.click("text=1. savoir comprendre des documents vidéo");
