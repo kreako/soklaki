@@ -44,7 +44,7 @@ import { defineEmit, defineProps, ref, computed } from "vue";
 import IconX from "../icons/IconX.vue";
 import IconPlusCircle from "../icons/IconPlusCircle.vue";
 
-defineEmit(["select", "cancel"]);
+defineEmit(["select"]);
 
 const props = defineProps({
   students: Object,
