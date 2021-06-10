@@ -64,22 +64,22 @@ query Ping {
       count
     }
   }
-  eval_comment_aggregate {
+  eval_comment_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  eval_evaluation_aggregate {
+  eval_evaluation_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  eval_observation_aggregate {
+  eval_observation_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  eval_period_aggregate {
+  eval_period_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
@@ -89,42 +89,42 @@ query Ping {
       count
     }
   }
-  report_aggregate {
+  report_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  socle_competency_aggregate {
+  socle_competency_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  socle_competency_subject_aggregate {
+  socle_competency_subject_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  socle_competency_template_aggregate {
+  socle_competency_template_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  socle_container_aggregate {
+  socle_container_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  socle_subject_aggregate {
+  socle_subject_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  student_aggregate {
+  student_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
   }
-  user_aggregate {
+  user_aggregate(where: {active: {_eq: true}}) {
     aggregate {
       count
     }
