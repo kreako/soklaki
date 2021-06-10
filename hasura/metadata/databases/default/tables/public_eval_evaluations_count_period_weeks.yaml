@@ -1,0 +1,38 @@
+table:
+  name: eval_evaluations_count_period_weeks
+  schema: public
+object_relationships:
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        eval_period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
+- name: user
+  using:
+    manual_configuration:
+      column_mapping:
+        user_id: id
+      insertion_order: null
+      remote_table:
+        name: user
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - eval_period_id
+    - week_start
+    - user_id
+    - evaluations_count
+    filter:
+      _and:
+      - user:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - period:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
