@@ -430,6 +430,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: update-observation-active
+  url: update-observation-active
+  methods:
+  - POST
+  name: update-observation-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: update-observation-date
   url: update-observation-date
   methods:

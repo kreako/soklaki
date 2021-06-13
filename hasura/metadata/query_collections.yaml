@@ -1487,3 +1487,10 @@
             report_id
           }
         }
+    - name: update-observation-active
+      query: |-
+        mutation UpdateObservationActive($id: bigint!, $active: Boolean!) {
+          update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
+            id
+          }
+        }
