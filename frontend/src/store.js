@@ -291,6 +291,15 @@ const mutations = {
   setObservationText(state, { id, text }) {
     state.observation.text = text;
   },
+  setObservationActive(state, { id, active }) {
+    if (!active) {
+      delete state.observations[id];
+      const pos = state.sortedCreatedAtObservations.indexOf(id);
+      state.sortedCreatedAtObservations.splice(pos, 1);
+    } else {
+      throw new Error("setObservationActive active=true not implemented");
+    }
+  },
   setObservations(state, { data, limit, offset }) {
     // Remove everything that is already in there
     // Component use pagination
@@ -675,6 +684,22 @@ const actions = {
         date: ${date}`);
     } else {
       commit("setObservation", data);
+    }
+  },
+
+  async updateObservationActive({ commit, state, dispatch }, { id, active }) {
+    const answer = await axios.post("update-observation-active", {
+      id: id,
+      active: active,
+    });
+
+    const data = answer.data.update_eval_observation_by_pk;
+    if (data == null) {
+      throw new Error(`Quelque chose s'est mal passé dans la mise à jour du champ active de l'observation. :(\n
+        id: ${id}\n
+        active: ${active}`);
+    } else {
+      commit("setObservationActive", { id, active });
     }
   },
 
