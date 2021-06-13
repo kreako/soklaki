@@ -813,39 +813,6 @@
             }
           }
         }
-    - name: observations-sorted-created-at
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            period {
-              eval_period_id
-            }
-            complete {
-              complete
-            }
-            competencies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            students_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
-            aggregate {
-              count
-            }
-          }
-        }
     - name: stats-summary
       query: |-
         query StatsSummary($period_id: Int) {
@@ -1492,5 +1459,38 @@
         mutation UpdateObservationActive($id: bigint!, $active: Boolean!) {
           update_eval_observation_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
             id
+          }
+        }
+    - name: observations-sorted-created-at
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {active: {_eq: true}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}}) {
+            aggregate {
+              count
+            }
           }
         }
