@@ -265,6 +265,27 @@
         </div>
       </div>
     </div>
+    <!-- Details -->
+    <div class="mt-20">
+      <Disclosure>
+        <DisclosureButton class="">
+          <div class="flex flex-row items-center space-x-3">
+            <div class="form-label">Zone dangereuse</div>
+          </div>
+        </DisclosureButton>
+        <DisclosurePanel>
+          <div>
+            <div>
+              N'hésitez pas à bien réfléchir, une fois qu'elle est supprimée...
+              Elle est supprimée !
+            </div>
+            <button @click="setActiveFalse" class="button-cancel-action">
+              Supprimer cette observation 😱
+            </button>
+          </div>
+        </DisclosurePanel>
+      </Disclosure>
+    </div>
   </div>
 </template>
 
@@ -279,6 +300,7 @@ import { nonSelectedStudents } from "../utils/observation";
 import { groupStudentsByCycle, studentsIdToCycle } from "../utils/student";
 import { groupCompetenciesByCycle } from "../utils/competency";
 import { evaluationByCompetencyIdStudentId } from "../utils/evaluation";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import IconPencil from "../icons/IconPencil.vue";
 import IconCheck from "../icons/IconCheck.vue";
 import IconX from "../icons/IconX.vue";
@@ -505,6 +527,14 @@ const editEvaluation = (competencyId, studentId) => {
 };
 
 const userById = computed(() => store.getters.userById);
+
+const setActiveFalse = async () => {
+  await store.dispatch("updateObservationActive", {
+    id: route.params.id,
+    active: false,
+  });
+  router.push("/observations");
+};
 
 const getObservation = async (id) => {
   id = Number(id);
