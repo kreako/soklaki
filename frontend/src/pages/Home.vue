@@ -85,6 +85,7 @@ onBeforeRouteUpdate((updateGuard) => {
 onMounted(async () => {
   if (token.value == null) {
     router.push("/login");
+    return;
   }
   await store.dispatch("boot");
   await store.dispatch("socle");
