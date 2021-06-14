@@ -26,7 +26,6 @@ import { cycleNb } from "../utils/cycle";
 import { fathers } from "../utils/competency";
 import Modal from "../components/Modal.vue";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
-import HashSubjects from "../components/HashSubjects.vue";
 import CompetencyTemplates from "../components/CompetencyTemplates.vue";
 import IconPlusCircle from "../icons/IconPlusCircle.vue";
 import { useTitle } from "@vueuse/core";
