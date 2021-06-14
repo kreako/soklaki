@@ -334,9 +334,8 @@ const editObservationText = () => {
   observationTextInEdit.value = true;
 };
 const saveObservationText = async () => {
-  // TODO store dispatch
   await store.dispatch("updateObservationText", {
-    id: observation.value.id,
+    id: route.params.id,
     text: observationEditText.value,
   });
   observationTextInEdit.value = false;
@@ -353,7 +352,7 @@ const editObservationDate = () => {
 };
 const saveObservationDate = async () => {
   await store.dispatch("updateObservationDate", {
-    id: observation.value.id,
+    id: route.params.id,
     date: observationEditDate.value,
   });
   observationDateInEdit.value = false;
@@ -380,13 +379,13 @@ const studentCycle = computed(
 );
 const addStudent = async (id) => {
   await store.dispatch("insertObservationStudent", {
-    observationId: observation.value.id,
+    observationId: route.params.id,
     studentId: id,
   });
 };
 const removeStudent = async (id) => {
   await store.dispatch("deleteObservationStudent", {
-    observationId: observation.value.id,
+    observationId: route.params.id,
     studentId: id,
   });
 };
@@ -411,13 +410,13 @@ const selectCompetency = async (cycle, competencyId) => {
     }
   }
   await store.dispatch("insertObservationCompetency", {
-    observationId: observation.value.id,
+    observationId: route.params.id,
     competencyId: competencyId,
   });
 };
 const removeCompetency = async (competencyId) => {
   await store.dispatch("deleteObservationCompetency", {
-    observationId: observation.value.id,
+    observationId: route.params.id,
     competencyId: competencyId,
   });
 };
