@@ -105,7 +105,9 @@ const fillStudents = () => {
     return;
   }
   const period = store.state.periods[store.state.currentPeriod];
-  const full = period.students.map((x) => studentById.value(x.student.id));
+  const full = period.students.map((x) =>
+    store.getters.studentById(x.student.id)
+  );
   students.value = full.filter(
     (x) => x.current_cycle.current_cycle === route.params.cycle
   );
