@@ -15,16 +15,12 @@
       {{ object.rank }}.
       {{ object.text }}
     </div>
-    <button @click="edit" class="text-gray-200 group-hover:text-gray-700">
-      <IconPencil class="hover:text-teal-500 h-3" />
-    </button>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmit, computed } from "vue";
 import { useStore } from "vuex";
-import IconPencil from "../icons/IconPencil.vue";
 
 const store = useStore();
 
@@ -34,8 +30,6 @@ const props = defineProps({
   kind: String,
 });
 
-const emit = defineEmit(["edit"]);
-
 const object = computed(() => {
   if (props.kind === "competency") {
     return props.socle.competencies[props.objectId];
@@ -43,8 +37,4 @@ const object = computed(() => {
     return props.socle.containers[props.objectId];
   }
 });
-
-const edit = () => {
-  emit("edit");
-};
 </script>
