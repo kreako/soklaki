@@ -120,16 +120,8 @@ const cycles = [
   { id: "c4", text: "Cycle 4" },
 ];
 
-const depthNavigation = ref(0);
-
-const goBackToL1 = () => {
-  selectedL2.value = null;
-  selectedCompetency.value = null;
-};
-
 const selectedCycle = ref(null);
 const selectCycle = async (id) => {
-  depthNavigation.value = 0;
   selectedCycle.value = id;
   selectedL1.value = null;
   selectedL2.value = null;
@@ -145,7 +137,6 @@ const cycle = computed(() => {
 
 const selectedL1 = ref(null);
 const selectL1 = async (id) => {
-  depthNavigation.value = 1;
   selectedL1.value = id;
   selectedL2.value = null;
   selectedCompetency.value = null;
@@ -162,7 +153,6 @@ const containerL1 = computed(() => {
 
 const selectedL2 = ref(null);
 const selectL2 = async (id) => {
-  depthNavigation.value = 2;
   selectedL2.value = id;
   selectedCompetency.value = null;
 };
@@ -181,7 +171,6 @@ const containerL2 = computed(() => {
 
 const selectedCompetency = ref(null);
 const selectCompetency = async (id) => {
-  depthNavigation.value = 3;
   selectedCompetency.value = id;
 };
 
