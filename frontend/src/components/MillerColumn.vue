@@ -1,17 +1,17 @@
 <template>
   <div class="flex flex-row">
-    <div class="flex flex-col">
-      <div>{{ title }} {{ list.length }}</div>
-      <div>
+    <div class="flex flex-col" v-if="!hide">
+      <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">
+        {{ title }}
+      </div>
+      <hr class="bg-gray-700" />
+      <div class="mt-2">
         <div v-for="(item, index) in list" class="cursor-pointer">
           <div @click="selectLabel(item.id)">
-            <slot name="label" :item="item" :index="index"></slot>
+            <slot :item="item" :index="index"></slot>
           </div>
         </div>
       </div>
-    </div>
-    <div>
-      <slot name="child"></slot>
     </div>
   </div>
 </template>
@@ -21,6 +21,7 @@ import { defineProps, defineEmit, ref } from "vue";
 const props = defineProps({
   title: String,
   list: Array,
+  hide: Boolean,
 });
 
 const emit = defineEmit(["selected"]);

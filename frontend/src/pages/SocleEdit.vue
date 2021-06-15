@@ -1,114 +1,93 @@
 <template>
   <div class="my-4 px-2">
     <div>
-      <IconHome class="h-4" />
-      <div v-if="selectedCycle">
-        {{ cycle.text }}
+      <div class="cursor-pointer" @click="selectCycle(null)">
+        <IconHome class="h-4" />
       </div>
-      <div v-if="selectedL1">
-        {{ containerById(containerL1.id).full_rank }}
-        {{ containerById(containerL1.id).text }}
-      </div>
-      <div v-if="selectedL2">
-        {{ containerById(containerL2.id).full_rank }}
-        {{ containerById(containerL2.id).text }}
-      </div>
-      <div v-if="selectedCompetency">
-        {{ competencyById(selectedCompetency).full_rank }}
-        {{ competencyById(selectedCompetency).text }}
+      <div v-if="selectedCycle" class="pl-2">
+        <div class="cursor-pointer" @click="selectL1(null)">
+          {{ cycle.text }}
+        </div>
+        <div v-if="selectedL1" class="pl-2">
+          <div class="cursor-pointer" @click="selectL2(null)">
+            {{ containerById(containerL1.id).full_rank }}
+            {{ containerById(containerL1.id).text }}
+          </div>
+          <div v-if="selectedL2" class="pl-2">
+            <div class="cursor-pointer" @click="selectCompetency(null)">
+              {{ containerById(containerL2.id).full_rank }}
+              {{ containerById(containerL2.id).text }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div>
-      <MillerColumn :list="cycles" title="Cycles" @selected="selectCycle">
-        <template v-slot:label="slot"> {{ slot.item.text }} </template>
-        <template v-slot:child>
-          <MillerColumn
-            v-if="selectedCycle"
-            :list="socle[selectedCycle]"
-            title="Domaines"
-            @selected="selectL1"
-          >
-            <template v-slot:label="slot">
-              {{ containerById(slot.item.id).full_rank }}
-              {{ containerById(slot.item.id).text }}
-            </template>
-            <template v-slot:child>
-              <div v-if="selectedL1">
-                <div v-if="containerL1.children.length > 0">
-                  <MillerColumn
-                    :list="containerL1.children"
-                    title="Sous domaines"
-                    @selected="selectL2"
-                  >
-                    <template v-slot:label="slot">
-                      {{ containerById(slot.item.id).full_rank }}
-                      {{ containerById(slot.item.id).text }}
-                    </template>
-                    <template v-slot:child>
-                      {{ selectedL2 }}
-                      <MillerColumn
-                        v-if="selectedL2"
-                        :list="containerL2.competencies"
-                        title="Compétences"
-                        @selected="selectCompetency"
-                      >
-                        <template v-slot:label="slot">
-                          {{ competencyById(slot.item.id).full_rank }}
-                          {{ competencyById(slot.item.id).text }}
-                        </template>
-                        <template v-slot:child>
-                          <div v-if="selectedCompetency">
-                            <div>Tags</div>
-                            <div>
-                              <div v-for="s in competency.subjects">
-                                #{{ subjectById(s.subject_id).title }}
-                              </div>
-                            </div>
-                            <div>Exemples</div>
-                            <div>
-                              <div v-for="t in competency.templates">
-                                {{ templateById(t.id).text }}
-                              </div>
-                            </div>
-                          </div>
-                        </template>
-                      </MillerColumn>
-                    </template>
-                  </MillerColumn>
-                </div>
-                <div v-else>
-                  <MillerColumn
-                    :list="containerL1.competencies"
-                    title="Compétences"
-                    @selected="selectCompetency"
-                  >
-                    <template v-slot:label="slot">
-                      {{ competencyById(slot.item.id).full_rank }}
-                      {{ competencyById(slot.item.id).text }}
-                    </template>
-                    <template v-slot:child>
-                      <div v-if="selectedCompetency">
-                        <div>Tags</div>
-                        <div>
-                          <div v-for="s in competency.subjects">
-                            #{{ subjectById(s.subject_id).title }}
-                          </div>
-                        </div>
-                        <div>Exemples</div>
-                        <div>
-                          <div v-for="t in competency.templates">
-                            {{ templateById(t.id).text }}
-                          </div>
-                        </div>
-                      </div>
-                    </template>
-                  </MillerColumn>
-                </div>
-              </div>
-            </template>
-          </MillerColumn>
-        </template>
-      </MillerColumn>
+    <div class="flex flex-row items-stretch mt-8">
+      <div class="flex-grow">
+        <MillerColumn
+          :list="cycles"
+          title="Cycles"
+          @selected="selectCycle"
+          :hide="selectedCycle != null"
+          v-slot="{ item }"
+        >
+          {{ item.text }}
+        </MillerColumn>
+        <MillerColumn
+          v-if="selectedCycle"
+          :list="socle[selectedCycle]"
+          title="Domaines"
+          @selected="selectL1"
+          :hide="selectedL1 != null"
+          v-slot="{ item }"
+        >
+          {{ containerById(item.id).full_rank }}
+          {{ containerById(item.id).text }}
+        </MillerColumn>
+        <div v-if="selectedL1">
+          <div v-if="containerL1.children.length > 0">
+            <MillerColumn
+              :list="containerL1.children"
+              title="Sous domaines"
+              @selected="selectL2"
+              :hide="selectedL2 != null"
+              v-slot="{ item }"
+            >
+              {{ containerById(item.id).full_rank }}
+              {{ containerById(item.id).text }}
+            </MillerColumn>
+            <MillerColumn
+              v-if="selectedL2"
+              :list="containerL2.competencies"
+              title="Compétences"
+              @selected="selectCompetency"
+              :hide="selectedCompetency != null"
+              v-slot="{ item }"
+            >
+              {{ competencyById(item.id).full_rank }}
+              {{ competencyById(item.id).text }}
+            </MillerColumn>
+            <div v-if="selectedCompetency">
+              <SocleEditCompetency :competency="competency" />
+            </div>
+          </div>
+          <div v-else>
+            <MillerColumn
+              :list="containerL1.competencies"
+              title="Compétences"
+              @selected="selectCompetency"
+              :hide="selectedCompetency != null"
+              v-slot="{ item }"
+            >
+              {{ competencyById(item.id).full_rank }}
+              {{ competencyById(item.id).text }}
+            </MillerColumn>
+            <div v-if="selectedCompetency">
+              <SocleEditCompetency :competency="competency" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -119,7 +98,10 @@ import { useRoute, useRouter } from "vue-router";
 import { useTitle } from "@vueuse/core";
 import { computed, ref, onMounted, watch } from "vue";
 import IconHome from "../icons/IconHome.vue";
+import IconChevronLeft from "../icons/IconChevronLeft.vue";
+import IconChevronRight from "../icons/IconChevronRight.vue";
 import MillerColumn from "../components/MillerColumn.vue";
+import SocleEditCompetency from "../components/SocleEditCompetency.vue";
 
 useTitle("Socle modification - soklaki.fr");
 
@@ -130,8 +112,6 @@ const socle = computed(() => store.state.socle);
 
 const containerById = computed(() => store.getters.containerById);
 const competencyById = computed(() => store.getters.competencyById);
-const subjectById = computed(() => store.getters.subjectById);
-const templateById = computed(() => store.getters.templateById);
 
 const cycles = [
   { id: "c1", text: "Cycle 1" },
@@ -140,8 +120,16 @@ const cycles = [
   { id: "c4", text: "Cycle 4" },
 ];
 
+const depthNavigation = ref(0);
+
+const goBackToL1 = () => {
+  selectedL2.value = null;
+  selectedCompetency.value = null;
+};
+
 const selectedCycle = ref(null);
 const selectCycle = async (id) => {
+  depthNavigation.value = 0;
   selectedCycle.value = id;
   selectedL1.value = null;
   selectedL2.value = null;
@@ -157,6 +145,7 @@ const cycle = computed(() => {
 
 const selectedL1 = ref(null);
 const selectL1 = async (id) => {
+  depthNavigation.value = 1;
   selectedL1.value = id;
   selectedL2.value = null;
   selectedCompetency.value = null;
@@ -173,6 +162,7 @@ const containerL1 = computed(() => {
 
 const selectedL2 = ref(null);
 const selectL2 = async (id) => {
+  depthNavigation.value = 2;
   selectedL2.value = id;
   selectedCompetency.value = null;
 };
@@ -191,6 +181,7 @@ const containerL2 = computed(() => {
 
 const selectedCompetency = ref(null);
 const selectCompetency = async (id) => {
+  depthNavigation.value = 3;
   selectedCompetency.value = id;
 };
 
