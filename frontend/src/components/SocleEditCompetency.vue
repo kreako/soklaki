@@ -31,18 +31,35 @@
       </div>
       <div v-if="editSubjects">
         <SubjectSelector @select="addSubject" :subjects="nonSelectedSubjects" />
-        <button
-          @click="editSubjects = false"
-          class="
-            mt-2
-            rounded-md
-            px-3
-            border border-teal-700
-            hover:border-teal-300
-          "
-        >
-          C'est bon, je les ai tous
-        </button>
+        <div class="flex flex-row items-center space-x-2">
+          <button
+            @click="newSubject"
+            class="
+              mt-2
+              rounded-md
+              px-3
+              border border-teal-700
+              hover:border-teal-300
+            "
+          >
+            <div class="flex flex-row items-center space-x-2">
+              <div>Nouveau tag</div>
+              <IconPlus class="h-3 text-gray-700" />
+            </div>
+          </button>
+          <button
+            @click="editSubjects = false"
+            class="
+              mt-2
+              rounded-md
+              px-3
+              border border-teal-700
+              hover:border-teal-300
+            "
+          >
+            C'est bon, je les ai tous
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -56,6 +73,17 @@
         {{ templateById(t.id).text }}
       </div>
     </div>
+    <ModalConfirmCancel
+      title="Nouveau tag"
+      :show="showNewSubjectModal"
+      @confirm="confirmNewSubject"
+      @cancel="cancelNewSubject"
+    >
+      <div>
+        <div>Création d'un nouveau tag</div>
+        <input type="text" v-model="tagValue" class="input w-full input" />
+      </div>
+    </ModalConfirmCancel>
   </div>
 </template>
 <script setup>
@@ -63,8 +91,11 @@ import { useStore } from "vuex";
 import { computed, ref, defineProps, defineEmit } from "vue";
 import MillerColumn from "../components/MillerColumn.vue";
 import SubjectSelector from "../components/SubjectSelector.vue";
+import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
+import IconPlus from "../icons/IconPlus.vue";
+import IconLogout from "../icons/IconLogout.vue";
 
 const props = defineProps({
   competency: Object,
@@ -96,5 +127,19 @@ const removeSubject = async (subjectId, competencyId) => {
     subjectId,
     competencyId,
   });
+};
+
+const showNewSubjectModal = ref(false);
+const tagValue = ref("");
+const newSubject = () => {
+  tagValue.value = "";
+  showNewSubjectModal.value = true;
+};
+const confirmNewSubject = async () => {
+  await store.dispatch("insertSocleSubject", { title: tagValue.value });
+  showNewSubjectModal.value = false;
+};
+const cancelNewSubject = () => {
+  showNewSubjectModal.value = false;
 };
 </script>
