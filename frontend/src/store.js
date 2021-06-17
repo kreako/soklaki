@@ -1127,6 +1127,18 @@ const actions = {
     await dispatch("socle");
   },
 
+  async deleteSocleCompetencySubject(
+    { state, dispatch },
+    { subjectId, competencyId }
+  ) {
+    await axios.post("delete-socle-competency-subject", {
+      subject_id: subjectId,
+      competency_id: competencyId,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
   async updateSocleContainerContainerId(
     { state, dispatch },
     { id, containerId }
