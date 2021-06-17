@@ -29,9 +29,11 @@
           </button>
         </div>
       </div>
-      <div v-if="editSubjects">
+      <div v-if="editSubjects" class="mt-2">
         <SubjectSelector @select="addSubject" :subjects="nonSelectedSubjects" />
-        <div class="flex flex-row items-center space-x-2">
+        <div
+          class="flex flex-col md:flex-row md:items-center md:space-x-2 mt-2"
+        >
           <button
             @click="newSubject"
             class="
@@ -45,6 +47,21 @@
             <div class="flex flex-row items-center space-x-2">
               <div>Nouveau tag</div>
               <IconPlus class="h-3 text-gray-700" />
+            </div>
+          </button>
+          <button
+            @click="deleteSubject"
+            class="
+              mt-2
+              rounded-md
+              px-3
+              border border-teal-700
+              hover:border-teal-300
+            "
+          >
+            <div class="flex flex-row items-center space-x-2">
+              <div>Supprimer un tag</div>
+              <IconX class="h-3 text-gray-700" />
             </div>
           </button>
           <button
@@ -81,7 +98,46 @@
     >
       <div>
         <div>Création d'un nouveau tag</div>
-        <input type="text" v-model="tagValue" class="input w-full input" />
+        <input
+          type="text"
+          v-model="tagValue"
+          @keyup.enter="confirmNewSubject"
+          class="input w-full input"
+        />
+      </div>
+    </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Suppression d'un tag"
+      :show="showDeleteSubjectModal"
+      @confirm="confirmDeleteSubject"
+      @cancel="cancelDeleteSubject"
+    >
+      <div>
+        <div>Suppression d'un tag</div>
+        <div>
+          <div
+            v-for="subject in subjects"
+            :key="subject.id"
+            class="px-2 flex flex-row items-center gap-2"
+          >
+            <button
+              v-if="selectedDeleteSubject === subject.id"
+              class="flex flex-row"
+              @click="toggleDeleteSubject(subject.id)"
+            >
+              <IconX class="w-4 text-teal-500 mr-2" />
+              <div class="text-teal-500">{{ subject.title }}</div>
+            </button>
+            <button
+              v-else
+              class="group flex flex-row"
+              @click="toggleDeleteSubject(subject.id)"
+            >
+              <IconX class="w-4 text-gray-300 group-hover:text-teal-500 mr-2" />
+              <div class="group-hover:text-teal-500">{{ subject.title }}</div>
+            </button>
+          </div>
+        </div>
       </div>
     </ModalConfirmCancel>
   </div>
@@ -95,6 +151,7 @@ import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
 import IconPlus from "../icons/IconPlus.vue";
+import IconX from "../icons/IconX.vue";
 import IconLogout from "../icons/IconLogout.vue";
 
 const props = defineProps({
@@ -106,6 +163,8 @@ const store = useStore();
 const competencyById = computed(() => store.getters.competencyById);
 const subjectById = computed(() => store.getters.subjectById);
 const templateById = computed(() => store.getters.templateById);
+
+const subjects = computed(() => store.getters.subjects);
 
 const nonSelectedSubjects = computed(() => {
   const selected = props.competency.subjects.map((x) => x.subject_id);
@@ -141,5 +200,28 @@ const confirmNewSubject = async () => {
 };
 const cancelNewSubject = () => {
   showNewSubjectModal.value = false;
+};
+
+const showDeleteSubjectModal = ref(false);
+const deleteSubject = () => {
+  showDeleteSubjectModal.value = true;
+};
+const confirmDeleteSubject = async () => {
+  await store.dispatch("updateSocleSubjectActive", {
+    id: selectedDeleteSubject.value,
+    active: false,
+  });
+  showDeleteSubjectModal.value = false;
+};
+const cancelDeleteSubject = () => {
+  showDeleteSubjectModal.value = false;
+};
+const selectedDeleteSubject = ref(null);
+const toggleDeleteSubject = (subjectId) => {
+  if (subjectId === selectedDeleteSubject.value) {
+    selectedDeleteSubject.value = null;
+  } else {
+    selectedDeleteSubject.value = subjectId;
+  }
 };
 </script>
