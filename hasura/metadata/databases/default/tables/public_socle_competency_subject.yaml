@@ -55,3 +55,14 @@ update_permissions:
           group_id:
             _eq: X-Hasura-User-Group
   role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - competency:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user

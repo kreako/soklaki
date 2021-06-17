@@ -1494,3 +1494,10 @@
             }
           }
         }
+    - name: delete-socle-competency-subject
+      query: |-
+        mutation DeleteSocleCompetencySubject($competency_id: Int!, $subject_id: Int!) {
+          delete_socle_competency_subject(where: {competency_id: {_eq: $competency_id}, subject_id: {_eq: $subject_id}}) {
+            affected_rows
+          }
+        }

@@ -28,6 +28,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: delete-socle-competency-subject
+  url: delete-socle-competency-subject
+  methods:
+  - POST
+  name: delete-socle-competency-subject
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: evaluation-single
   url: evaluation-single
   methods:
