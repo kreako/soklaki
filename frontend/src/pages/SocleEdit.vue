@@ -1,20 +1,29 @@
 <template>
   <div class="my-4 px-2">
     <div>
-      <div class="cursor-pointer" @click="selectCycle(null)">
+      <div
+        class="cursor-pointer hover:text-teal-500"
+        @click="selectCycle(null)"
+      >
         <IconHome class="h-4" />
       </div>
       <div v-if="selectedCycle" class="pl-2">
-        <div class="cursor-pointer" @click="selectL1(null)">
+        <div class="cursor-pointer hover:text-teal-500" @click="selectL1(null)">
           {{ cycle.text }}
         </div>
         <div v-if="selectedL1" class="pl-2">
-          <div class="cursor-pointer" @click="selectL2(null)">
+          <div
+            class="cursor-pointer hover:text-teal-500"
+            @click="selectL2(null)"
+          >
             {{ containerById(containerL1.id).full_rank }}
             {{ containerById(containerL1.id).text }}
           </div>
           <div v-if="selectedL2" class="pl-2">
-            <div class="cursor-pointer" @click="selectCompetency(null)">
+            <div
+              class="cursor-pointer hover:text-teal-500"
+              @click="selectCompetency(null)"
+            >
               {{ containerById(containerL2.id).full_rank }}
               {{ containerById(containerL2.id).text }}
             </div>
@@ -29,6 +38,7 @@
           title="Cycles"
           @selected="selectCycle"
           :hide="selectedCycle != null"
+          :editable="false"
           v-slot="{ item }"
         >
           {{ item.text }}
