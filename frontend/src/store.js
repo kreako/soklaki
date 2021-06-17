@@ -568,6 +568,21 @@ const getters = {
       student_id: null,
     };
   },
+  subjects: (state) => {
+    const subjects = Object.values(state.socle.subjects);
+    subjects.sort((a, b) => {
+      const lowerA = a.title.toLowerCase();
+      const lowerB = b.title.toLowerCase();
+      if (lowerA < lowerB) {
+        return -1;
+      }
+      if (lowerA > lowerB) {
+        return 1;
+      }
+      return 0;
+    });
+    return subjects;
+  },
 };
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
