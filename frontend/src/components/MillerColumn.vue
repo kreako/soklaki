@@ -33,6 +33,11 @@
               @click="moveDown(item.id)"
               class="h-3 hidden group-hover:block hover:text-teal-500 handle"
             />
+            <IconUpload
+              v-if="editable"
+              @click="move(item.id)"
+              class="h-3 hidden group-hover:block hover:text-teal-500 handle"
+            />
           </div>
         </div>
       </div>
@@ -60,6 +65,7 @@ import IconPencil from "../icons/IconPencil.vue";
 import IconTrash from "../icons/IconTrash.vue";
 import IconChevronUp from "../icons/IconChevronUp.vue";
 import IconChevronDown from "../icons/IconChevronDown.vue";
+import IconUpload from "../icons/IconUpload.vue";
 
 const props = defineProps({
   title: String,
@@ -81,6 +87,7 @@ const emit = defineEmit([
   "trash",
   "moveUp",
   "moveDown",
+  "move",
   "add",
 ]);
 
@@ -102,6 +109,10 @@ const moveUp = (id) => {
 
 const moveDown = (id) => {
   emit("moveDown", id);
+};
+
+const move = (id) => {
+  emit("move", id);
 };
 
 const addItem = () => {
