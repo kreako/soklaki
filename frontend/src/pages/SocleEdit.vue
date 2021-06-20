@@ -53,6 +53,7 @@
             title="Domaines"
             addLabel="Ajouter un domaine"
             @selected="selectL1"
+            @edit="goToEditContainer"
             :hide="selectedL1 != null"
             v-slot="{ item }"
           >
@@ -66,6 +67,7 @@
                 title="Sous domaines"
                 addLabel="Ajouter un sous domaine"
                 @selected="selectL2"
+                @edit="goToEditContainer"
                 :hide="selectedL2 != null"
                 v-slot="{ item }"
               >
@@ -108,6 +110,16 @@
         </div>
       </div>
     </Loading>
+    <ModalConfirmCancel
+      title="Modification du titre"
+      :show="showEditContainerModal"
+      @confirm="confirmContainerEdit"
+      @cancel="cancelContainerEdit"
+    >
+      <div>
+        <input type="text" v-model="containerText" class="input w-full" />
+      </div>
+    </ModalConfirmCancel>
   </div>
 </template>
 
@@ -122,6 +134,7 @@ import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
 import MillerColumn from "../components/MillerColumn.vue";
 import SocleEditCompetency from "../components/SocleEditCompetency.vue";
+import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 
 useTitle("Socle modification - soklaki.fr");
 
@@ -215,6 +228,25 @@ const competency = computed(() => {
       .competencies.find((x) => x.id == selectedCompetency.value);
   }
 });
+
+const showEditContainerModal = ref(false);
+const containerText = ref("");
+const containerId = ref(null);
+const goToEditContainer = (id) => {
+  showEditContainerModal.value = true;
+  containerText.value = store.getters.containerById(id).text;
+  containerId.value = id;
+};
+const confirmContainerEdit = async () => {
+  await store.dispatch("updateSocleContainerText", {
+    id: containerId.value,
+    text: containerText.value,
+  });
+  showEditContainerModal.value = false;
+};
+const cancelContainerEdit = () => {
+  showEditContainerModal.value = false;
+};
 
 watchEffect(() => {
   router.replace({
