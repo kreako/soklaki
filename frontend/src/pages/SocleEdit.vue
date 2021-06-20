@@ -80,6 +80,7 @@
                 title="Compétences"
                 addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
+                @edit="goToEditCompetency"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -96,6 +97,7 @@
                 title="Compétences"
                 addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
+                @edit="goToEditCompetency"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -118,6 +120,16 @@
     >
       <div>
         <input type="text" v-model="containerText" class="input w-full" />
+      </div>
+    </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Modification du titre"
+      :show="showEditCompetencyModal"
+      @confirm="confirmCompetencyEdit"
+      @cancel="cancelCompetencyEdit"
+    >
+      <div>
+        <input type="text" v-model="competencyText" class="input w-full" />
       </div>
     </ModalConfirmCancel>
   </div>
@@ -246,6 +258,25 @@ const confirmContainerEdit = async () => {
 };
 const cancelContainerEdit = () => {
   showEditContainerModal.value = false;
+};
+
+const showEditCompetencyModal = ref(false);
+const competencyText = ref("");
+const competencyId = ref(null);
+const goToEditCompetency = (id) => {
+  showEditCompetencyModal.value = true;
+  competencyText.value = store.getters.competencyById(id).text;
+  competencyId.value = id;
+};
+const confirmCompetencyEdit = async () => {
+  await store.dispatch("updateSocleCompetencyText", {
+    id: competencyId.value,
+    text: competencyText.value,
+  });
+  showEditCompetencyModal.value = false;
+};
+const cancelCompetencyEdit = () => {
+  showEditCompetencyModal.value = false;
 };
 
 watchEffect(() => {
