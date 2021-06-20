@@ -84,7 +84,7 @@
         Exemples
       </div>
       <button
-        @click="editTemplates = true"
+        @click="goInEditTemplates()"
         class="hover:text-teal-500 text-gray-700"
       >
         <IconPencil class="h-3" />
@@ -92,16 +92,37 @@
     </div>
     <hr class="bg-gray-700" />
     <div v-if="editTemplates">
-      <div v-for="t in competency.templates" class="mb-2">
+      <div v-for="t in editedTemplates" class="mb-2">
         <textarea
-          :value="templateById(t.id).text"
+          :value="t.text"
           @input="setTemplateText(t.id, $event.target.value)"
           class="mt-2 input w-full"
           rows="5"
         >
         </textarea>
       </div>
+      <div v-for="(t, index) in addedTemplates" class="mb-2">
+        <textarea
+          :value="t"
+          @input="setAddedTemplateText(index, $event.target.value)"
+          class="mt-2 input w-full"
+          rows="5"
+        >
+        </textarea>
+      </div>
       <div class="flex flex-col md:flex-row md:items-center md:space-x-2 mt-2">
+        <button
+          @click="addTemplate"
+          class="
+            mt-2
+            rounded-md
+            px-3
+            border border-teal-700
+            hover:border-teal-300
+          "
+        >
+          Ajouter un exemple
+        </button>
         <button
           @click="saveTemplatesEdit"
           class="
@@ -294,13 +315,39 @@ const toggleDeleteSubject = (subjectId) => {
 };
 
 const editTemplates = ref(false);
-const templatesText = ref({});
+const editedTemplates = ref([]);
+const goInEditTemplates = () => {
+  editedTemplates.value = [];
+  for (const t of props.competency.templates) {
+    editedTemplates.value.push({
+      id: t.id,
+      text: store.getters.templateById(t.id).text,
+    });
+  }
+  editTemplates.value = true;
+};
 const setTemplateText = (id, text) => {
-  templatesText.value[id] = text;
+  for (const t of editedTemplates.value) {
+    if (t.id === id) {
+      t.text = text;
+    }
+  }
 };
 const saveTemplatesEdit = async () => {
-  for (const [id, text] of Object.entries(templatesText.value)) {
-    await store.dispatch("updateSocleCompetencyTemplateText", { id, text });
+  for (const t of editedTemplates.value) {
+    await store.dispatch("updateSocleCompetencyTemplateText", {
+      id: t.id,
+      text: t.text.trim(),
+    });
+  }
+  for (const text of addedTemplates.value) {
+    const t = text.trim();
+    if (t !== "") {
+      await store.dispatch("insertSocleCompetencyTemplate", {
+        competencyId: props.competency.id,
+        text: t,
+      });
+    }
   }
   editTemplates.value = false;
 };
@@ -321,5 +368,13 @@ const confirmDeleteTemplate = async () => {
 const cancelDeleteTemplate = () => {
   showDeleteTemplateModal.value = false;
   selectedForDeletionTemplate.value = null;
+};
+
+const addedTemplates = ref([]);
+const addTemplate = () => {
+  addedTemplates.value.push("");
+};
+const setAddedTemplateText = (index, text) => {
+  addedTemplates.value[index] = text;
 };
 </script>
