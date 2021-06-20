@@ -55,6 +55,8 @@
             @selected="selectL1"
             @edit="goToEditContainer"
             @trash="trashContainer"
+            @moveUp="moveUpContainer(socle[selectedCycle], $event)"
+            @moveDown="moveDownContainer(socle[selectedCycle], $event)"
             :hide="selectedL1 != null"
             v-slot="{ item }"
           >
@@ -70,6 +72,8 @@
                 @selected="selectL2"
                 @edit="goToEditContainer"
                 @trash="trashContainer"
+                @moveUp="moveUpContainer(containerL1.children, $event)"
+                @moveDown="moveDownContainer(containerL1.children, $event)"
                 :hide="selectedL2 != null"
                 v-slot="{ item }"
               >
@@ -339,6 +343,50 @@ const confirmCompetencyTrash = async () => {
 };
 const cancelCompetencyTrash = () => {
   showTrashCompetencyModal.value = false;
+};
+
+const moveUpContainer = async (list, id) => {
+  const container = store.getters.containerById(id);
+  if (container.rank == 1) {
+    // Already on top
+    return;
+  }
+  // Update the container
+  await store.dispatch("updateSocleContainerRank", {
+    id: id,
+    rank: container.rank - 1,
+  });
+  // Find the container before
+  const idx = list.findIndex((x) => x.id == id) - 1;
+  const before = store.getters.containerById(list[idx].id);
+  await store.dispatch("updateSocleContainerRank", {
+    id: before.id,
+    rank: before.rank + 1,
+  });
+  // Now reload the socle
+  await store.dispatch("socle");
+};
+
+const moveDownContainer = async (list, id) => {
+  // Find the container after
+  const idx = list.findIndex((x) => x.id == id) + 1;
+  if (list.length <= idx) {
+    // last of the list, do nothing
+    return;
+  }
+  const after = store.getters.containerById(list[idx].id);
+  const container = store.getters.containerById(id);
+  // Update the container
+  await store.dispatch("updateSocleContainerRank", {
+    id: id,
+    rank: container.rank + 1,
+  });
+  await store.dispatch("updateSocleContainerRank", {
+    id: after.id,
+    rank: after.rank - 1,
+  });
+  // Now reload the socle
+  await store.dispatch("socle");
 };
 
 watchEffect(() => {

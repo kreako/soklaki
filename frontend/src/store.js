@@ -1181,7 +1181,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async updateSocleContainerRank({ state, dispatch }, { id, rank }) {
+  async updateSocleContainerRank({ state }, { id, rank }) {
     const containerId = state.socle.containers[id].container_id;
     const { alphaFullRank, fullRank } = computeRanks({
       state,
@@ -1194,8 +1194,6 @@ const actions = {
       full_rank: fullRank,
       rank: rank,
     });
-    // Now reload the socle
-    await dispatch("socle");
   },
 
   async updateSocleCompetencyRank({ state, dispatch }, { id, rank }) {
