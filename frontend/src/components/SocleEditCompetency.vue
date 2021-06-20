@@ -129,8 +129,20 @@
       </div>
     </div>
     <div v-else>
-      <div v-for="t in competency.templates" class="mb-2">
-        {{ templateById(t.id).text }}
+      {{ competency.templates }}
+      <div
+        v-for="t in competency.templates"
+        class="flex flex-row items-center space-x-2 mb-2"
+      >
+        <div>
+          {{ templateById(t.id).text }}
+        </div>
+        <button
+          @click="deleteTemplate(t.id)"
+          class="text-gray-300 hover:text-gray-600"
+        >
+          <IconTrash class="h-4" />
+        </button>
       </div>
     </div>
     <ModalConfirmCancel
@@ -183,6 +195,19 @@
         </div>
       </div>
     </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Suppression d'un exemple"
+      :show="showDeleteTemplateModal"
+      @confirm="confirmDeleteTemplate"
+      @cancel="cancelDeleteTemplate"
+    >
+      <div>
+        <div>Êtes-vous sûr de vouloir supprimer cet exemple ?</div>
+        <div class="mt-2 font-mono">
+          {{ templateById(selectedForDeletionTemplate).text }}
+        </div>
+      </div>
+    </ModalConfirmCancel>
   </div>
 </template>
 <script setup>
@@ -193,6 +218,7 @@ import SubjectSelector from "../components/SubjectSelector.vue";
 import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import IconXCircle from "../icons/IconXCircle.vue";
+import IconTrash from "../icons/IconTrash.vue";
 import IconPlus from "../icons/IconPlus.vue";
 import IconX from "../icons/IconX.vue";
 import IconLogout from "../icons/IconLogout.vue";
@@ -278,5 +304,23 @@ const saveTemplatesEdit = async () => {
     await store.dispatch("updateSocleCompetencyTemplateText", { id, text });
   }
   editTemplates.value = false;
+};
+
+const showDeleteTemplateModal = ref(false);
+const selectedForDeletionTemplate = ref(null);
+const deleteTemplate = (id) => {
+  selectedForDeletionTemplate.value = id;
+  showDeleteTemplateModal.value = true;
+};
+const confirmDeleteTemplate = async () => {
+  await store.dispatch("updateSocleCompetencyTemplateActive", {
+    id: selectedForDeletionTemplate.value,
+    active: false,
+  });
+  showDeleteTemplateModal.value = false;
+};
+const cancelDeleteTemplate = () => {
+  showDeleteTemplateModal.value = false;
+  selectedForDeletionTemplate.value = null;
 };
 </script>
