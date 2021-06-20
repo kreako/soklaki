@@ -83,6 +83,7 @@
                 addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
                 @edit="goToEditCompetency"
+                @trash="trashCompetency"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -100,6 +101,7 @@
                 addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
                 @edit="goToEditCompetency"
+                @trash="trashCompetency"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -144,6 +146,18 @@
       <div class="mt-2 font-mono">
         {{ containerById(containerTrash.id).full_rank }}
         {{ containerById(containerTrash.id).text }}
+      </div>
+    </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Suppression d'une compétence"
+      :show="showTrashCompetencyModal"
+      @confirm="confirmCompetencyTrash"
+      @cancel="cancelCompetencyTrash"
+    >
+      <div>Êtes-vous sur de vouloir supprimer cette compétence ?</div>
+      <div class="mt-2 font-mono">
+        {{ competencyById(competencyTrash.id).full_rank }}
+        {{ competencyById(competencyTrash.id).text }}
       </div>
     </ModalConfirmCancel>
   </div>
@@ -308,6 +322,23 @@ const confirmContainerTrash = async () => {
 };
 const cancelContainerTrash = () => {
   showTrashContainerModal.value = false;
+};
+
+const showTrashCompetencyModal = ref(false);
+const competencyTrash = ref(null);
+const trashCompetency = (id) => {
+  competencyTrash.value = id;
+  showTrashCompetencyModal.value = true;
+};
+const confirmCompetencyTrash = async () => {
+  await store.dispatch("updateSocleCompetencyActive", {
+    id: competencyTrash.value,
+    active: false,
+  });
+  showTrashCompetencyModal.value = false;
+};
+const cancelCompetencyTrash = () => {
+  showTrashCompetencyModal.value = false;
 };
 
 watchEffect(() => {
