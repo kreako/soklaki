@@ -495,6 +495,8 @@ const getters = {
       full_rank: null,
       text: null,
       cycle: null,
+      children: [],
+      competencies: [],
     };
   },
   competencyById: (state) => (competencyId) => {
