@@ -129,7 +129,6 @@
       </div>
     </div>
     <div v-else>
-      {{ competency.templates }}
       <div
         v-for="t in competency.templates"
         class="flex flex-row items-center space-x-2 mb-2"
