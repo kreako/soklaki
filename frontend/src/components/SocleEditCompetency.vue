@@ -1,8 +1,16 @@
 <template>
   <div>
-    <div>
-      {{ competencyById(competency.id).full_rank }}
-      {{ competencyById(competency.id).text }}
+    <div class="flex flex-row items-center space-x-2">
+      <div>
+        {{ competencyById(competency.id).full_rank }}
+        {{ competencyById(competency.id).text }}
+      </div>
+      <button
+        @click="goInEditCompetency"
+        class="hover:text-teal-500 text-gray-700"
+      >
+        <IconPencil class="h-3" />
+      </button>
     </div>
     <div class="flex flex-row items-center space-x-2 mt-8">
       <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">
@@ -228,6 +236,16 @@
         </div>
       </div>
     </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Modification du titre de la compétence"
+      :show="showCompetencyModal"
+      @confirm="confirmCompetency"
+      @cancel="cancelCompetency"
+    >
+      <div>
+        <input type="text" v-model="competencyTitle" class="input w-full" />
+      </div>
+    </ModalConfirmCancel>
   </div>
 </template>
 <script setup>
@@ -376,5 +394,24 @@ const addTemplate = () => {
 };
 const setAddedTemplateText = (index, text) => {
   addedTemplates.value[index] = text;
+};
+
+const showCompetencyModal = ref(false);
+const competencyTitle = ref("");
+const goInEditCompetency = () => {
+  competencyTitle.value = store.getters.competencyById(
+    props.competency.id
+  ).text;
+  showCompetencyModal.value = true;
+};
+const confirmCompetency = async () => {
+  await store.dispatch("updateSocleCompetencyText", {
+    id: props.competency.id,
+    text: competencyTitle.value,
+  });
+  showCompetencyModal.value = false;
+};
+const cancelCompetency = async () => {
+  showCompetencyModal.value = false;
 };
 </script>
