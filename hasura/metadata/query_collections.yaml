@@ -1501,3 +1501,24 @@
             affected_rows
           }
         }
+    - name: update-socle-competency-templates-text
+      query: |-
+        mutation UpdateSocleCompetencyTemplatesText($id: Int!, $text: String!) {
+          update_socle_competency_template_by_pk(pk_columns: {id: $id}, _set: {text: $text}) {
+            id
+          }
+        }
+    - name: update-socle-competency-templates-active
+      query: |-
+        mutation UpdateSocleCompetencyTemplatesActive($id: Int!, $active: Boolean!) {
+          update_socle_competency_template_by_pk(pk_columns: {id: $id}, _set: {active: $active}) {
+            id
+          }
+        }
+    - name: insert-socle-competency-templates
+      query: |-
+        mutation InsertSocleCompetencyTemplates($competency_id: Int!, $group_id: bigint!, $text: String!) {
+          insert_socle_competency_template_one(object: {active: true, competency_id: $competency_id, group_id: $group_id, text: $text}) {
+            id
+          }
+        }

@@ -145,6 +145,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: insert-socle-competency-templates
+  url: insert-socle-competency-templates
+  methods:
+  - POST
+  name: insert-socle-competency-templates
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-socle-container
   url: insert-socle-container
   methods:
@@ -525,6 +534,24 @@
   methods:
   - POST
   name: update-socle-competency-subject-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-templates-active
+  url: update-socle-competency-templates-active
+  methods:
+  - POST
+  name: update-socle-competency-templates-active
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
+      query_name: update-socle-competency-templates-text
+  url: update-socle-competency-templates-text
+  methods:
+  - POST
+  name: update-socle-competency-templates-text
   comment: null
 - definition:
     query:
