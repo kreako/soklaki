@@ -139,7 +139,7 @@
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { useTitle, until } from "@vueuse/core";
-import { computed, ref, onMounted, watchEffect } from "vue";
+import { computed, ref, onMounted, watchEffect, watch } from "vue";
 import Loading from "../components/Loading.vue";
 import IconHome from "../icons/IconHome.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
@@ -288,6 +288,25 @@ watchEffect(() => {
       competency: selectedCompetency.value,
     },
   });
+});
+
+watch(route, () => {
+  if (route.path !== "/socle/edit") {
+    // Not my page
+    return;
+  }
+  if (route.query.cycle != selectedCycle.value) {
+    selectedCycle.value = route.query.cycle;
+  }
+  if (route.query.l1 != selectedL1.value) {
+    selectedL1.value = route.query.l1;
+  }
+  if (route.query.l2 != selectedL2.value) {
+    selectedL2.value = route.query.l2;
+  }
+  if (route.query.competency != selectedCompetency.value) {
+    selectedCompetency.value = route.query.competency;
+  }
 });
 
 onMounted(async () => {
