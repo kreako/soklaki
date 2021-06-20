@@ -88,6 +88,8 @@
                 @selected="selectCompetency"
                 @edit="goToEditCompetency"
                 @trash="trashCompetency"
+                @moveUp="moveUpCompetency(containerL2.competencies, $event)"
+                @moveDown="moveDownCompetency(containerL2.competencies, $event)"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -106,6 +108,8 @@
                 @selected="selectCompetency"
                 @edit="goToEditCompetency"
                 @trash="trashCompetency"
+                @moveUp="moveUpCompetency(containerL1.competencies, $event)"
+                @moveDown="moveDownCompetency(containerL1.competencies, $event)"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -382,6 +386,50 @@ const moveDownContainer = async (list, id) => {
     rank: container.rank + 1,
   });
   await store.dispatch("updateSocleContainerRank", {
+    id: after.id,
+    rank: after.rank - 1,
+  });
+  // Now reload the socle
+  await store.dispatch("socle");
+};
+
+const moveUpCompetency = async (list, id) => {
+  const competency = store.getters.competencyById(id);
+  if (competency.rank == 1) {
+    // Already on top
+    return;
+  }
+  // Update the container
+  await store.dispatch("updateSocleCompetencyRank", {
+    id: id,
+    rank: competency.rank - 1,
+  });
+  // Find the competency before
+  const idx = list.findIndex((x) => x.id == id) - 1;
+  const before = store.getters.competencyById(list[idx].id);
+  await store.dispatch("updateSocleCompetencyRank", {
+    id: before.id,
+    rank: before.rank + 1,
+  });
+  // Now reload the socle
+  await store.dispatch("socle");
+};
+
+const moveDownCompetency = async (list, id) => {
+  // Find the competency after
+  const idx = list.findIndex((x) => x.id == id) + 1;
+  if (list.length <= idx) {
+    // last of the list, do nothing
+    return;
+  }
+  const after = store.getters.competencyById(list[idx].id);
+  const competency = store.getters.competencyById(id);
+  // Update the competency
+  await store.dispatch("updateSocleCompetencyRank", {
+    id: id,
+    rank: competency.rank + 1,
+  });
+  await store.dispatch("updateSocleCompetencyRank", {
     id: after.id,
     rank: after.rank - 1,
   });
