@@ -15,22 +15,40 @@
             </div>
             <IconPencil
               v-if="editable"
+              @click="edit(item.id)"
               class="h-3 hidden group-hover:block hover:text-teal-500"
             />
             <IconTrash
               v-if="editable"
+              @click="trash(item.id)"
               class="h-3 hidden group-hover:block hover:text-teal-500"
             />
             <IconChevronUp
               v-if="editable"
+              @click="moveUp(item.id)"
               class="h-3 hidden group-hover:block hover:text-teal-500 handle"
             />
             <IconChevronDown
               v-if="editable"
+              @click="moveDown(item.id)"
               class="h-3 hidden group-hover:block hover:text-teal-500 handle"
             />
           </div>
         </div>
+      </div>
+      <div v-if="editable" class="mt-2">
+        <button
+          @click="addItem"
+          class="
+            mt-2
+            rounded-md
+            px-3
+            border border-teal-700
+            hover:border-teal-300
+          "
+        >
+          {{ addLabel }}
+        </button>
       </div>
     </div>
   </div>
@@ -51,11 +69,42 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  addLabel: {
+    type: String,
+    default: "Ajouter",
+  },
 });
 
-const emit = defineEmit(["selected"]);
+const emit = defineEmit([
+  "selected",
+  "edit",
+  "trash",
+  "moveUp",
+  "moveDown",
+  "add",
+]);
 
 const selectLabel = (id) => {
   emit("selected", id);
+};
+
+const edit = (id) => {
+  emit("edit", id);
+};
+
+const trash = (id) => {
+  emit("trash", id);
+};
+
+const moveUp = (id) => {
+  emit("moveUp", id);
+};
+
+const moveDown = (id) => {
+  emit("moveDown", id);
+};
+
+const addItem = () => {
+  emit("add");
 };
 </script>

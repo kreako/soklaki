@@ -51,6 +51,7 @@
             v-if="selectedCycle"
             :list="socle[selectedCycle]"
             title="Domaines"
+            addLabel="Ajouter un domaine"
             @selected="selectL1"
             :hide="selectedL1 != null"
             v-slot="{ item }"
@@ -63,6 +64,7 @@
               <MillerColumn
                 :list="containerL1.children"
                 title="Sous domaines"
+                addLabel="Ajouter un sous domaine"
                 @selected="selectL2"
                 :hide="selectedL2 != null"
                 v-slot="{ item }"
@@ -74,6 +76,7 @@
                 v-if="selectedL2"
                 :list="containerL2.competencies"
                 title="Compétences"
+                addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
@@ -89,6 +92,7 @@
               <MillerColumn
                 :list="containerL1.competencies"
                 title="Compétences"
+                addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
