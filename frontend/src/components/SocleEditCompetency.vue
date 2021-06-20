@@ -79,13 +79,56 @@
         </div>
       </div>
     </div>
-    <div
-      class="text-sm uppercase text-gray-700 tracking-wider font-semibold mt-8"
-    >
-      Exemples
+    <div class="flex flex-row items-center space-x-2 mt-8">
+      <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">
+        Exemples
+      </div>
+      <button
+        @click="editTemplates = true"
+        class="hover:text-teal-500 text-gray-700"
+      >
+        <IconPencil class="h-3" />
+      </button>
     </div>
     <hr class="bg-gray-700" />
-    <div>
+    <div v-if="editTemplates">
+      <div v-for="t in competency.templates" class="mb-2">
+        <textarea
+          :value="templateById(t.id).text"
+          @input="setTemplateText(t.id, $event.target.value)"
+          class="mt-2 input w-full"
+          rows="5"
+        >
+        </textarea>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-center md:space-x-2 mt-2">
+        <button
+          @click="saveTemplatesEdit"
+          class="
+            mt-2
+            rounded-md
+            px-3
+            border border-teal-700
+            hover:border-teal-300
+          "
+        >
+          Sauvegarder
+        </button>
+        <button
+          @click="editTemplates = false"
+          class="
+            mt-2
+            rounded-md
+            px-3
+            border border-teal-700
+            hover:border-teal-300
+          "
+        >
+          Tout annuler
+        </button>
+      </div>
+    </div>
+    <div v-else>
       <div v-for="t in competency.templates" class="mb-2">
         {{ templateById(t.id).text }}
       </div>
@@ -223,5 +266,17 @@ const toggleDeleteSubject = (subjectId) => {
   } else {
     selectedDeleteSubject.value = subjectId;
   }
+};
+
+const editTemplates = ref(false);
+const templatesText = ref({});
+const setTemplateText = (id, text) => {
+  templatesText.value[id] = text;
+};
+const saveTemplatesEdit = async () => {
+  for (const [id, text] of Object.entries(templatesText.value)) {
+    await store.dispatch("updateSocleCompetencyTemplateText", { id, text });
+  }
+  editTemplates.value = false;
 };
 </script>
