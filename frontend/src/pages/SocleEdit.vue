@@ -280,7 +280,7 @@ const cancelCompetencyEdit = () => {
 };
 
 watchEffect(() => {
-  router.replace({
+  router.push({
     query: {
       cycle: selectedCycle.value,
       l1: selectedL1.value,
