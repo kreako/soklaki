@@ -54,6 +54,7 @@
             addLabel="Ajouter un domaine"
             @selected="selectL1"
             @edit="goToEditContainer"
+            @trash="trashContainer"
             :hide="selectedL1 != null"
             v-slot="{ item }"
           >
@@ -68,6 +69,7 @@
                 addLabel="Ajouter un sous domaine"
                 @selected="selectL2"
                 @edit="goToEditContainer"
+                @trash="trashContainer"
                 :hide="selectedL2 != null"
                 v-slot="{ item }"
               >
@@ -130,6 +132,18 @@
     >
       <div>
         <input type="text" v-model="competencyText" class="input w-full" />
+      </div>
+    </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Suppression d'un domaine/sous domaine"
+      :show="showTrashContainerModal"
+      @confirm="confirmContainerTrash"
+      @cancel="cancelContainerTrash"
+    >
+      <div>Êtes-vous sur de vouloir supprimer ce domaine/sous domaine ?</div>
+      <div class="mt-2 font-mono">
+        {{ containerById(containerTrash.id).full_rank }}
+        {{ containerById(containerTrash.id).text }}
       </div>
     </ModalConfirmCancel>
   </div>
@@ -277,6 +291,23 @@ const confirmCompetencyEdit = async () => {
 };
 const cancelCompetencyEdit = () => {
   showEditCompetencyModal.value = false;
+};
+
+const showTrashContainerModal = ref(false);
+const containerTrash = ref(null);
+const trashContainer = (id) => {
+  containerTrash.value = id;
+  showTrashContainerModal.value = true;
+};
+const confirmContainerTrash = async () => {
+  await store.dispatch("updateSocleContainerActive", {
+    id: containerTrash.value,
+    active: false,
+  });
+  showTrashContainerModal.value = false;
+};
+const cancelContainerTrash = () => {
+  showTrashContainerModal.value = false;
 };
 
 watchEffect(() => {
