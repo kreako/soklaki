@@ -1240,6 +1240,37 @@ const actions = {
     await dispatch("socle");
   },
 
+  async updateSocleCompetencyTemplateText({ dispatch }, { id, text }) {
+    await axios.post("update-socle-competency-templates-text", {
+      id,
+      text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyTemplateActive({ dispatch }, { id, active }) {
+    await axios.post("update-socle-competency-templates-active", {
+      id,
+      active,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async insertSocleCompetencyTemplate(
+    { state, dispatch },
+    { competencyId, text }
+  ) {
+    await axios.post("insert-socle-competency-templates", {
+      competency_id: competencyId,
+      group_id: state.login.groupId,
+      text: text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
   async insertPeriod({ commit, state, dispatch }, { name, start, end }) {
     const answer = await axios.post("insert-period", {
       group_id: state.login.groupId,
