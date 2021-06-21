@@ -57,6 +57,7 @@
             @trash="trashContainer"
             @moveUp="moveUpContainer(socle[selectedCycle], $event)"
             @moveDown="moveDownContainer(socle[selectedCycle], $event)"
+            @add="goToNewContainer(null, socle[selectedCycle])"
             :hide="selectedL1 != null"
             v-slot="{ item }"
           >
@@ -74,6 +75,7 @@
                 @trash="trashContainer"
                 @moveUp="moveUpContainer(containerL1.children, $event)"
                 @moveDown="moveDownContainer(containerL1.children, $event)"
+                @add="goToNewContainer(selectedL1, containerL1.children)"
                 :hide="selectedL2 != null"
                 v-slot="{ item }"
               >
@@ -90,6 +92,7 @@
                 @trash="trashCompetency"
                 @moveUp="moveUpCompetency(containerL2.competencies, $event)"
                 @moveDown="moveDownCompetency(containerL2.competencies, $event)"
+                @add="goToNewCompetency(selectedL2, containerL2.competencies)"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -110,6 +113,7 @@
                 @trash="trashCompetency"
                 @moveUp="moveUpCompetency(containerL1.competencies, $event)"
                 @moveDown="moveDownCompetency(containerL1.competencies, $event)"
+                @add="goToNewCompetency(selectedL1, containerL1.competencies)"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -166,6 +170,26 @@
       <div class="mt-2 font-mono">
         {{ competencyById(competencyTrash.id).full_rank }}
         {{ competencyById(competencyTrash.id).text }}
+      </div>
+    </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Nouveau domaine/sous domaine"
+      :show="showNewContainerModal"
+      @confirm="confirmContainerNew"
+      @cancel="cancelContainerNew"
+    >
+      <div>
+        <input type="text" v-model="containerText" class="input w-full" />
+      </div>
+    </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Nouvelle compétence"
+      :show="showNewCompetencyModal"
+      @confirm="confirmCompetencyNew"
+      @cancel="cancelCompetencyNew"
+    >
+      <div>
+        <input type="text" v-model="competencyText" class="input w-full" />
       </div>
     </ModalConfirmCancel>
   </div>
@@ -296,6 +320,28 @@ const cancelContainerEdit = () => {
   showEditContainerModal.value = false;
 };
 
+const showNewContainerModal = ref(false);
+const newContainerRank = ref(null);
+const newContainerParentId = ref(null);
+const goToNewContainer = (containerParentId, list) => {
+  newContainerRank.value =
+    store.getters.containerById(list[list.length - 1].id).rank + 1;
+  newContainerParentId.value = containerParentId;
+  showNewContainerModal.value = true;
+};
+const confirmContainerNew = async () => {
+  await store.dispatch("insertSocleContainer", {
+    containerId: newContainerParentId.value,
+    cycle: selectedCycle.value,
+    rank: newContainerRank.value,
+    text: containerText.value,
+  });
+  showNewContainerModal.value = false;
+};
+const cancelContainerNew = () => {
+  showNewContainerModal.value = false;
+};
+
 const showEditCompetencyModal = ref(false);
 const competencyText = ref("");
 const competencyId = ref(null);
@@ -313,6 +359,28 @@ const confirmCompetencyEdit = async () => {
 };
 const cancelCompetencyEdit = () => {
   showEditCompetencyModal.value = false;
+};
+
+const showNewCompetencyModal = ref(false);
+const newCompetencyRank = ref(null);
+const newCompetencyParentId = ref(null);
+const goToNewCompetency = (competencyParentId, list) => {
+  newCompetencyRank.value =
+    store.getters.competencyById(list[list.length - 1].id).rank + 1;
+  newCompetencyParentId.value = competencyParentId;
+  showNewCompetencyModal.value = true;
+};
+const confirmCompetencyNew = async () => {
+  await store.dispatch("insertSocleCompetency", {
+    containerId: newCompetencyParentId.value,
+    cycle: selectedCycle.value,
+    rank: newCompetencyRank.value,
+    text: containerText.value,
+  });
+  showNewCompetencyModal.value = false;
+};
+const cancelCompetencyNew = () => {
+  showNewCompetencyModal.value = false;
 };
 
 const showTrashContainerModal = ref(false);
