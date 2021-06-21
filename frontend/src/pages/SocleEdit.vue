@@ -135,7 +135,12 @@
       @cancel="cancelContainerEdit"
     >
       <div>
-        <input type="text" v-model="containerText" class="input w-full" />
+        <input
+          @keyup.enter="confirmContainerEdit"
+          type="text"
+          v-model="containerText"
+          class="input w-full"
+        />
       </div>
     </ModalConfirmCancel>
     <ModalConfirmCancel
@@ -145,7 +150,12 @@
       @cancel="cancelCompetencyEdit"
     >
       <div>
-        <input type="text" v-model="competencyText" class="input w-full" />
+        <input
+          @keyup.enter="confirmCompetencyEdit"
+          type="text"
+          v-model="competencyText"
+          class="input w-full"
+        />
       </div>
     </ModalConfirmCancel>
     <ModalConfirmCancel
@@ -179,7 +189,12 @@
       @cancel="cancelContainerNew"
     >
       <div>
-        <input type="text" v-model="containerText" class="input w-full" />
+        <input
+          @keyup.enter="confirmContainerNew"
+          type="text"
+          v-model="containerText"
+          class="input w-full"
+        />
       </div>
     </ModalConfirmCancel>
     <ModalConfirmCancel
@@ -189,7 +204,12 @@
       @cancel="cancelCompetencyNew"
     >
       <div>
-        <input type="text" v-model="competencyText" class="input w-full" />
+        <input
+          @keyup.enter="confirmCompetencyNew"
+          type="text"
+          v-model="competencyText"
+          class="input w-full"
+        />
       </div>
     </ModalConfirmCancel>
   </div>
