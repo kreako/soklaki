@@ -89,7 +89,7 @@
                 addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
                 @edit="goToEditCompetency"
-                @trash="trashCompetency"
+                @trash="trashCompetency(containerL2.competencies, $event)"
                 @moveUp="moveUpCompetency(containerL2.competencies, $event)"
                 @moveDown="moveDownCompetency(containerL2.competencies, $event)"
                 @add="goToNewCompetency(selectedL2, containerL2.competencies)"
@@ -110,7 +110,7 @@
                 addLabel="Ajouter une compétence"
                 @selected="selectCompetency"
                 @edit="goToEditCompetency"
-                @trash="trashCompetency"
+                @trash="trashCompetency(containerL1.competencies, $event)"
                 @moveUp="moveUpCompetency(containerL1.competencies, $event)"
                 @moveDown="moveDownCompetency(containerL1.competencies, $event)"
                 @add="goToNewCompetency(selectedL1, containerL1.competencies)"
@@ -435,11 +435,24 @@ const cancelContainerTrash = () => {
 
 const showTrashCompetencyModal = ref(false);
 const competencyTrash = ref(null);
-const trashCompetency = (id) => {
+const competencyTrashAfter = ref([]);
+const trashCompetency = (list, id) => {
+  const idx = list.findIndex((x) => x.id == id);
+  competencyTrashAfter.value = [];
+  for (let i = idx + 1; i < list.length; i++) {
+    competencyTrashAfter.value.push(list[i].id);
+  }
   competencyTrash.value = id;
   showTrashCompetencyModal.value = true;
 };
 const confirmCompetencyTrash = async () => {
+  for (const id of competencyTrashAfter.value) {
+    const competency = store.getters.competencyById(id);
+    await store.dispatch("updateSocleCompetencyRank", {
+      id: id,
+      rank: competency.rank - 1,
+    });
+  }
   await store.dispatch("updateSocleCompetencyActive", {
     id: competencyTrash.value,
     active: false,
