@@ -395,7 +395,7 @@ const confirmCompetencyNew = async () => {
     containerId: newCompetencyParentId.value,
     cycle: selectedCycle.value,
     rank: newCompetencyRank.value,
-    text: containerText.value,
+    text: competencyText.value,
   });
   showNewCompetencyModal.value = false;
 };
