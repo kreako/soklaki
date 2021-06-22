@@ -54,7 +54,7 @@
             addLabel="Ajouter un domaine"
             @selected="selectL1"
             @edit="goToEditContainer"
-            @trash="trashContainer"
+            @trash="trashContainer(socle[selectedCycle], $event)"
             @moveUp="moveUpContainer(socle[selectedCycle], $event)"
             @moveDown="moveDownContainer(socle[selectedCycle], $event)"
             @add="goToNewContainer(null, socle[selectedCycle])"
@@ -72,7 +72,7 @@
                 addLabel="Ajouter un sous domaine"
                 @selected="selectL2"
                 @edit="goToEditContainer"
-                @trash="trashContainer"
+                @trash="trashContainer(containerL1.children, $event)"
                 @moveUp="moveUpContainer(containerL1.children, $event)"
                 @moveDown="moveDownContainer(containerL1.children, $event)"
                 @add="goToNewContainer(selectedL1, containerL1.children)"
@@ -405,11 +405,24 @@ const cancelCompetencyNew = () => {
 
 const showTrashContainerModal = ref(false);
 const containerTrash = ref(null);
-const trashContainer = (id) => {
+const containerTrashAfter = ref([]);
+const trashContainer = (list, id) => {
+  const idx = list.findIndex((x) => x.id == id);
+  containerTrashAfter.value = [];
+  for (let i = idx + 1; i < list.length; i++) {
+    containerTrashAfter.value.push(list[i].id);
+  }
   containerTrash.value = id;
   showTrashContainerModal.value = true;
 };
 const confirmContainerTrash = async () => {
+  for (const id of containerTrashAfter.value) {
+    const container = store.getters.containerById(id);
+    await store.dispatch("updateSocleContainerRank", {
+      id: id,
+      rank: container.rank - 1,
+    });
+  }
   await store.dispatch("updateSocleContainerActive", {
     id: containerTrash.value,
     active: false,
