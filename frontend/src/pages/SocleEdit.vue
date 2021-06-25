@@ -94,6 +94,7 @@
                 @moveDown="moveDownCompetency(containerL2.competencies, $event)"
                 @add="goToNewCompetency(selectedL2, containerL2.competencies)"
                 @move="goToMoveCompetency($event, containerL2.competencies)"
+                :movable="true"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -116,6 +117,7 @@
                 @moveDown="moveDownCompetency(containerL1.competencies, $event)"
                 @add="goToNewCompetency(selectedL1, containerL1.competencies)"
                 @move="goToMoveCompetency($event, containerL1.competencies)"
+                :movable="true"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >

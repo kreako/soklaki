@@ -34,7 +34,7 @@
               class="h-3 hidden group-hover:block hover:text-teal-500 handle"
             />
             <IconUpload
-              v-if="editable"
+              v-if="movable"
               @click="move(item.id)"
               class="h-3 hidden group-hover:block hover:text-teal-500 handle"
             />
@@ -74,6 +74,10 @@ const props = defineProps({
   editable: {
     type: Boolean,
     default: true,
+  },
+  movable: {
+    type: Boolean,
+    default: false,
   },
   addLabel: {
     type: String,
