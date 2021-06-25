@@ -596,6 +596,12 @@ const confirmCompetencyMove = async () => {
     // No container selected, do nothing
     return;
   }
+  const c = store.getters.competencyById(selectMoveCompetency.value);
+  if (selectMoveContainer.value == c.container_id) {
+    // Move into the container where I already belong ? Too easy
+    showMoveCompetencyModal.value = false;
+    return;
+  }
   for (const id of selectMoveCompetencyAfterList.value) {
     const competency = store.getters.competencyById(id);
     await store.dispatch("updateSocleCompetencyRank", {
