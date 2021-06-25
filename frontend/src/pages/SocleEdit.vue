@@ -93,6 +93,7 @@
                 @moveUp="moveUpCompetency(containerL2.competencies, $event)"
                 @moveDown="moveDownCompetency(containerL2.competencies, $event)"
                 @add="goToNewCompetency(selectedL2, containerL2.competencies)"
+                @move="goToMoveCompetency($event, containerL2.competencies)"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -114,6 +115,7 @@
                 @moveUp="moveUpCompetency(containerL1.competencies, $event)"
                 @moveDown="moveDownCompetency(containerL1.competencies, $event)"
                 @add="goToNewCompetency(selectedL1, containerL1.competencies)"
+                @move="goToMoveCompetency($event, containerL1.competencies)"
                 :hide="selectedCompetency != null"
                 v-slot="{ item }"
               >
@@ -212,6 +214,19 @@
         />
       </div>
     </ModalConfirmCancel>
+    <ModalConfirmCancel
+      title="Déplacer cette compétence dans un autre domaine/sous domaine"
+      :show="showMoveCompetencyModal"
+      @confirm="confirmCompetencyMove"
+      @cancel="cancelCompetencyMove"
+    >
+      <div>
+        <ContainerSelector
+          @selected="selectedMoveContainer"
+          :cycle="selectedCycle"
+        />
+      </div>
+    </ModalConfirmCancel>
   </div>
 </template>
 
@@ -221,6 +236,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useTitle, until } from "@vueuse/core";
 import { computed, ref, onMounted, watchEffect, watch } from "vue";
 import Loading from "../components/Loading.vue";
+import ContainerSelector from "../components/ContainerSelector.vue";
 import IconHome from "../icons/IconHome.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
@@ -549,6 +565,50 @@ const moveDownCompetency = async (list, id) => {
   });
   // Now reload the socle
   await store.dispatch("socle");
+};
+
+// Modal toggle
+const showMoveCompetencyModal = ref(false);
+// id of the competency to move
+const selectMoveCompetency = ref(null);
+// list of competency after the one to move that need a rank update
+// after a successful move
+const selectMoveCompetencyAfterList = ref([]);
+// Container id where to move the competency, as selected by ContainerSelector
+const selectMoveContainer = ref(null);
+const goToMoveCompetency = (id, list) => {
+  selectMoveContainer.value = null;
+  selectMoveCompetencyAfterList.value = [];
+  const idx = list.findIndex((x) => x.id == id);
+  for (let i = idx + 1; i < list.length; i++) {
+    selectMoveCompetencyAfterList.value.push(list[i].id);
+  }
+  selectMoveCompetency.value = id;
+  showMoveCompetencyModal.value = true;
+};
+const selectedMoveContainer = (id) => {
+  selectMoveContainer.value = id;
+};
+const confirmCompetencyMove = async () => {
+  if (selectMoveContainer.value == null) {
+    // No container selected, do nothing
+    return;
+  }
+  for (const id of selectMoveCompetencyAfterList.value) {
+    const competency = store.getters.competencyById(id);
+    await store.dispatch("updateSocleCompetencyRank", {
+      id: id,
+      rank: competency.rank - 1,
+    });
+  }
+  await store.dispatch("updateSocleCompetencyContainerId", {
+    id: selectMoveCompetency.value,
+    containerId: selectMoveContainer.value,
+  });
+  showMoveCompetencyModal.value = false;
+};
+const cancelCompetencyMove = () => {
+  showMoveCompetencyModal.value = false;
 };
 
 watchEffect(() => {
