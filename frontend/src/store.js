@@ -1165,7 +1165,19 @@ const actions = {
     { state, dispatch },
     { id, containerId }
   ) {
-    const rank = state.socle.competencies[id].rank;
+    // Move this competency at the end of the current competencies
+    // Find the future container
+    const container = state.socle.containers[containerId];
+    // Find it in the tree
+    let c = null;
+    if (container.container_id == null) {
+      c = state.socle[container.cycle].find((x) => x.id == containerId);
+    } else {
+      c = state.socle[container.cycle]
+        .find((x) => x.id == container.container_id)
+        .children.find((x) => x.id == containerId);
+    }
+    const rank = c.competencies.length + 1;
     const { alphaFullRank, fullRank } = computeRanks({
       state,
       rank,
@@ -1173,6 +1185,7 @@ const actions = {
     });
     await axios.post("update-socle-competency-container-id", {
       id: id,
+      rank: rank,
       alpha_full_rank: alphaFullRank,
       container_id: containerId,
       full_rank: fullRank,
