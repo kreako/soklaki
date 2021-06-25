@@ -1,6 +1,9 @@
 <template>
   <div class="my-4 px-2">
     <div class="flex flex-row justify-end space-x-2">
+      <router-link to="/socle/edit" class="button-minor-action text-xs"
+        >Modifier</router-link
+      >
       <ElegantSelect v-model="cycleFilter" :options="allCyclesOptions" />
       <ElegantSelect v-model="subjectFilter" :options="allSubjectsOptions" />
     </div>

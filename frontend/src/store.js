@@ -495,6 +495,8 @@ const getters = {
       full_rank: null,
       text: null,
       cycle: null,
+      children: [],
+      competencies: [],
     };
   },
   competencyById: (state) => (competencyId) => {
@@ -567,6 +569,21 @@ const getters = {
       pdf_path: null,
       student_id: null,
     };
+  },
+  subjects: (state) => {
+    const subjects = Object.values(state.socle.subjects);
+    subjects.sort((a, b) => {
+      const lowerA = a.title.toLowerCase();
+      const lowerB = b.title.toLowerCase();
+      if (lowerA < lowerB) {
+        return -1;
+      }
+      if (lowerA > lowerB) {
+        return 1;
+      }
+      return 0;
+    });
+    return subjects;
   },
 };
 
@@ -1112,6 +1129,18 @@ const actions = {
     await dispatch("socle");
   },
 
+  async deleteSocleCompetencySubject(
+    { state, dispatch },
+    { subjectId, competencyId }
+  ) {
+    await axios.post("delete-socle-competency-subject", {
+      subject_id: subjectId,
+      competency_id: competencyId,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
   async updateSocleContainerContainerId(
     { state, dispatch },
     { id, containerId }
@@ -1136,7 +1165,19 @@ const actions = {
     { state, dispatch },
     { id, containerId }
   ) {
-    const rank = state.socle.competencies[id].rank;
+    // Move this competency at the end of the current competencies
+    // Find the future container
+    const container = state.socle.containers[containerId];
+    // Find it in the tree
+    let c = null;
+    if (container.container_id == null) {
+      c = state.socle[container.cycle].find((x) => x.id == containerId);
+    } else {
+      c = state.socle[container.cycle]
+        .find((x) => x.id == container.container_id)
+        .children.find((x) => x.id == containerId);
+    }
+    const rank = c.competencies.length + 1;
     const { alphaFullRank, fullRank } = computeRanks({
       state,
       rank,
@@ -1144,6 +1185,7 @@ const actions = {
     });
     await axios.post("update-socle-competency-container-id", {
       id: id,
+      rank: rank,
       alpha_full_rank: alphaFullRank,
       container_id: containerId,
       full_rank: fullRank,
@@ -1152,7 +1194,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async updateSocleContainerRank({ state, dispatch }, { id, rank }) {
+  async updateSocleContainerRank({ state }, { id, rank }) {
     const containerId = state.socle.containers[id].container_id;
     const { alphaFullRank, fullRank } = computeRanks({
       state,
@@ -1165,11 +1207,9 @@ const actions = {
       full_rank: fullRank,
       rank: rank,
     });
-    // Now reload the socle
-    await dispatch("socle");
   },
 
-  async updateSocleCompetencyRank({ state, dispatch }, { id, rank }) {
+  async updateSocleCompetencyRank({ state }, { id, rank }) {
     const containerId = state.socle.competencies[id].container_id;
     const { alphaFullRank, fullRank } = computeRanks({
       state,
@@ -1182,8 +1222,6 @@ const actions = {
       full_rank: fullRank,
       rank: rank,
     });
-    // Now reload the socle
-    await dispatch("socle");
   },
 
   async updateSocleContainerText({ state, dispatch }, { id, text }) {
@@ -1208,6 +1246,37 @@ const actions = {
     await axios.post("update-socle-subject-text", {
       id,
       title,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyTemplateText({ dispatch }, { id, text }) {
+    await axios.post("update-socle-competency-templates-text", {
+      id,
+      text,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async updateSocleCompetencyTemplateActive({ dispatch }, { id, active }) {
+    await axios.post("update-socle-competency-templates-active", {
+      id,
+      active,
+    });
+    // Now reload the socle
+    await dispatch("socle");
+  },
+
+  async insertSocleCompetencyTemplate(
+    { state, dispatch },
+    { competencyId, text }
+  ) {
+    await axios.post("insert-socle-competency-templates", {
+      competency_id: competencyId,
+      group_id: state.login.groupId,
+      text: text,
     });
     // Now reload the socle
     await dispatch("socle");

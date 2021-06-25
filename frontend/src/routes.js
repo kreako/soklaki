@@ -58,6 +58,10 @@ const routes = [
         component: () => import("./pages/Socle.vue"),
       },
       {
+        path: "/socle/edit",
+        component: () => import("./pages/SocleEdit.vue"),
+      },
+      {
         path: "/stats/:cycle",
         component: () => import("./pages/Stats.vue"),
       },

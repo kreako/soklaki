@@ -16,7 +16,9 @@ test("computeRanks with no parent", () => {
 });
 
 test("computeRanks with 1 parent", () => {
-  const state = { containers: { 23: { container_id: null, rank: 3 } } };
+  const state = {
+    socle: { containers: { 23: { container_id: null, rank: 3 } } },
+  };
   expect(
     computeRanks({ state: state, rank: 13, containerId: 23 })
   ).toStrictEqual({ alphaFullRank: "0003.0013.", fullRank: "3.13." });
@@ -24,9 +26,11 @@ test("computeRanks with 1 parent", () => {
 
 test("computeRanks with 2 parent", () => {
   const state = {
-    containers: {
-      23: { container_id: 12, rank: 3 },
-      12: { container_id: null, rank: 202 },
+    socle: {
+      containers: {
+        23: { container_id: 12, rank: 3 },
+        12: { container_id: null, rank: 202 },
+      },
     },
   };
   expect(

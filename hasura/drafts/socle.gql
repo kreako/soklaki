@@ -25,7 +25,7 @@ query Socle {
           id
           subject_id
         }
-        templates {
+        templates(where: { active: { _eq: true } }) {
           id
         }
       }
@@ -42,7 +42,7 @@ query Socle {
         id
         subject_id
       }
-      templates {
+      templates(where: { active: { _eq: true } }) {
         id
       }
     }
@@ -73,7 +73,7 @@ query Socle {
           id
           subject_id
         }
-        templates {
+        templates(where: { active: { _eq: true } }) {
           id
         }
       }
@@ -90,7 +90,7 @@ query Socle {
         id
         subject_id
       }
-      templates {
+      templates(where: { active: { _eq: true } }) {
         id
       }
     }
@@ -121,7 +121,7 @@ query Socle {
           id
           subject_id
         }
-        templates {
+        templates(where: { active: { _eq: true } }) {
           id
         }
       }
@@ -138,7 +138,7 @@ query Socle {
         id
         subject_id
       }
-      templates {
+      templates(where: { active: { _eq: true } }) {
         id
       }
     }
@@ -169,7 +169,7 @@ query Socle {
           id
           subject_id
         }
-        templates {
+        templates(where: { active: { _eq: true } }) {
           id
         }
       }
@@ -186,7 +186,7 @@ query Socle {
         id
         subject_id
       }
-      templates {
+      templates(where: { active: { _eq: true } }) {
         id
       }
     }
@@ -205,7 +205,7 @@ query Socle {
       id
       subject_id
     }
-    templates {
+    templates(where: { active: { _eq: true } }) {
       id
     }
   }

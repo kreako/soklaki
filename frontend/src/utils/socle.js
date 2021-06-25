@@ -6,7 +6,7 @@ const parentRanks = (state, containerId) => {
     return [];
   }
   // General recursion
-  const container = state.containers[containerId];
+  const container = state.socle.containers[containerId];
   return [...parentRanks(state, container.container_id), container.rank];
 };
 
