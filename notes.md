@@ -41,7 +41,7 @@ podman run -d \
  -e HASURA_GRAPHQL_ADMIN_SECRET="hasura admin secret - keep in sync with hasura deployment" \
  -e HASURA_GRAPHQL_JWT_SECRET='{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}' \
  --name soklaki-hasura \
- hasura/graphql-engine:v2.0.0-beta.1
+ hasura/graphql-engine:v2.0.0-beta.2
 
 podman run -d \
  --restart=always \
