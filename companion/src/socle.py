@@ -98,7 +98,7 @@ async def load(gql_client, input: LoadSocleInput):
                 "full_rank": l2["full_rank"],
                 "rank": l2["rank"],
                 "container_id": containers[l2["container_id"]],  # map old id to new
-                "cycle": l1["cycle"],
+                "cycle": l2["cycle"],
             }
         )
     new_ids = await gql_client.insert_containers(new_containers)
