@@ -41,6 +41,7 @@
 
 <script setup>
 import { defineEmit, defineProps, ref, computed } from "vue";
+import MascotteTip from "../components/MascotteTip.vue";
 import IconX from "../icons/IconX.vue";
 import IconPlusCircle from "../icons/IconPlusCircle.vue";
 
