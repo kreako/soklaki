@@ -5,14 +5,12 @@ type Mutation {
   ): ReportOutput
 }
 
-
 type Mutation {
   invitation_generate_token (
     user_id: bigint!
     group_id: bigint!
   ): GenerateTokenOutput
 }
-
 
 type Mutation {
   invitation_signup_token (
@@ -22,20 +20,17 @@ type Mutation {
   ): SignupTokenOutput
 }
 
-
 type Mutation {
   invitation_verify_token (
     token: String!
   ): VerifyTokenOutput
 }
 
-
 type Mutation {
   load_socle (
     group_id: bigint!
   ): LoadSocleOutput
 }
-
 
 type Mutation {
   login (
@@ -44,13 +39,11 @@ type Mutation {
   ): LoginOutput
 }
 
-
 type Mutation {
   ping (
     secret: String!
   ): PingOutput
 }
-
 
 type Mutation {
   signup (
@@ -58,9 +51,6 @@ type Mutation {
     password: String!
   ): SignupOutput!
 }
-
-
-
 
 type SignupOutput {
   errorKnownEmail : Boolean!
