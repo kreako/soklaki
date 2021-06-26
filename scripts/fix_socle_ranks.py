@@ -91,7 +91,7 @@ def fix_objects_rank_by_cycle(group_id, cycle):
             .order_by(SocleCompetency.alpha_full_rank)
         )
 
-        print(cycle, "l1", l1.full_rank, len(l2s), len(competencies))
+        # print(cycle, "l1", l1.full_rank, len(l2s), len(competencies))
 
         rank = 1
         for c in competencies:
@@ -121,7 +121,7 @@ def fix_objects_rank_by_cycle(group_id, cycle):
                 .order_by(SocleCompetency.alpha_full_rank)
             )
 
-            print(cycle, "l2", l2.full_rank, len(competencies))
+            # print(cycle, "l2", l2.full_rank, len(competencies))
 
             rank = 1
             for c in competencies:
