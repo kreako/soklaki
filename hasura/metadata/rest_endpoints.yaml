@@ -236,6 +236,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: observations-by-competency
+  url: observations-by-competency
+  methods:
+  - POST
+  name: observations-by-competency
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: observations-by-user
   url: observations-by-user
   methods:

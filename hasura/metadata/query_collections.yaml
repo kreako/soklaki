@@ -1522,3 +1522,21 @@
             id
           }
         }
+    - name: observations-by-competency
+      query: |-
+        query ObservationsByCompetency($competency_id: Int!) {
+          eval_observation(where: {active: {_eq: true}, competencies: {competency_id: {_eq: $competency_id}}}) {
+            created_at
+            date
+            id
+            students {
+              student_id
+            }
+            user_id
+            text
+            updated_at
+            competencies {
+              competency_id
+            }
+          }
+        }
