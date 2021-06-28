@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import axios from "axios";
-import { dateJsObj, today } from "./utils/date";
+import { dateJsObj, today, dateFromString } from "./utils/date";
 import { searchOrCreatePeriod } from "./utils/period";
 import { computeRanks } from "./utils/socle";
 
@@ -163,6 +163,8 @@ const state = {
         current: null,
       },
     },
+    // [{weekStart: "<date>", counts: [ { user: id, observations: count, evaluations: count} ... ] } ...]
+    weeks: [],
   },
   reports: {
     // id -> reports
@@ -347,6 +349,9 @@ const mutations = {
       competenciesCountC4,
       comments,
       stats,
+      weeks,
+      observations,
+      evaluations,
     }
   ) {
     const root = state.statsSummary;
@@ -371,6 +376,54 @@ const mutations = {
       root[stat.cycle].observations.current = stat.observations;
       root[stat.cycle].evaluations.total = stat.total;
       root[stat.cycle].evaluations.current = stat.evaluations;
+    }
+
+    // Now build weeks as :
+    // [{weekStart: "<date>", counts: [ { user: id, observations: count, evaluations: count} ... ] } ...]
+    // week start -> user id -> {observations: count, evaluations: count}
+    const cache = {};
+    for (const o of observations) {
+      if (!(o.week_start in cache)) {
+        cache[o.week_start] = {};
+      }
+      cache[o.week_start][o.user_id] = {
+        observations: o.observations_count,
+        evaluations: 0,
+      };
+    }
+    for (const e of evaluations) {
+      if (!(e.week_start in cache)) {
+        cache[e.week_start] = {};
+      }
+      if (e.user_id in cache[e.week_start]) {
+        cache[e.week_start][e.user_id].evaluations = e.evaluations_count;
+      } else {
+        cache[e.week_start][e.user_id] = {
+          observations: 0,
+          evaluations: e.evaluations_count,
+        };
+      }
+    }
+
+    for (const week of weeks) {
+      const o = {};
+      const start = dateFromString(week.week_start);
+      o.weekStart = start;
+      o.counts = [];
+      if (week.week_start in cache) {
+        let users = Object.keys(cache[week.week_start]);
+        for (const userId of users) {
+          const values = cache[week.week_start][userId];
+          values.user = userId;
+          o.counts.push(values);
+        }
+        // sort counts higher sum first
+        o.counts.sort(
+          (a, b) =>
+            b.observations + b.evaluations - (a.observations + a.evaluations)
+        );
+      }
+      root.weeks.push(o);
     }
   },
   setEvaluations(state, evaluations) {
@@ -893,6 +946,10 @@ const actions = {
 
       comments: data.comments,
       stats: data.stats,
+
+      weeks: data.weeks,
+      observations: data.observations,
+      evaluations: data.evaluations,
     });
   },
 
