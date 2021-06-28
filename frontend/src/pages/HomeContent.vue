@@ -120,7 +120,7 @@
             </DisclosurePanel>
           </Disclosure>
           <div class="mt-2">
-            <table class="w-full">
+            <table v-if="week.counts.length > 0" class="w-full">
               <tbody>
                 <tr
                   v-for="(count, idx) in week.counts"
@@ -153,6 +153,14 @@
                 </tr>
               </tbody>
             </table>
+            <div v-else>
+              <MascotteTip class="my-2">
+                <template v-slot:title>Oh ! 😱</template>
+                <template v-slot:default>
+                  Personne n'a encore rien fait cette semaine !
+                </template>
+              </MascotteTip>
+            </div>
           </div>
         </div>
       </div>
