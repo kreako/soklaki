@@ -1335,6 +1335,7 @@ const actions = {
       date: date,
       user_id: state.login.userId,
     });
+    return answer.data.insert_eval_evaluation_one;
   },
 
   async insertComment({ commit, state, dispatch }, { date, studentId, text }) {
