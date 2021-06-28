@@ -30,7 +30,7 @@ select_permissions:
     filter:
       _and:
       - period:
-          id:
+          group_id:
             _eq: X-Hasura-User-Group
       - user:
           group_id:
