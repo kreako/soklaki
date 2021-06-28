@@ -1,77 +1,76 @@
 <template>
   <div class="my-4 px-2">
-    <div class="form-label">
-      Évaluations - {{ competencyById(competencyId).full_rank }}
-    </div>
-    <div class="mt-4">
-      <div class="uppercase tracking-wide text-gray-700">
-        {{ competencyFathers[0].rank }}.
-        {{ competencyFathers[0].text }}
+    <Loading :loading="loading">
+      <div class="form-label">
+        Évaluations - {{ competencyById(competencyId).full_rank }}
       </div>
-      <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
-        {{ competencyFathers[1].rank }}.
-        {{ competencyFathers[1].text }}
-      </div>
-      <div>
-        {{ competencyById(competencyId).rank }}.
-        {{ competencyById(competencyId).text }}
-      </div>
-    </div>
-    <div class="">
-      <div v-for="student in students" class="mt-14">
-        <div class="form-label">
-          {{ student.firstname }}
-          {{ student.lastname }}
+      <div class="mt-4">
+        <div class="uppercase tracking-wide text-gray-700">
+          {{ competencyFathers[0].rank }}.
+          {{ competencyFathers[0].text }}
         </div>
-        <div class="mt-2">
-          <EvalCompetency
-            :edit="editByStudent[student.id]"
-            :comment="evaluationByStudent[student.id].comment"
-            :status="evaluationByStudent[student.id].status"
-            @save="saveEvaluationByStudent[student.id]"
-            @cancel="cancelEvaluationByStudent[student.id]"
-          />
+        <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
+          {{ competencyFathers[1].rank }}.
+          {{ competencyFathers[1].text }}
+        </div>
+        <div>
+          {{ competencyById(competencyId).rank }}.
+          {{ competencyById(competencyId).text }}
         </div>
       </div>
-    </div>
-    <div class="mt-20 flex flex-row justify-center space-x-4">
-      <router-link
-        :to="previousCompetency"
-        class="
-          border border-gray-300
-          rounded-md
-          shadow-md
-          hover:text-teal-500
-          hover:border-teal-500
-        "
-      >
-        <IconChevronLeft class="h-8" />
-      </router-link>
-      <router-link
-        :to="`/evaluations-by-cycle/${route.params.cycle}`"
-        class="
-          border border-gray-300
-          rounded-md
-          shadow-md
-          hover:text-teal-500
-          hover:border-teal-500
-        "
-      >
-        <IconChevronUp class="h-8" />
-      </router-link>
-      <router-link
-        :to="nextCompetency"
-        class="
-          border border-gray-300
-          rounded-md
-          shadow-md
-          hover:text-teal-500
-          hover:border-teal-500
-        "
-      >
-        <IconChevronRight class="h-8" />
-      </router-link>
-    </div>
+      <div class="">
+        <div v-for="student in students" class="mt-14">
+          <div class="form-label">
+            {{ student.firstname }}
+            {{ student.lastname }}
+          </div>
+          <div class="mt-2">
+            <EvalCompetency
+              :edit="true"
+              :comment="evaluationByStudent[student.id].comment"
+              :status="evaluationByStudent[student.id].status"
+              @save="saveEvaluation(student.id, $event)"
+              @cancel="cancelEvaluation(student.id)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="mt-20 flex flex-row justify-center space-x-4">
+        <router-link
+          :to="previousCompetency"
+          class="
+            border border-gray-300
+            rounded-md
+            shadow-md
+            hover:text-teal-500 hover:border-teal-500
+          "
+        >
+          <IconChevronLeft class="h-8" />
+        </router-link>
+        <router-link
+          :to="`/evaluations-by-cycle/${route.params.cycle}`"
+          class="
+            border border-gray-300
+            rounded-md
+            shadow-md
+            hover:text-teal-500 hover:border-teal-500
+          "
+        >
+          <IconChevronUp class="h-8" />
+        </router-link>
+        <router-link
+          :to="nextCompetency"
+          class="
+            border border-gray-300
+            rounded-md
+            shadow-md
+            hover:text-teal-500 hover:border-teal-500
+          "
+        >
+          <IconChevronRight class="h-8" />
+        </router-link>
+      </div>
+    </Loading>
   </div>
 </template>
 
@@ -82,6 +81,7 @@ import { useRoute, useRouter } from "vue-router";
 import { until } from "@vueuse/core";
 import { today } from "../utils/date";
 import { fathers } from "../utils/competency";
+import Loading from "../components/Loading.vue";
 import EvalCompetency from "../components/EvalCompetency.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
@@ -93,159 +93,145 @@ useTitle("Évaluation d'une compétence - soklaki.fr");
 const store = useStore();
 const route = useRoute();
 
+const loading = ref(true);
+
 const competencyId = computed(() =>
   route.params.id == null ? null : Number(route.params.id)
 );
 const competencyById = computed(() => store.getters.competencyById);
 
 const studentById = computed(() => store.getters.studentById);
-const students = ref([]);
-const fillStudents = () => {
-  if (store.state.currentPeriod == null) {
-    return;
-  }
-  const period = store.state.periods[store.state.currentPeriod];
-  const full = period.students.map((x) =>
-    store.getters.studentById(x.student.id)
-  );
-  students.value = full.filter(
-    (x) => x.current_cycle.current_cycle === route.params.cycle
-  );
-  goInEdit();
-  fillCancelEvaluationByStudent();
-  fillSaveEvaluationByStudent();
-  fillEvaluationByStudent();
-};
-
-const previousCompetency = computed(() => {
-  const competencies = Object.keys(store.state.stats[route.params.cycle].stats);
-  const current = competencies.findIndex((x) => x == competencyId.value);
-  if (current === -1) {
-    return "";
-  } else if (current === 0) {
-    return `/evaluations-by-cycle/${route.params.cycle}`;
-  } else {
-    const previous = competencies[current - 1];
-    return `/evaluation/${route.params.cycle}/${previous}`;
-  }
-});
-const nextCompetency = computed(() => {
-  const competencies = Object.keys(store.state.stats[route.params.cycle].stats);
-  const current = competencies.findIndex((x) => x == competencyId.value);
-  if (current === -1) {
-    return "";
-  } else if (current === competencies.length - 1) {
-    return `/evaluation/${route.params.cycle}/comment`;
-  } else {
-    const next = competencies[current + 1];
-    return `/evaluation/${route.params.cycle}/${next}`;
-  }
-});
 
 const containerById = computed(() => store.getters.containerById);
 const competencyFathers = computed(() => fathers(store, competencyId.value));
 
-const evaluationByStudent = ref({});
-const fillEvaluationByStudent = () => {
+const evaluations = ref([]);
+const observations = ref([]);
+const competencies = ref([]);
+
+const students = computed(() => {
+  const period = store.state.periods[store.state.currentPeriod];
+  const full = period.students.map((x) =>
+    store.getters.studentById(x.student.id)
+  );
+  return full.filter(
+    (x) => x.current_cycle.current_cycle === route.params.cycle
+  );
+});
+
+const searchEvaluation = (studentId) => {
+  // evaluations are sorted by date desc, so the first one is the one I'm looking for
+  return evaluations.value.find((e) => {
+    if (e.student_id === studentId && e.competency_id == route.params.id) {
+      return true;
+    }
+    return false;
+  });
+};
+
+const evaluationByStudent = computed(() => {
+  const e = {};
   for (const student of students.value) {
-    const evaluationId = store.state.evaluations.sorted.find((i) => {
-      const e = store.state.evaluations.store[i];
-      if (
-        e.student_id === student.id &&
-        e.competency_id === competencyId.value
-      ) {
-        return true;
-      }
-      return false;
-    });
-    if (evaluationId == null) {
-      evaluationByStudent.value[student.id] = {
+    // Search for an existing evaluation
+    const evaluation = searchEvaluation(student.id);
+    if (evaluation == null) {
+      // No evaluation yet
+      e[student.id] = {
         id: null,
         comment: null,
         status: "Emtpy",
       };
     } else {
-      const evaluation = store.state.evaluations.store[evaluationId];
-      evaluationByStudent.value[student.id] = {
+      e[student.id] = {
         id: evaluation.id,
         comment: evaluation.comment,
         status: evaluation.status,
       };
     }
   }
-};
+  return e;
+});
 
-const saveEvaluationByStudent = ref({});
-const fillSaveEvaluationByStudent = () => {
-  const handlers = {};
-  for (const student of students.value) {
-    saveEvaluationByStudent.value[student.id] = async ({ comment, status }) => {
-      const evaluation = evaluationByStudent.value[student.id];
-      if (evaluation.id == null) {
-        await store.dispatch("insertEvaluation", {
-          studentId: student.id,
-          competencyId: competencyId.value,
-          periodId: store.state.currentPeriod,
-          date: today(),
-          status: status,
-          comment: comment,
-        });
-      } else {
-        await store.dispatch("updateEvaluation", {
-          id: evaluation.id,
-          comment: comment,
-          date: today(),
-          status: status,
-          periodId: store.state.currentPeriod,
-        });
-      }
-      await store.dispatch("evaluations", {
-        periodId: store.state.currentPeriod,
-      });
-      fillEvaluationByStudent();
-      editByStudent.value[student.id] = false;
-    };
+const saveEvaluation = async (studentId, { comment, status }) => {
+  const evaluation = searchEvaluation(studentId);
+  if (evaluation == null) {
+    const e = await store.dispatch("insertEvaluation", {
+      studentId: studentId,
+      competencyId: Number(route.params.id),
+      periodId: store.state.currentPeriod,
+      date: today(),
+      status: status,
+      comment: comment,
+    });
+    evaluations.value.push(e);
+  } else {
+    await store.dispatch("updateEvaluation", {
+      id: evaluation.id,
+      comment: comment,
+      date: today(),
+      status: status,
+      periodId: store.state.currentPeriod,
+    });
+    evaluation.comment = comment;
+    evaluation.status = status;
   }
 };
 
-const cancelEvaluationByStudent = ref({});
-const fillCancelEvaluationByStudent = () => {
-  for (const student of students.value) {
-    cancelEvaluationByStudent.value[student.id] = async ({
-      comment,
-      status,
-    }) => {
-      editByStudent.value[student.id] = false;
-    };
-  }
+const cancelEvaluation = (studentId) => {
+  // nothing to do :)
 };
 
-const editByStudent = ref({});
-const goInEdit = () => {
-  for (const student of students.value) {
-    editByStudent.value[student.id] = true;
+const previousCompetency = computed(() => {
+  const current = competencies.value.findIndex((x) => x == route.params.id);
+  if (current === -1) {
+    // Oups ?
+    return "";
+  } else if (current === 0) {
+    return `/evaluations-by-cycle/${route.params.cycle}`;
+  } else {
+    const previous = competencies.value[current - 1];
+    return `/evaluation/${route.params.cycle}/${previous}`;
   }
+});
+const nextCompetency = computed(() => {
+  const current = competencies.value.findIndex((x) => x == route.params.id);
+  if (current === -1) {
+    // Oups ?
+    return "";
+  } else if (current === competencies.value.length - 1) {
+    return `/evaluation/${route.params.cycle}/comment`;
+  } else {
+    const next = competencies.value[current + 1];
+    return `/evaluation/${route.params.cycle}/${next}`;
+  }
+});
+
+const getEvaluations = async () => {
+  if (route.params.id == null) {
+    // Of course
+    return;
+  }
+  const data = await store.dispatch("evaluationsByCompetency", {
+    competencyId: Number(route.params.id),
+    cycle: route.params.cycle,
+  });
+  evaluations.value = data.evaluations;
+  observations.value = data.observations;
+  competencies.value = data.competencies.map((x) => x.id);
 };
+
 watch(
   () => route.params.id,
-  () => {
-    goInEdit();
-    fillCancelEvaluationByStudent();
-    fillSaveEvaluationByStudent();
-    fillEvaluationByStudent();
+  async () => {
+    loading.value = true;
+    await getEvaluations();
+    loading.value = false;
   }
 );
 
 onMounted(async () => {
   await until(() => store.state.currentPeriod).not.toBeNull();
-  await store.dispatch("evaluations", {
-    periodId: store.state.currentPeriod,
-  });
-  // For previous/next
-  await store.dispatch("stats", {
-    periodId: store.state.currentPeriod,
-  });
-  goInEdit();
-  fillStudents();
+  await getEvaluations();
+  loading.value = false;
 });
 </script>
