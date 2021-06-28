@@ -1522,28 +1522,10 @@
             id
           }
         }
-    - name: observations-by-competency
-      query: |-
-        query ObservationsByCompetency($competency_id: Int!) {
-          eval_observation(where: {active: {_eq: true}, competencies: {competency_id: {_eq: $competency_id}}}, order_by: {date: desc}) {
-            created_at
-            date
-            id
-            students {
-              student_id
-            }
-            user_id
-            text
-            updated_at
-            competencies {
-              competency_id
-            }
-          }
-        }
     - name: evaluations-by-competency
       query: |-
-        query EvaluationsByCompetency($competency_id: Int!) {
-          eval_evaluation(where: {competency_id: {_eq: $competency_id}, active: {_eq: true}}, order_by: {date: desc}) {
+        query EvaluationsByCompetency($competency_id: Int!, $cycle: cycle!, $group_id: bigint!) {
+          evaluations: eval_evaluation(where: {competency_id: {_eq: $competency_id}, active: {_eq: true}}, order_by: {date: desc}) {
             comment
             competency_id
             created_at
@@ -1555,6 +1537,23 @@
             user_id
             period {
               eval_period_id
+            }
+          }
+          competencies: socle_competency(where: {active: {_eq: true}, cycle: {_eq: $cycle}, group_id: {_eq: $group_id}}, order_by: {alpha_full_rank: asc}) {
+            id
+          }
+          observations: eval_observation(where: {active: {_eq: true}, competencies: {competency_id: {_eq: $competency_id}}}, order_by: {date: desc}) {
+            created_at
+            date
+            id
+            students {
+              student_id
+            }
+            user_id
+            text
+            updated_at
+            competencies {
+              competency_id
             }
           }
         }
