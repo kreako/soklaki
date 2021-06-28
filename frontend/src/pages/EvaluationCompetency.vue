@@ -36,7 +36,15 @@
                   >
                     <div>
                       {{ evaluationByStudent[student.id].observations.length }}
-                      observations
+                      <span
+                        v-if="
+                          evaluationByStudent[student.id].observations.length >
+                          1
+                        "
+                      >
+                        observations
+                      </span>
+                      <span v-else> observation </span>
                     </div>
                     <IconChevronDown class="h-4 text-gray-400" />
                   </div>
