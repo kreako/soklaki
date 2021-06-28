@@ -1474,6 +1474,13 @@ const actions = {
     commit("setLoginErrorInvitationTokenValid", data.valid);
     commit("setLoginErrorInvitationTokenTooOld", data.too_old);
   },
+
+  async countPerWeeks({}, { periodId }) {
+    const answer = await axios.post("count-per-weeks", {
+      period_id: periodId,
+    });
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
