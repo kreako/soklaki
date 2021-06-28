@@ -374,6 +374,7 @@ class PDF(FPDF):
         self.add_font(
             "dejavu-bold", fname=CURRENT_DIR / "DejaVuSerif-Bold.ttf", uni=True
         )
+        self.add_font("dejavu-mono", fname=CURRENT_DIR / "DejaVuSansMono.ttf", uni=True)
 
     def footer(self):
         # Position at 1.5 cm from bottom
@@ -438,7 +439,7 @@ class PdfWriter(object):
         return self
 
     def font_mono(self):
-        self.pdf.set_font("Courier")
+        self.pdf.set_font("dejavu-mono")
         return self
 
     def text_lg(self):
