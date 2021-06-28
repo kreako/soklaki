@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="inEdit || props.edit">
+    <div v-if="inEdit">
       <div class="mt-2">
         <textarea v-model="commentText" class="mt-2 input w-full" rows="2" />
       </div>
