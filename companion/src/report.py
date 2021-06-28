@@ -127,8 +127,17 @@ async def report(gql_client, reports_dir, input: ReportInput):
         status = evaluation["status"]
         evaluations[domain][status] += 1
 
+    # Now move non evaluated to "InProgress"
+    for l1_id in evaluations:
+        evaluations[l1_id]["InProgress"] += total[l1_id] - (
+            evaluations[l1_id]["NotAcquired"]
+            + evaluations[l1_id]["InProgress"]
+            + evaluations[l1_id]["Acquired"]
+            + evaluations[l1_id]["TipTop"]
+        )
+
     # Now to draw
-    pdf.set_y(pdf.get_y() + 20)
+    pdf.set_y(pdf.get_y() + 10)
     # Per domains
     for l1 in data["socle"]:
         domain = data["container_by_id"][l1["id"]]
@@ -147,18 +156,26 @@ async def report(gql_client, reports_dir, input: ReportInput):
     # Total
     with pdf.edit().style_label() as e:
         e.write("Total")
-    total = len(data["competencies"])
+    not_acquired = 0
+    in_progress = 0
+    acquired = 0
+    tip_top = 0
+    for l1_id in evaluations:
+        not_acquired += evaluations[l1_id]["NotAcquired"]
+        in_progress += evaluations[l1_id]["InProgress"]
+        acquired += evaluations[l1_id]["Acquired"]
+        tip_top += evaluations[l1_id]["TipTop"]
     output_bar_progression(
         pdf,
-        data["evaluations_by_status"]["NotAcquired"],
-        data["evaluations_by_status"]["InProgress"],
-        data["evaluations_by_status"]["Acquired"],
-        data["evaluations_by_status"]["TipTop"],
-        total,
+        not_acquired,
+        in_progress,
+        acquired,
+        tip_top,
+        not_acquired + in_progress + acquired + tip_top,
     )
 
     # Legend
-    pdf.set_y(pdf.get_y() + 20)
+    pdf.set_y(pdf.get_y() + 10)
     with pdf.edit() as e:
         y = pdf.get_y()
         e.fill_red_600()
@@ -333,14 +350,20 @@ def output_competency(pdf, competency_id, data, indent):
                 e.fill_pink_600()
                 status_line = "Très bonne maîtrise"
             else:
-                e.fill_white()
-                status_line = ""
+                # If no evaluation, go for "InProgress" status
+                e.fill_yellow_600()
+                status_line = "Maîtrise fragile"
             e.write_with_marker(
                 f"{status_line:<30} {evaluations_count:<30} {observations_count:<30}"
             )
             if evaluation["comment"]:
                 e.write(f"{evaluation['comment']}")
             e.empty_line()
+            e.empty_line()
+        else:
+            # If no evaluation, go for "InProgress" status
+            e.fill_yellow_600()
+            e.write_with_marker("Maîtrise fragile")
             e.empty_line()
 
 
@@ -392,7 +415,7 @@ class PdfWriter(object):
             "F",
         )
         self.pdf.set_x(self.pdf.get_x() + 20)
-        self.pdf.multi_cell(w=0, h=self.line_height, txt=txt, ln=1)
+        self.pdf.cell(w=0, h=self.line_height, txt=txt, ln=1)
 
     def empty_line(self):
         self.pdf.cell(w=0, h=self.line_height, txt="", ln=1)
