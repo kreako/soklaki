@@ -1478,6 +1478,23 @@
             user_id
           }
         }
+    - name: count-per-weeks
+      query: |-
+        query CountPerWeeks($period_id: Int!) {
+          weeks: eval_period_weeks(order_by: {week_start: desc}, where: {eval_period_id: {_eq: $period_id}}) {
+            week_start
+          }
+          observations: eval_observations_count_period_weeks(where: {eval_period_id: {_eq: $period_id}}, order_by: {week_start: desc}) {
+            observations_count
+            user_id
+            week_start
+          }
+          evaluations: eval_evaluations_count_period_weeks(where: {eval_period_id: {_eq: $period_id}}) {
+            evaluations_count
+            user_id
+            week_start
+          }
+        }
     - name: stats-summary
       query: |-
         query StatsSummary($period_id: Int) {
@@ -1564,10 +1581,6 @@
             observations
             total
           }
-        }
-    - name: count-per-weeks
-      query: |-
-        query CountPerWeeks($period_id: Int!) {
           weeks: eval_period_weeks(order_by: {week_start: desc}, where: {eval_period_id: {_eq: $period_id}}) {
             week_start
           }
