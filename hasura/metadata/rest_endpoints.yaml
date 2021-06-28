@@ -55,6 +55,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: evaluations-by-competency
+  url: evaluations-by-competency
+  methods:
+  - POST
+  name: evaluations-by-competency
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: generate_report
   url: generate_report
   methods:

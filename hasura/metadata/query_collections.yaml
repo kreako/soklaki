@@ -1540,3 +1540,21 @@
             }
           }
         }
+    - name: evaluations-by-competency
+      query: |-
+        query EvaluationsByCompetency($competency_id: Int!) {
+          eval_evaluation(where: {competency_id: {_eq: $competency_id}, active: {_eq: true}}, order_by: {date: desc}) {
+            comment
+            competency_id
+            created_at
+            date
+            id
+            status
+            student_id
+            updated_at
+            user_id
+            period {
+              eval_period_id
+            }
+          }
+        }
