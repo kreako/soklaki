@@ -10,7 +10,7 @@
   </div>
   <div>
     <div class="flex flex-row items-end">
-      <div class="flex-grow">Commentaires</div>
+      <div class="flex-grow text-sm text-gray-700">Commentaires</div>
       <div class="text-gray-700 text-xs">
         {{ stats.comments.current }} / {{ stats.comments.total }}
       </div>
@@ -22,7 +22,7 @@
   </div>
   <div>
     <div class="flex flex-row items-end">
-      <div class="flex-grow">Observations</div>
+      <div class="flex-grow text-sm text-gray-700">Observations</div>
       <div class="text-gray-700 text-xs">
         {{ stats.observations.current }} / {{ stats.observations.total }}
       </div>
@@ -34,7 +34,7 @@
   </div>
   <div>
     <div class="flex flex-row items-end">
-      <div class="flex-grow">Évaluations</div>
+      <div class="flex-grow text-sm text-gray-700">Évaluations</div>
       <div class="text-gray-700 text-xs">
         {{ stats.evaluations.current }} / {{ stats.evaluations.total }}
       </div>
