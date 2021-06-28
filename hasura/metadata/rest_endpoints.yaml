@@ -10,6 +10,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: count-per-weeks
+  url: count-per-weeks
+  methods:
+  - POST
+  name: count-per-weeks
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: delete-observation-competency
   url: delete-observation-competency
   methods:
