@@ -4,6 +4,9 @@
       :style="`width: ${width}px`"
       class="absolute left-0 top-1 h-3 bg-green-400"
     ></div>
+    <div v-if="label != null" class="absolute right-1 text-gray-700 text-sm">
+      {{ label }}
+    </div>
   </div>
 </template>
 <script setup>
@@ -13,6 +16,10 @@ import { useElementSize } from "@vueuse/core";
 const props = defineProps({
   current: Number,
   total: Number,
+  label: {
+    type: String,
+    default: null,
+  },
 });
 
 const main = ref(null);
