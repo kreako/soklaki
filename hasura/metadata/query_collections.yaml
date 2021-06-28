@@ -1525,7 +1525,7 @@
     - name: observations-by-competency
       query: |-
         query ObservationsByCompetency($competency_id: Int!) {
-          eval_observation(where: {active: {_eq: true}, competencies: {competency_id: {_eq: $competency_id}}}) {
+          eval_observation(where: {active: {_eq: true}, competencies: {competency_id: {_eq: $competency_id}}}, order_by: {date: desc}) {
             created_at
             date
             id
