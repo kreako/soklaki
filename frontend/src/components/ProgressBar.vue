@@ -2,7 +2,7 @@
   <div ref="main" class="mr-4 w-full h-5 bg-gray-200 relative">
     <div
       :style="`width: ${width}px`"
-      class="absolute left-0 top-1 h-3 bg-green-400"
+      class="absolute left-0 top-1 h-3 bg-teal-700"
     ></div>
     <div v-if="label != null" class="absolute right-1 text-gray-700 text-sm">
       {{ label }}
@@ -26,6 +26,10 @@ const main = ref(null);
 
 const width = computed(() => {
   if (main.value == null) {
+    return 3;
+  }
+  if (props.total == 0) {
+    // divide by 0 ?
     return 3;
   }
   const mainWidth = main.value.getBoundingClientRect().width;

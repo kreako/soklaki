@@ -26,7 +26,7 @@
           Pas d'observations incomplètes ! 👍
         </router-link>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 md:gap-y-20 md:gap-x-32 mt-8">
         <router-link to="/stats/c1">
           <div class="mt-12 md:mt-0 flex flex-row items-center space-x-4">
             <div
@@ -80,79 +80,61 @@
           </div>
         </router-link>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 md:gap-y-20 md:gap-x-32 mt-20"
+      >
         <div v-for="week in last4Weeks">
-          <Disclosure>
-            <DisclosureButton>
-              <div class="flex flex-row items-center space-x-4 mt-4 md:mt-0">
-                <div
-                  class="
-                    text-xs text-gray-700
-                    uppercase
-                    tracking-wide
-                    font-bold
-                  "
-                >
-                  Semaine du {{ week.weekStart }}
-                </div>
-                <IconQuestionMark class="h-3 text-gray-400" />
-              </div>
-            </DisclosureButton>
-            <DisclosurePanel>
-              <MascotteTip class="my-2">
-                <template v-slot:title
-                  >Le top des utilisateur.ice.s 🏅</template
-                >
-                <template v-slot:default>
-                  <div>
-                    Avec le rang (plus d'observations/évaluations classe plus
-                    haut)
-                  </div>
-                  <div>Le prénom, le nom</div>
-                  <div>
-                    Une petite barre qui représente le nombre d'observations
-                    qu'il.elle a rapporté par rapport au nombre total
-                    d'observations faites dans la semaine
-                  </div>
-                  <div>La même chose pour les évaluations !</div>
-                </template>
-              </MascotteTip>
-            </DisclosurePanel>
-          </Disclosure>
+          <div
+            class="
+              mt-12
+              md:mt-0
+              text-xs text-gray-700
+              uppercase
+              tracking-wide
+              font-bold
+            "
+          >
+            Semaine du {{ week.weekStart }}
+          </div>
           <div class="mt-2">
-            <table v-if="week.counts.length > 0" class="w-full">
-              <tbody>
-                <tr
-                  v-for="(count, idx) in week.counts"
-                  :class="
-                    idx == 0 ? 'text-base' : idx > 2 ? 'text-xs' : 'text-sm'
-                  "
-                >
-                  <td>{{ idx + 1 }}.</td>
-                  <td>
-                    {{ userById(count.user).firstname }}&nbsp;{{
-                      userById(count.user).lastname
-                    }}
-                  </td>
-                  <td class="w-1/2 px-2">
-                    <div class="flex flex-row items-center">
-                      <ProgressBar
-                        :current="count.observations"
-                        :total="week.observations"
-                        :label="count.observations.toString()"
-                      />
-                    </div>
-                  </td>
-                  <td class="w-1/2">
-                    <ProgressBar
-                      :current="count.evaluations"
-                      :total="week.evaluations"
-                      :label="count.evaluations.toString()"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div
+              v-if="week.counts.length > 0"
+              v-for="(count, idx) in week.counts"
+              class="mt-2"
+            >
+              <div>
+                {{ idx + 1 }}. {{ userById(count.user).firstname }}&nbsp;{{
+                  userById(count.user).lastname
+                }}
+              </div>
+
+              <div>
+                <div class="flex flex-row items-end">
+                  <div class="flex-grow text-sm text-gray-700">
+                    Observations
+                  </div>
+                  <div class="text-gray-700 text-xs">
+                    {{ count.observations }} / {{ week.observations }}
+                  </div>
+                </div>
+                <ProgressBar
+                  :current="count.observations"
+                  :total="week.observations"
+                />
+              </div>
+              <div>
+                <div class="flex flex-row items-end">
+                  <div class="flex-grow text-sm text-gray-700">Évaluations</div>
+                  <div class="text-gray-700 text-xs">
+                    {{ count.evaluations }} / {{ week.evaluations }}
+                  </div>
+                </div>
+                <ProgressBar
+                  :current="count.evaluations"
+                  :total="week.evaluations"
+                />
+              </div>
+            </div>
             <div v-else>
               <MascotteTip class="my-2">
                 <template v-slot:title>Oh ! 😱</template>
