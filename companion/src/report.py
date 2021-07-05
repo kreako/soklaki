@@ -1,9 +1,11 @@
 from collections import defaultdict
 from zipfile import ZipFile
 from datetime import date
+import json
 import re
 from pydantic import BaseModel, Field
 from fastapi.responses import FileResponse
+from fastapi.exceptions import HTTPException
 from typing import Optional
 from fpdf import FPDF
 from path import Path
@@ -36,24 +38,13 @@ class ReportOutput(BaseModel):
 
 
 async def report(gql_client, reports_dir, input: ReportInput):
-    # Check permissions
-    user_id = input.session_variables.x_hasura_user_id
-    group_id = (await gql_client.user_by_id(user_id))["group_id"]
-    period, student = await gql_period(
-        gql_client, input.input.period_id, input.input.student_id
-    )
-    if group_id != period["group_id"]:
-        return None
-    if group_id != student["group_id"]:
-        return None
-    if not period["active"]:
-        return None
-    if not student["active"]:
-        return None
-
-    # Gather data
+    # Gather data - will check permissions and raise HTTPException(500) if necessary
     data = await gql_report(
-        gql_client, period["end"], student["id"], student["cycle"], group_id
+        gql_client,
+        input.input.student_id,
+        input.input.period_id,
+        input.session_variables.x_hasura_user_id,
+        input.session_variables.x_hasura_user_group,
     )
 
     # Now generation
@@ -63,80 +54,45 @@ async def report(gql_client, reports_dir, input: ReportInput):
     with pdf.edit().font_bold().text_lg().text_black() as e:
         e.write("Rapport d'évaluation du socle commun")
         e.write(
-            f"{student['firstname']} {student['lastname']} - {student['cycle']}",
+            f"{data['student']['firstname']} {data['student']['lastname']} - {data['student']['cycle']}",
             align="R",
         )
-        e.write(f"{period['group']['name']}", align="R")
+        e.write(f"{data['period']['group']['name']}", align="R")
         e.empty_line()
+
+    y_start_of_general_info = pdf.get_y()
 
     with pdf.edit().style_label() as e:
         e.write("Date du rapport")
     with pdf.edit().style_normal() as e:
-        e.write(f"{period['end']}")
+        e.write(f"{data['period']['end']}")
     with pdf.edit().style_label() as e:
         e.write("Nom")
     with pdf.edit().style_normal() as e:
-        e.write(f"{student['lastname']}")
+        e.write(f"{data['student']['lastname']}")
     with pdf.edit().style_label() as e:
         e.write("Prénom")
     with pdf.edit().style_normal() as e:
-        e.write(f"{student['firstname']}")
+        e.write(f"{data['student']['firstname']}")
     with pdf.edit().style_label() as e:
         e.write("Cycle")
     with pdf.edit().style_normal() as e:
-        e.write(f"Cycle {student['cycle'][-1]}")
+        e.write(f"Cycle {data['student']['cycle'][-1]}")
     with pdf.edit().style_label() as e:
         e.write("Date d'anniversaire")
     with pdf.edit().style_normal() as e:
-        e.write(f"{student['birthdate']}")
+        e.write(f"{data['student']['birthdate']}")
     with pdf.edit().style_label() as e:
         e.write("Date d'entrée à l'école")
     with pdf.edit().style_normal() as e:
-        e.write(f"{student['school_entry']}")
-    if student["school_exit"]:
+        e.write(f"{data['student']['school_entry']}")
+    if data["student"]["school_exit"]:
         with pdf.edit().style_label() as e:
             e.write("Date de sortie de l'école")
         with pdf.edit().style_normal() as e:
-            e.write(f"{student['school_exit']}")
+            e.write(f"{data['student']['school_exit']}")
 
     # Graphics data
-    # Compute competencies -> domain
-    domains = {}
-    # domain -> nb competencies
-    total = defaultdict(int)
-    for l1 in data["socle"]:
-        for l2 in l1["children"]:
-            for c in l2["competencies"]:
-                domains[c["id"]] = l1["id"]
-                total[l1["id"]] += 1
-        for c in l1["competencies"]:
-            domains[c["id"]] = l1["id"]
-            total[l1["id"]] += 1
-    # Now sort evaluations count by domain and status
-    evaluations = {
-        l1["id"]: {
-            "NotAcquired": 0,
-            "InProgress": 0,
-            "Acquired": 0,
-            "TipTop": 0,
-        }
-        for l1 in data["socle"]
-    }
-    for evaluation in data["evaluations"]:
-        domain = domains[evaluation["competency_id"]]
-        status = evaluation["status"]
-        evaluations[domain][status] += 1
-
-    # Now move non evaluated to "InProgress"
-    for l1_id in evaluations:
-        evaluations[l1_id]["InProgress"] += total[l1_id] - (
-            evaluations[l1_id]["NotAcquired"]
-            + evaluations[l1_id]["InProgress"]
-            + evaluations[l1_id]["Acquired"]
-            + evaluations[l1_id]["TipTop"]
-        )
-
-    # Now to draw
     pdf.set_y(pdf.get_y() + 10)
     # Per domains
     for l1 in data["socle"]:
@@ -145,37 +101,28 @@ async def report(gql_client, reports_dir, input: ReportInput):
             e.write(f"{domain['full_rank']} {domain['text']}")
         output_bar_progression(
             pdf,
-            evaluations[l1["id"]]["NotAcquired"],
-            evaluations[l1["id"]]["InProgress"],
-            evaluations[l1["id"]]["Acquired"],
-            evaluations[l1["id"]]["TipTop"],
-            total[l1["id"]],
+            data["evaluations_count_by_domain_status"][l1["id"]]["NotAcquired"],
+            data["evaluations_count_by_domain_status"][l1["id"]]["InProgress"],
+            data["evaluations_count_by_domain_status"][l1["id"]]["Acquired"],
+            data["evaluations_count_by_domain_status"][l1["id"]]["TipTop"],
+            data["evaluations_count_by_domain"][l1["id"]],
         )
         pdf.set_y(pdf.get_y() + 1)
 
     # Total
     with pdf.edit().style_label() as e:
         e.write("Total")
-    not_acquired = 0
-    in_progress = 0
-    acquired = 0
-    tip_top = 0
-    for l1_id in evaluations:
-        not_acquired += evaluations[l1_id]["NotAcquired"]
-        in_progress += evaluations[l1_id]["InProgress"]
-        acquired += evaluations[l1_id]["Acquired"]
-        tip_top += evaluations[l1_id]["TipTop"]
     output_bar_progression(
         pdf,
-        not_acquired,
-        in_progress,
-        acquired,
-        tip_top,
-        not_acquired + in_progress + acquired + tip_top,
+        data["evaluations_count_by_status"]["not_acquired"],
+        data["evaluations_count_by_status"]["in_progress"],
+        data["evaluations_count_by_status"]["acquired"],
+        data["evaluations_count_by_status"]["tip_top"],
+        data["evaluations_count_by_status"]["total"],
     )
 
     # Legend
-    pdf.set_y(pdf.get_y() + 10)
+    pdf.set_y(y_start_of_general_info)
     with pdf.edit() as e:
         y = pdf.get_y()
         e.fill_red_600()
@@ -248,13 +195,19 @@ async def report(gql_client, reports_dir, input: ReportInput):
             e.empty_line()
 
     # Output
-    pdf_fname = f"{period['group']['name']}_{period['name']}_{student['cycle']}_{student['firstname']}_{student['lastname']}.pdf"
-    pdf_fname = make_safe_filename(pdf_fname)
-    dirname = Path(reports_dir) / f"{group_id}" / f"{input.input.period_id}"
+    prefix = f"{data['period']['group']['name']}_{data['period']['name']}_{data['student']['cycle']}_{data['student']['firstname']}_{data['student']['lastname']}"
+    prefix = make_safe_filename(prefix)
+    pdf_fname = f"{prefix}.pdf"
+    dirname = (
+        Path(reports_dir) / f"{data['period']['group_id']}" / f"{input.input.period_id}"
+    )
     dirname.makedirs_p()
     pdf_path = dirname / pdf_fname
     pdf.output(pdf_path)
-    json_path = "invalid"
+    json_fname = f"{prefix}.json"
+    json_path = dirname / json_fname
+    with open(json_path, "w") as f:
+        f.write(json.dumps(data, indent=2))
 
     # Make older report inactive
     await inactivate_old_report(
@@ -265,7 +218,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
     id = await insert_report(
         gql_client,
         input.input.student_id,
-        student["cycle"],
+        data["student"]["cycle"],
         today,
         json_path,
         pdf_path,
@@ -563,7 +516,23 @@ query Period($student_id: bigint!, $period_id: Int!) {
     return (period, student)
 
 
-async def gql_report(gql_client, period_end, student_id, cycle, group_id):
+async def gql_report(
+    gql_client, student_id, period_id, x_hasura_user_id, x_hasura_user_group
+):
+    # Check permissions and gather first info
+    group_id = (await gql_client.user_by_id(x_hasura_user_id))["group_id"]
+    if group_id != x_hasura_user_group:
+        raise HTTPException(500)
+    period, student = await gql_period(gql_client, period_id, student_id)
+    if group_id != period["group_id"]:
+        raise HTTPException(500)
+    if group_id != student["group_id"]:
+        raise HTTPException(500)
+    if not period["active"]:
+        raise HTTPException(500)
+    if not student["active"]:
+        raise HTTPException(500)
+
     r = await gql_client.run_query(
         """
 query Report(
@@ -692,13 +661,16 @@ query Report(
 }
         """,
         {
-            "period_end": period_end,
+            "period_end": period["end"],
             "student_id": student_id,
-            "cycle": cycle,
+            "cycle": student["cycle"],
             "group_id": group_id,
         },
     )
     data = r["data"]
+
+    data["period"] = period
+    data["student"] = student
 
     data["container_by_id"] = {
         container["id"]: container for container in data["containers"]
@@ -725,14 +697,64 @@ query Report(
             evaluation
         )
 
-    data["evaluations_by_status"] = {
-        "NotAcquired": 0,
-        "InProgress": 0,
-        "Acquired": 0,
-        "TipTop": 0,
+    # Compute competencies -> domain
+    domains = {}
+    # domain -> nb competencies
+    total = defaultdict(int)
+    for l1 in data["socle"]:
+        for l2 in l1["children"]:
+            for c in l2["competencies"]:
+                domains[c["id"]] = l1["id"]
+                total[l1["id"]] += 1
+        for c in l1["competencies"]:
+            domains[c["id"]] = l1["id"]
+            total[l1["id"]] += 1
+    # Now sort evaluations count by domain and status
+    evaluations = {
+        l1["id"]: {
+            "NotAcquired": 0,
+            "InProgress": 0,
+            "Acquired": 0,
+            "TipTop": 0,
+        }
+        for l1 in data["socle"]
     }
     for evaluation in data["evaluations"]:
-        data["evaluations_by_status"][evaluation["status"]] += 1
+        domain = domains[evaluation["competency_id"]]
+        status = evaluation["status"]
+        evaluations[domain][status] += 1
+
+    # Now move non evaluated to "InProgress"
+    for l1_id in evaluations:
+        evaluations[l1_id]["InProgress"] += total[l1_id] - (
+            evaluations[l1_id]["NotAcquired"]
+            + evaluations[l1_id]["InProgress"]
+            + evaluations[l1_id]["Acquired"]
+            + evaluations[l1_id]["TipTop"]
+        )
+
+    data["evaluations_count_by_domain_status"] = evaluations
+    data["evaluations_count_by_domain"] = total
+
+    # Grand total
+    not_acquired = 0
+    in_progress = 0
+    acquired = 0
+    tip_top = 0
+    for l1_id in evaluations:
+        not_acquired += evaluations[l1_id]["NotAcquired"]
+        in_progress += evaluations[l1_id]["InProgress"]
+        acquired += evaluations[l1_id]["Acquired"]
+        tip_top += evaluations[l1_id]["TipTop"]
+
+    data["evaluations_count_by_status"] = {
+        "not_acquired": not_acquired,
+        "in_progress": in_progress,
+        "acquired": acquired,
+        "tip_top": tip_top,
+        "total": not_acquired + in_progress + acquired + tip_top,
+    }
+
     return data
 
 
