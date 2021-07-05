@@ -98,29 +98,79 @@ async def report(gql_client, reports_dir, input: ReportInput):
     pdf.set_y(y_start_of_general_info)
     output_legend(pdf)
 
-    # Main body
+    # Summary by competencies
     for l1_raw in data["socle"]:
         l1_id = l1_raw["id"]
         l1 = data["container_by_id"][l1_id]
         pdf.add_page()
 
-        with pdf.edit().font_bold().text_sm().text_gray_700() as e:
+        with pdf.edit().font_bold().text_gray_700() as e:
             e.write(f"{l1['full_rank']} {l1['text'].upper()}")
 
-        for l2_raw in l1_raw["children"]:
+        for l2_idx, l2_raw in enumerate(l1_raw["children"]):
             l2_id = l2_raw["id"]
             l2 = data["container_by_id"][l2_id]
 
-            with pdf.edit().text_sm().text_gray_700() as e:
-                e.write(f"{l2['full_rank']} {l2['text']}", indent=1)
+            with pdf.edit().text_gray_700() as e:
+                if l2_idx > 0:
+                    e.empty_line()
+                e.write(f"{l2['full_rank']} {l2['text']}")
+                e.empty_line()
 
             for competency_raw in l2_raw["competencies"]:
                 competency_id = competency_raw["id"]
-                output_competency(pdf, competency_id, data, 2)
+                output_competency_table(pdf, competency_id, data)
 
         for competency_raw in l1_raw["competencies"]:
             competency_id = competency_raw["id"]
-            output_competency(pdf, competency_id, data, 1)
+            output_competency_table(pdf, competency_id, data)
+
+    # Details of competencies
+    pdf.add_page()
+    for l1_idx, l1_raw in enumerate(data["socle"]):
+        l1_id = l1_raw["id"]
+        l1 = data["container_by_id"][l1_id]
+
+        output_domain_needed = True
+
+        def output_domain():
+            nonlocal output_domain_needed
+            if output_domain_needed:
+                # pdf.add_page()
+                with pdf.edit().font_bold().text_gray_700() as e:
+                    if l1_idx > 0:
+                        e.empty_line()
+                        e.empty_line()
+                    e.write(f"{l1['full_rank']} {l1['text'].upper()}")
+                output_domain_needed = False
+
+        for l2_idx, l2_raw in enumerate(l1_raw["children"]):
+            l2_id = l2_raw["id"]
+            l2 = data["container_by_id"][l2_id]
+
+            output_sub_domain_needed = True
+
+            def output_sub_domain():
+                nonlocal output_sub_domain_needed
+                if output_sub_domain_needed:
+                    with pdf.edit().text_gray_700() as e:
+                        if l2_idx > 0:
+                            e.empty_line()
+                        e.write(f"{l2['full_rank']} {l2['text']}")
+                        e.empty_line()
+                    output_sub_domain_needed = False
+
+            for competency_raw in l2_raw["competencies"]:
+                competency_id = competency_raw["id"]
+                output_competency(
+                    pdf, competency_id, data, output_domain, output_sub_domain
+                )
+
+        for competency_raw in l1_raw["competencies"]:
+            competency_id = competency_raw["id"]
+            output_competency(
+                pdf, competency_id, data, output_domain, output_sub_domain
+            )
 
     # Eval comments
     pdf.add_page()
@@ -128,7 +178,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
         e.write("Commentaire")
         e.empty_line()
     if data["comments"]:
-        with pdf.edit().style_normal().font_mono() as e:
+        with pdf.edit().style_normal() as e:
             e.write(f"{data['comments'][0]['text']}")
 
     # Observations
@@ -138,7 +188,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
         e.empty_line()
     for observation in data["observations"]:
         with pdf.edit().style_normal() as e:
-            e.write(f"{observation['date']}")
+            e.write(f"Observation pour :")
         with pdf.edit().style_label() as e:
             for c in observation["competencies"]:
                 competency_id = c["competency_id"]
@@ -273,64 +323,108 @@ def output_bar_progression(pdf, not_acquired, in_progress, acquired, tiptop, tot
     pdf.set_y(y + 10)
 
 
-def output_competency(pdf, competency_id, data, indent):
+def output_competency_table(pdf, competency_id, data):
+    MARKER_WIDTH = 8
+    RIGHT_STOP = 200 - 4 * MARKER_WIDTH  # 10 for page right margin
     competency = data["competency_by_id"][competency_id]
-    with pdf.edit().text_gray_700() as e:
-        e.write(f"{competency['full_rank']} {competency['text']}", indent=indent)
+    evaluations = data["evaluations_by_competency_id"][competency_id]
+    if evaluations:
+        status = evaluations[0]["status"]
+    else:
+        status = "InProgress"
+    with pdf.edit().text_gray_700().draw_gray_900() as e:
+        txt = f"{competency['full_rank']} {competency['text']}"
+        lines = len(
+            pdf.multi_cell(
+                w=RIGHT_STOP - 10,  # -10 for page left margin
+                h=e.line_height,
+                txt=txt,
+                split_only=True,
+            )
+        )
+        y = pdf.get_y()
+        if competency["full_rank"] == "2.1.3.":
+            print(y, lines, e.line_height)
+        if y + lines * e.line_height >= 297 - 15 - 10:  # 10 margin, 15 footer
+            pdf.add_page()
+            y = pdf.get_y()
+
+        pdf.multi_cell(
+            w=RIGHT_STOP - 10,  # -10 for page left margin
+            h=e.line_height,
+            txt=txt,
+            ln=1,
+            align="L",
+            border="BTRL",
+        )
+
+        if status == "NotAcquired":
+            e.fill_red_600()
+        else:
+            e.fill_white()
+        e.rect(RIGHT_STOP + 0 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+        e.borders(RIGHT_STOP + 0 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+
+        if status == "InProgress":
+            e.fill_yellow_600()
+        else:
+            e.fill_white()
+        e.rect(RIGHT_STOP + 1 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+        e.borders(RIGHT_STOP + 1 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+
+        if status == "Acquired":
+            e.fill_green_600()
+        else:
+            e.fill_white()
+        e.rect(RIGHT_STOP + 2 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+        e.borders(RIGHT_STOP + 2 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+
+        if status == "TipTop":
+            e.fill_pink_600()
+        else:
+            e.fill_white()
+        e.rect(RIGHT_STOP + 3 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+        e.borders(RIGHT_STOP + 3 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+
+
+def output_competency(pdf, competency_id, data, output_domain, output_sub_domain):
+    competency = data["competency_by_id"][competency_id]
+    write_needed = False
     observations = data["observations_by_competency_id"][competency_id]
     len_observations = len(observations)
+    if len_observations > 0:
+        write_needed = True
     evaluations = data["evaluations_by_competency_id"][competency_id]
     len_evaluations = len(evaluations)
-    if evaluations:
+    comment = None
+    if len_evaluations > 0:
         evaluation = evaluations[0]
-    else:
-        evaluation = None
-    with pdf.edit().style_normal().font_mono() as e:
-        e.empty_line()
+        if evaluation["comment"]:
+            comment = evaluation["comment"]
+            write_needed = True
 
-        if len_observations > 1:
-            observations_count = f"{len_observations} observations"
-        elif len_observations == 1:
-            observations_count = f"1 observation"
-        else:
-            observations_count = ""
+    if not write_needed:
+        return
 
-        if len_evaluations > 1:
-            evaluations_count = f"{len_evaluations} évaluations"
-        elif len_evaluations == 1:
-            evaluations_count = f"1 évaluation"
-        else:
-            evaluations_count = ""
+    output_domain()
+    output_sub_domain()
 
-        if evaluation:
-            status = evaluation["status"]
-            if status == "NotAcquired":
-                e.fill_red_600()
-                status_line = "Maîtrise insuffisante"
-            elif status == "InProgress":
-                e.fill_yellow_600()
-                status_line = "Maîtrise fragile"
-            elif status == "Acquired":
-                e.fill_green_600()
-                status_line = "Maîtrise satisfaisante"
-            elif status == "TipTop":
-                e.fill_pink_600()
-                status_line = "Très bonne maîtrise"
+    output_competency_table(pdf, competency_id, data)
+
+    if len_observations > 0:
+        with pdf.edit().text_sm().text_gray_700().font_mono() as e:
+            e.empty_line()
+            if len_observations > 1:
+                e.write(f"{len_observations} observations", indent=1)
             else:
-                # If no evaluation, go for "InProgress" status
-                e.fill_yellow_600()
-                status_line = "Maîtrise fragile"
-            e.write_with_marker(
-                f"{status_line:<30} {evaluations_count:<30} {observations_count:<30}"
-            )
-            if evaluation["comment"]:
-                e.write(f"{evaluation['comment']}")
+                e.write("1 observation", indent=1)
             e.empty_line()
-            e.empty_line()
-        else:
-            # If no evaluation, go for "InProgress" status
-            e.fill_yellow_600()
-            e.write_with_marker("Maîtrise fragile")
+
+    if comment:
+        with pdf.edit().style_normal() as e:
+            if len_observations == 0:
+                e.empty_line()
+            e.write(comment, indent=1)
             e.empty_line()
 
 
