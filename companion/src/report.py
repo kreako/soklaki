@@ -52,48 +52,20 @@ async def report(gql_client, reports_dir, input: ReportInput):
     # Header
     pdf.add_page()
     with pdf.edit().font_bold().text_lg().text_black() as e:
-        e.write("Rapport d'évaluation du socle commun")
+        e.write("Rapport d'évaluation du socle commun", align="C")
+        e.write(f"{data['period']['group']['name']}", align="C")
         e.write(
             f"{data['student']['firstname']} {data['student']['lastname']} - {data['student']['cycle']}",
-            align="R",
+            align="C",
         )
-        e.write(f"{data['period']['group']['name']}", align="R")
         e.empty_line()
 
     y_start_of_general_info = pdf.get_y()
 
-    with pdf.edit().style_label() as e:
-        e.write("Date du rapport")
-    with pdf.edit().style_normal() as e:
-        e.write(f"{data['period']['end']}")
-    with pdf.edit().style_label() as e:
-        e.write("Nom")
-    with pdf.edit().style_normal() as e:
-        e.write(f"{data['student']['lastname']}")
-    with pdf.edit().style_label() as e:
-        e.write("Prénom")
-    with pdf.edit().style_normal() as e:
-        e.write(f"{data['student']['firstname']}")
-    with pdf.edit().style_label() as e:
-        e.write("Cycle")
-    with pdf.edit().style_normal() as e:
-        e.write(f"Cycle {data['student']['cycle'][-1]}")
-    with pdf.edit().style_label() as e:
-        e.write("Date d'anniversaire")
-    with pdf.edit().style_normal() as e:
-        e.write(f"{data['student']['birthdate']}")
-    with pdf.edit().style_label() as e:
-        e.write("Date d'entrée à l'école")
-    with pdf.edit().style_normal() as e:
-        e.write(f"{data['student']['school_entry']}")
-    if data["student"]["school_exit"]:
-        with pdf.edit().style_label() as e:
-            e.write("Date de sortie de l'école")
-        with pdf.edit().style_normal() as e:
-            e.write(f"{data['student']['school_exit']}")
+    output_general_info(pdf, data)
 
     # Graphics data
-    pdf.set_y(pdf.get_y() + 10)
+    pdf.set_y(pdf.get_y() + 30)
     # Per domains
     for l1 in data["socle"]:
         domain = data["container_by_id"][l1["id"]]
@@ -110,6 +82,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
         pdf.set_y(pdf.get_y() + 1)
 
     # Total
+    pdf.set_y(pdf.get_y() + 10)
     with pdf.edit().style_label() as e:
         e.write("Total")
     output_bar_progression(
@@ -123,26 +96,7 @@ async def report(gql_client, reports_dir, input: ReportInput):
 
     # Legend
     pdf.set_y(y_start_of_general_info)
-    with pdf.edit() as e:
-        y = pdf.get_y()
-        e.fill_red_600()
-        e.rect(190, y + 1, 10, 4)
-        pdf.cell(w=170, h=e.line_height, txt="Maîtrise insuffisante", ln=1, align="R")
-
-        y = pdf.get_y()
-        e.fill_yellow_600()
-        e.rect(190, y + 1, 10, 4)
-        pdf.cell(w=170, h=e.line_height, txt="Maîtrise fragile", ln=1, align="R")
-
-        y = pdf.get_y()
-        e.fill_green_600()
-        e.rect(190, y + 1, 10, 4)
-        pdf.cell(w=170, h=e.line_height, txt="Maîtrise satisfaisante", ln=1, align="R")
-
-        y = pdf.get_y()
-        e.fill_pink_600()
-        e.rect(190, y + 1, 10, 4)
-        pdf.cell(w=170, h=e.line_height, txt="Très bonne maîtrise", ln=1, align="R")
+    output_legend(pdf)
 
     # Main body
     for l1_raw in data["socle"]:
@@ -229,6 +183,66 @@ async def report(gql_client, reports_dir, input: ReportInput):
         pdf_path=pdf_path,
         json_path=json_path,
     )
+
+
+def output_legend(pdf):
+    with pdf.edit().fill_gray_200().text_sm() as e:
+        y = pdf.get_y()
+        e.rect(153, y, 47, e.line_height * 5)
+        pdf.set_y(y + e.line_height / 2)
+
+    with pdf.edit().text_sm() as e:
+        y = pdf.get_y()
+        e.fill_red_600()
+        e.rect(188, y, 10, e.line_height)
+        pdf.cell(w=176, h=e.line_height, txt="Maîtrise insuffisante", ln=1, align="R")
+
+        y = pdf.get_y()
+        e.fill_yellow_600()
+        e.rect(188, y, 10, e.line_height)
+        pdf.cell(w=176, h=e.line_height, txt="Maîtrise fragile", ln=1, align="R")
+
+        y = pdf.get_y()
+        e.fill_green_600()
+        e.rect(188, y, 10, e.line_height)
+        pdf.cell(w=176, h=e.line_height, txt="Maîtrise satisfaisante", ln=1, align="R")
+
+        y = pdf.get_y()
+        e.fill_pink_600()
+        e.rect(188, y, 10, e.line_height)
+        pdf.cell(w=176, h=e.line_height, txt="Très bonne maîtrise", ln=1, align="R")
+
+
+def output_general_info(pdf, data):
+    with pdf.edit().style_label() as e:
+        e.write("Date du rapport")
+    with pdf.edit().style_normal() as e:
+        e.write(f"{data['period']['end']}")
+    with pdf.edit().style_label() as e:
+        e.write("Nom")
+    with pdf.edit().style_normal() as e:
+        e.write(f"{data['student']['lastname']}")
+    with pdf.edit().style_label() as e:
+        e.write("Prénom")
+    with pdf.edit().style_normal() as e:
+        e.write(f"{data['student']['firstname']}")
+    with pdf.edit().style_label() as e:
+        e.write("Cycle")
+    with pdf.edit().style_normal() as e:
+        e.write(f"Cycle {data['student']['cycle'][-1]}")
+    with pdf.edit().style_label() as e:
+        e.write("Date d'anniversaire")
+    with pdf.edit().style_normal() as e:
+        e.write(f"{data['student']['birthdate']}")
+    with pdf.edit().style_label() as e:
+        e.write("Date d'entrée à l'école")
+    with pdf.edit().style_normal() as e:
+        e.write(f"{data['student']['school_entry']}")
+    if data["student"]["school_exit"]:
+        with pdf.edit().style_label() as e:
+            e.write("Date de sortie de l'école")
+        with pdf.edit().style_normal() as e:
+            e.write(f"{data['student']['school_exit']}")
 
 
 def output_bar_progression(pdf, not_acquired, in_progress, acquired, tiptop, total):
@@ -377,6 +391,9 @@ class PdfWriter(object):
     def rect(self, x, y, w, h):
         self.pdf.rect(x, y, w, h, "F")
 
+    def borders(self, x, y, w, h):
+        self.pdf.rect(x, y, w, h, "D")
+
     def style_label(self):
         return self.font_normal().text_sm().text_gray_700()
 
@@ -443,8 +460,16 @@ class PdfWriter(object):
         self.pdf.set_text_color(0xDB, 0x27, 0x77)
         return self
 
+    def draw_gray_900(self):
+        self.pdf.set_draw_color(0x11, 0x18, 0x27)
+        return self
+
     def fill_white(self):
         self.pdf.set_fill_color(0xFF, 0xFF, 0xFF)
+        return self
+
+    def fill_gray_200(self):
+        self.pdf.set_fill_color(0xE5, 0xE7, 0xEB)
         return self
 
     def fill_gray_700(self):
