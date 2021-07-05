@@ -346,6 +346,7 @@ def test_socle_competency_container_id(login, socle):
                 socle_competency_by_pk(id: $id) {
                     alpha_full_rank
                     full_rank
+                    rank
                     container_id
                 }
             }""",
@@ -365,6 +366,7 @@ def test_socle_competency_container_id(login, socle):
         "update-socle-competency-container-id",
         {
             "id": competency_id,
+            "rank": 3,
             "alpha_full_rank": "ac0",
             "full_rank": "c0",
             "container_id": container_id,
@@ -380,6 +382,7 @@ def test_socle_competency_container_id(login, socle):
                 socle_competency_by_pk(id: $id) {
                     alpha_full_rank
                     full_rank
+                    rank
                     container_id
                 }
             }""",
@@ -389,6 +392,7 @@ def test_socle_competency_container_id(login, socle):
     new_competency = data["data"]["socle_competency_by_pk"]
     assert new_competency["alpha_full_rank"] == "ac0"
     assert new_competency["full_rank"] == "c0"
+    assert new_competency["rank"] == 3
     assert competency["container_id"] != new_competency["container_id"]
     assert new_competency["container_id"] == container_id
 
@@ -397,6 +401,7 @@ def test_socle_competency_container_id(login, socle):
         "update-socle-competency-container-id",
         {
             "id": competency_id,
+            "rank": competency["rank"],
             "alpha_full_rank": competency["alpha_full_rank"],
             "full_rank": competency["full_rank"],
             "container_id": competency["container_id"],
@@ -412,6 +417,7 @@ def test_socle_competency_container_id(login, socle):
                 socle_competency_by_pk(id: $id) {
                     alpha_full_rank
                     full_rank
+                    rank
                     container_id
                 }
             }""",
@@ -421,6 +427,7 @@ def test_socle_competency_container_id(login, socle):
     new_competency = data["data"]["socle_competency_by_pk"]
     assert new_competency["alpha_full_rank"] == competency["alpha_full_rank"]
     assert new_competency["full_rank"] == competency["full_rank"]
+    assert new_competency["rank"] == competency["rank"]
     assert new_competency["container_id"] == competency["container_id"]
 
 
