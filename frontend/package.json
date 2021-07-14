@@ -27,12 +27,12 @@
     "@playwright/test": "^0.1110.0",
     "@vitejs/plugin-vue": "^1.2.2",
     "@vue/compiler-sfc": "^3.0.5",
-    "autoprefixer": "^10.2.5",
+    "autoprefixer": "^10.3.1",
     "dotenv": "^9.0.2",
     "jest": "^26.6.3",
     "playwright": "^1.11.0",
-    "postcss": "^8.2.8",
-    "tailwindcss": "^2.1.2",
+    "postcss": "^8.3.5",
+    "tailwindcss": "^2.2.4",
     "vite": "^2.2.3"
   }
 }
