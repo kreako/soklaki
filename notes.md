@@ -14,9 +14,13 @@ npm install vue-router@4
 
 ### Ports
 
+Take a look at ansible/roles/podman to see if something is missing
+
 - 8080 is hasura graphql end point port
 - 5432 is postgresql port
 - 8000 is companion port
+- 8001 is the exporter
+- 8008 is the backend
 
 ### Creation
 
@@ -112,3 +116,15 @@ ssh-copy-id <user>@<ip>
 ### Prometheus
 
 podman run -p 9090:9090 -v $HOME/prometheus/config:/etc/prometheus/:z prom/prometheus
+
+## Backend
+
+### Todo
+
+When hasura is not anymore in charge :
+
+https://github.com/rust-db/refinery
+For Migrations
+
+https://crates.io/crates/barrel
+For typed migrations
