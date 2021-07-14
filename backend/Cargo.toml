@@ -6,3 +6,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+rocket = { version = "0.5.0-rc.1" }
+rocket_sync_db_pools = { version = "0.1.0-rc.1", default-features = false, features = ["postgres_pool"] }
+postgres = "0.19.1"

@@ -1,0 +1,6 @@
+[default]
+address = "127.0.0.1"
+port = 8008
+
+[global.databases]
+postgres = { url = "postgres://postgres:password@127.0.0.1:5432/postgres" }
