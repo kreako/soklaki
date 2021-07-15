@@ -507,72 +507,6 @@
             valid
           }
         }
-    - name: observations-by-user
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {user_id: {_eq: $user_id}}) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            period {
-              eval_period_id
-            }
-            complete {
-              complete
-            }
-            competencies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            students_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, user_id: {_eq: $user_id}}) {
-            aggregate {
-              count
-            }
-          }
-        }
-    - name: observations-incomplete
-      query: |-
-        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
-          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {complete: {complete: {_eq: false}}}) {
-            id
-            date
-            created_at
-            updated_at
-            text
-            user_id
-            period {
-              eval_period_id
-            }
-            complete {
-              complete
-            }
-            competencies_aggregate {
-              aggregate {
-                count
-              }
-            }
-            students_aggregate {
-              aggregate {
-                count
-              }
-            }
-          }
-          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, complete: {complete: {_eq: false}}}) {
-            aggregate {
-              count
-            }
-          }
-        }
     - name: delete-observation-competency
       query: |-
         mutation DeleteObservationCompetency($observation_id: bigint!, $competency_id: Int!) {
@@ -1478,12 +1412,62 @@
             user_id
           }
         }
+    - name: count-per-weeks
+      query: |-
+        query CountPerWeeks($period_id: Int!) {
+          weeks: eval_period_weeks(order_by: {week_start: desc}, where: {eval_period_id: {_eq: $period_id}}) {
+            week_start
+          }
+          observations: eval_observations_count_period_weeks(where: {eval_period_id: {_eq: $period_id}}) {
+            observations_count
+            user_id
+            week_start
+          }
+          evaluations: eval_evaluations_count_period_weeks(where: {eval_period_id: {_eq: $period_id}}) {
+            evaluations_count
+            user_id
+            week_start
+          }
+        }
+    - name: observations-incomplete
+      query: |-
+        query Observations($limit: Int!, $offset: Int!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {complete: {complete: {_eq: false}}, active: {_eq: true}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
+            user_id
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
+          }
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, complete: {complete: {_eq: false}}}) {
+            aggregate {
+              count
+            }
+          }
+        }
     - name: stats-summary
       query: |-
         query StatsSummary($period_id: Int) {
           incomplete_observations: eval_observation_complete_aggregate(
             where: {
-              observation: { period: { eval_period_id: { _eq: $period_id } } }
+              observation: { period: { eval_period_id: { _eq: $period_id } }, active: {_eq: true } }
               complete: { _eq: false }
             }
           ) {
@@ -1578,20 +1562,36 @@
             week_start
           }
         }
-    - name: count-per-weeks
+    - name: observations-by-user
       query: |-
-        query CountPerWeeks($period_id: Int!) {
-          weeks: eval_period_weeks(order_by: {week_start: desc}, where: {eval_period_id: {_eq: $period_id}}) {
-            week_start
-          }
-          observations: eval_observations_count_period_weeks(where: {eval_period_id: {_eq: $period_id}}) {
-            observations_count
+        query Observations($limit: Int!, $offset: Int!, $user_id: bigint!, $group_id: bigint!) {
+          eval_observation(limit: $limit, order_by: {created_at: desc}, offset: $offset, where: {user_id: {_eq: $user_id}, active: {_eq: true}}) {
+            id
+            date
+            created_at
+            updated_at
+            text
             user_id
-            week_start
+            period {
+              eval_period_id
+            }
+            complete {
+              complete
+            }
+            competencies_aggregate {
+              aggregate {
+                count
+              }
+            }
+            students_aggregate {
+              aggregate {
+                count
+              }
+            }
           }
-          evaluations: eval_evaluations_count_period_weeks(where: {eval_period_id: {_eq: $period_id}}) {
-            evaluations_count
-            user_id
-            week_start
+          eval_observation_aggregate(where: {user: {group_id: {_eq: $group_id}}, user_id: {_eq: $user_id}}) {
+            aggregate {
+              count
+            }
           }
         }
