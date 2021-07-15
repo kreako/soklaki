@@ -3,16 +3,12 @@ extern crate rocket;
 
 use dotenv::dotenv;
 
-use rocket_sync_db_pools::database;
-use rocket_sync_db_pools::postgres;
-
+mod db;
+mod home_content;
 mod jwt;
 
-#[database("postgres")]
-struct Db(postgres::Client);
-
 #[get("/")]
-async fn index(db: Db, token: jwt::JwtToken) -> &'static str {
+async fn index(db: db::Db, token: jwt::JwtToken) -> &'static str {
     println!("token: {:?}", token);
     db.run(|client| {
         for row in client
@@ -35,6 +31,7 @@ async fn index(db: Db, token: jwt::JwtToken) -> &'static str {
 fn rocket() -> _ {
     dotenv().ok();
     rocket::build()
-        .attach(Db::fairing())
+        .attach(db::Db::fairing())
+        .mount("/home_content", routes![home_content::index])
         .mount("/", routes![index])
 }
