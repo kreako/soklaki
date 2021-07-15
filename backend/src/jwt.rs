@@ -20,61 +20,61 @@ use std::env;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JwtClaim {
-	#[serde(rename = "x-hasura-allowed-roles")]
-	roles: Vec<String>,
-	#[serde(rename = "x-hasura-default-role")]
-	role: String,
-	#[serde(rename = "x-hasura-user-id")]
-	user_id: String,
-	#[serde(rename = "x-hasura-user-group")]
-	user_group: String,
+    #[serde(rename = "x-hasura-allowed-roles")]
+    pub roles: Vec<String>,
+    #[serde(rename = "x-hasura-default-role")]
+    pub role: String,
+    #[serde(rename = "x-hasura-user-id")]
+    pub user_id: String,
+    #[serde(rename = "x-hasura-user-group")]
+    pub user_group: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JwtToken {
-	#[serde(rename = "https://hasura.io/jwt/claims")]
-	pub claim: JwtClaim,
+    #[serde(rename = "https://hasura.io/jwt/claims")]
+    pub claim: JwtClaim,
 }
 
 #[derive(Debug, Serialize)]
 pub struct TokenResponse {
-	pub invalid_token: bool,
+    pub invalid_token: bool,
 }
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for JwtToken {
-	type Error = status::Custom<Json<TokenResponse>>;
-	async fn from_request(
-		request: &'r Request<'_>,
-	) -> request::Outcome<Self, status::Custom<Json<TokenResponse>>> {
-		if let Some(authen_header) = request.headers().get_one("Authorization") {
-			let authen_str = authen_header.to_string();
-			if authen_str.starts_with("Bearer") {
-				let token = authen_str[6..authen_str.len()].trim();
-				if let Ok(token_data) = decode_token(token.to_string()) {
-					return Outcome::Success(token_data.claims);
-				}
-			}
-		}
+    type Error = status::Custom<Json<TokenResponse>>;
+    async fn from_request(
+        request: &'r Request<'_>,
+    ) -> request::Outcome<Self, status::Custom<Json<TokenResponse>>> {
+        if let Some(authen_header) = request.headers().get_one("Authorization") {
+            let authen_str = authen_header.to_string();
+            if authen_str.starts_with("Bearer") {
+                let token = authen_str[6..authen_str.len()].trim();
+                if let Ok(token_data) = decode_token(token.to_string()) {
+                    return Outcome::Success(token_data.claims);
+                }
+            }
+        }
 
-		Outcome::Failure((
-			Status::BadRequest,
-			status::Custom(
-				Status::Unauthorized,
-				Json(TokenResponse {
-					invalid_token: true,
-				}),
-			),
-		))
-	}
+        Outcome::Failure((
+            Status::BadRequest,
+            status::Custom(
+                Status::Unauthorized,
+                Json(TokenResponse {
+                    invalid_token: true,
+                }),
+            ),
+        ))
+    }
 }
 
 fn decode_token(token: String) -> JwtResult<TokenData<JwtToken>> {
-	let mut validation = Validation::new(Algorithm::HS256);
-	validation.validate_exp = false;
-	jsonwebtoken::decode::<JwtToken>(
-		&token,
-		&DecodingKey::from_secret(env::var("HASURA_GRAPHQL_JWT_SECRET").unwrap().as_ref()),
-		&validation,
-	)
+    let mut validation = Validation::new(Algorithm::HS256);
+    validation.validate_exp = false;
+    jsonwebtoken::decode::<JwtToken>(
+        &token,
+        &DecodingKey::from_secret(env::var("HASURA_GRAPHQL_JWT_SECRET").unwrap().as_ref()),
+        &validation,
+    )
 }
