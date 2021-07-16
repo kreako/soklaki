@@ -3,6 +3,7 @@ ansible/inventory/staging.yml
 ansible/inventory/prom.yml
 backend/target
 backend/.env
+backend/Rocket.toml
 backend_tests/env
 backend_tests/.env
 backend_tests/__pycache__
