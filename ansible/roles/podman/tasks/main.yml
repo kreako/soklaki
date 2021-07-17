@@ -13,6 +13,7 @@
       - 5432:5432 # postgresql port
       - 8000:8000 # companion port
       - 8001:8001 # exporter port
+      - 8008:8008 # backend port
 
 - name: logs directory
   ansible.builtin.file:
