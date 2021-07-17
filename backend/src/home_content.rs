@@ -1,4 +1,5 @@
 use chrono::naive::NaiveDate;
+use log::info;
 use rocket::serde::json::Json;
 use rocket_sync_db_pools::postgres;
 use serde::Serialize;
@@ -413,37 +414,44 @@ SELECT user_id::int, evaluations_count::int
 
 #[get("/")]
 pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
+    info!("home_content current_period_id");
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
     let group_id1 = group_id.clone();
     let period_id = db
         .run(move |client| current_period_id(client, group_id1))
         .await
         .unwrap();
+    info!("home_content count_incomplete_observations");
     let period_id1 = period_id.clone();
     let incomplete_observations_count = db
         .run(move |client| count_incomplete_observations(client, period_id1))
         .await
         .unwrap();
+    info!("home_content students_count_by_cycle");
     let period_id2 = period_id.clone();
     let students_count = db
         .run(move |client| students_count_by_cycle(client, period_id2))
         .await
         .unwrap();
+    info!("home_content competencies_count_by_cycle");
     let group_id2 = group_id.clone();
     let competencies_count = db
         .run(move |client| competencies_count_by_cycle(client, group_id2))
         .await
         .unwrap();
+    info!("home_content comments_count_by_cycle");
     let period_id3 = period_id.clone();
     let comments_count = db
         .run(move |client| comments_count_by_cycle(client, period_id3))
         .await
         .unwrap();
+    info!("home_content eval_count_by_cycle");
     let period_id4 = period_id.clone();
     let eval_count = db
         .run(move |client| eval_count_by_cycle(client, period_id4))
         .await
         .unwrap();
+    info!("home_content week_stats");
     let period_id5 = period_id.clone();
     let weeks = db
         .run(move |client| weeks_stats(client, period_id5))

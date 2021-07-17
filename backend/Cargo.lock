@@ -67,6 +67,7 @@ dependencies = [
  "chrono",
  "dotenv",
  "jsonwebtoken",
+ "log",
  "postgres",
  "reqwest",
  "rocket",
