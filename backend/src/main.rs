@@ -27,13 +27,12 @@ async fn forward_to_hasura(
         .await
         .map_err(|e| BadRequest(Some(e.to_string())))?;
     let client = reqwest::Client::new();
+    let mut hasura_path = PathBuf::from("http://localhost:8080");
+    hasura_path.push("api");
+    hasura_path.push("rest");
+    hasura_path.push(path.as_path().file_name().unwrap());
     let res = client
-        .post(format!(
-            "http://localhost:8080/{}",
-            path.into_os_string()
-                .into_string()
-                .map_err(|_| BadRequest(Some(String::from("Invalid path"))))?
-        ))
+        .post(hasura_path.to_string_lossy().to_string())
         .body(body.into_inner())
         .header("Authorization", auth.raw)
         .send()

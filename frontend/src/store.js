@@ -668,7 +668,7 @@ const actions = {
   },
 
   async socle({ commit }) {
-    const answer = await axios.get("socle");
+    const answer = await axios.post("socle");
     commit("setSocle", answer.data);
   },
 
