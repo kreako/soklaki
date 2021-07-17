@@ -2,7 +2,7 @@
   <div class="my-4 px-2">
     <Loading :loading="loading">
       <div class="form-label">Quelques statistiques...</div>
-      <div v-if="stats.incompleteObservationsCount > 0" class="flex flex-row">
+      <div v-if="stats.incomplete_observations_count > 0" class="flex flex-row">
         <div class="flex-grow"></div>
         <div class="flex-grow-0">
           <router-link
@@ -12,9 +12,9 @@
             }"
           >
             <span class="text-xl">
-              {{ stats.incompleteObservationsCount }}
+              {{ stats.incomplete_observations_count }}
             </span>
-            <span v-if="stats.incompleteObservationsCount > 1">
+            <span v-if="stats.incomplete_observations_count > 1">
               observations incomplètes
             </span>
             <span v-else> observation incomplète </span>
@@ -83,7 +83,7 @@
       <div
         class="grid grid-cols-1 md:grid-cols-2 md:gap-y-20 md:gap-x-32 mt-20"
       >
-        <div v-for="week in last4Weeks">
+        <div v-for="week in stats.weeks">
           <div
             class="
               mt-12
@@ -94,7 +94,7 @@
               font-bold
             "
           >
-            Semaine du {{ week.weekStart }}
+            Semaine du {{ week.week_start }}
           </div>
           <div class="mt-2">
             <div
@@ -170,49 +170,10 @@ const userById = computed(() => store.getters.userById);
 
 const loading = ref(true);
 
-const stats = computed(() => store.state.statsSummary);
-
-const addTotal = (week) => {
-  week.observations = 0;
-  week.evaluations = 0;
-  for (const count of week.counts) {
-    week.observations += count.observations;
-    week.evaluations += count.evaluations;
-  }
-  return week;
-};
-
-const last4Weeks = computed(() => {
-  const weeks = [];
-
-  // First search for the monday of this week - getDay() = 1
-  let monday = new Date();
-  while (monday.getDay() !== 1) {
-    monday.setDate(monday.getDate() - 1);
-  }
-  monday = dateToString(monday);
-
-  let count = 0;
-  for (const week of store.state.statsSummary.weeks) {
-    if (count > 3) {
-      return weeks;
-    }
-    if (count > 0) {
-      weeks.push(addTotal(week));
-      count += 1;
-    } else {
-      if (week.weekStart == monday) {
-        weeks.push(addTotal(week));
-        count = 1;
-      }
-    }
-  }
-  return weeks;
-});
+const stats = ref({});
 
 onMounted(async () => {
-  await until(() => store.state.currentPeriod).not.toBeNull();
-  await store.dispatch("statsSummary", { periodId: store.state.currentPeriod });
+  stats.value = await store.dispatch("homeContent");
   loading.value = false;
 });
 </script>

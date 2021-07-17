@@ -1538,6 +1538,11 @@ const actions = {
     });
     return answer.data;
   },
+
+  async homeContent() {
+    const answer = await axios.get("home_content/");
+    return answer.data;
+  },
 };
 
 const buildStore = () => {

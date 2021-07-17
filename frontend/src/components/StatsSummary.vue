@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-row items-center space-x-2">
     <div>
-      {{ stats.studentsCount }}
+      {{ stats.students_count }}
     </div>
     <div>élèves</div>
     <div class="text-xs text-gray-500">
-      {{ stats.competenciesCount }} Compétences
+      {{ stats.competencies_count }} Compétences
     </div>
   </div>
   <div>
