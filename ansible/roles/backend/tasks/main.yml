@@ -1,0 +1,41 @@
+- name: Create a .env for dotenv
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ soklaki_co_dir }}/backend/.env"
+
+- name: Create a Rocket.toml
+  ansible.builtin.template:
+    src: Rocket.toml.j2
+    dest: "{{ soklaki_co_dir }}/backend/Rocket.toml"
+
+- name: Remove backend container
+  containers.podman.podman_container:
+    name: soklaki-backend
+    state: absent
+
+- name: Remove soklaki backend image
+  containers.podman.podman_image:
+    name: soklaki-backend
+    state: absent
+
+- name: Build soklaki backend image
+  containers.podman.podman_image:
+    name: soklaki-backend
+    path: "{{ soklaki_co_dir }}/backend"
+
+- name: Create a backend container
+  containers.podman.podman_container:
+    name: soklaki-backend
+    image: soklaki-backend
+    restart_policy: always
+    pod: soklaki
+    volume:
+      - "{{reports_dir}}:/reports:z"
+    env:
+      ARGON2_SECRET: "{{ argon2_secret }}"
+      HASURA_GRAPHQL_JWT_SECRET: "{{ hasura_graphql_jwt_secret }}"
+      INVITATION_SECRET: "{{ invitation_secret }}"
+      PING_SECRET: "{{ ping_secret }}"
+      REPORTS_DIR: "/reports"
+    log_opt: path={{podman_logs_dir}}/backend.json max_size=100mb
+    state: started
