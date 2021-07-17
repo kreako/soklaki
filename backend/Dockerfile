@@ -10,6 +10,8 @@ RUN cargo build --release
 
 # Now build the complete app
 RUN sed -i 's#dummy.rs#src/main.rs#' Cargo.toml
+RUN rm -rf ./target/release/backend*
+RUN rm -rf ./target/release/deps/backend*
 COPY . .
 RUN cargo build --release
 
