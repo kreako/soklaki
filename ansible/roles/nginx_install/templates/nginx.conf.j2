@@ -51,7 +51,7 @@ http {
                 }
 
                 location /api {
-                    rewrite /api/(.*) /api/rest/$1 break;
+                    rewrite /api/(.*) /$1 break;
                     proxy_pass http://127.0.0.1:{{ domain.proxy_pass_port }}/;
                     proxy_http_version 1.1;
                     proxy_set_header Upgrade $http_upgrade;

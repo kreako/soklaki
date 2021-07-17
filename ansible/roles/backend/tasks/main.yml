@@ -13,10 +13,10 @@
     name: soklaki-backend
     state: absent
 
-- name: Remove soklaki backend image
-  containers.podman.podman_image:
-    name: soklaki-backend
-    state: absent
+#- name: Remove soklaki backend image
+#containers.podman.podman_image:
+#name: soklaki-backend
+#state: absent
 
 - name: Build soklaki backend image
   containers.podman.podman_image:
