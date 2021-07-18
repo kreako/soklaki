@@ -2,9 +2,9 @@
 FROM rust:1.53
 
 WORKDIR /app
-COPY target/release/backend /app
-COPY Rocket.toml /app
-COPY .env /app
+COPY target/release/backend .
+COPY Rocket.toml .
+COPY .env .
 
 # Launch from target dir
 CMD [ "/app/backend" ]
