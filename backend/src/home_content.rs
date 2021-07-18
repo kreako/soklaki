@@ -6,6 +6,7 @@ use serde::Serialize;
 
 use super::db;
 use super::jwt;
+use super::stats;
 
 #[derive(Debug, Serialize)]
 struct CurrentTotal {
@@ -47,26 +48,34 @@ pub struct StatsSummary {
     weeks: Vec<StatsWeek>,
 }
 
-fn current_period_id(
+struct Period {
+    id: i32,
+    end: NaiveDate,
+}
+
+fn current_period(
     client: &mut postgres::Client,
-    group_id: i64,
-) -> Result<i32, postgres::error::Error> {
+    group_id: &i64,
+) -> Result<Period, postgres::error::Error> {
     let row = client.query_one(
         "
-SELECT eval_period.id
+SELECT eval_period.id, eval_period.end
 	FROM eval_period_current
 	JOIN eval_period
 		ON eval_period_current.id = eval_period.id
 	WHERE eval_period.group_id = $1
 	",
-        &[&group_id],
+        &[group_id],
     )?;
-    Ok(row.get(0))
+    Ok(Period {
+        id: row.get(0),
+        end: row.get(1),
+    })
 }
 
 fn count_incomplete_observations(
     client: &mut postgres::Client,
-    period_id: i32,
+    period_id: &i32,
 ) -> Result<i32, postgres::error::Error> {
     // No need to filter by group_id here
     // because eval_observation_period view definition
@@ -85,7 +94,7 @@ SELECT COUNT(eval_observation.id)::int
         AND eval_observation_period.eval_period_id = $1
         AND eval_observation.active = true
 ",
-        &[&period_id],
+        &[period_id],
     )?;
 
     Ok(row.get(0))
@@ -100,7 +109,7 @@ struct CountByCycle {
 
 fn students_count_by_cycle(
     client: &mut postgres::Client,
-    period_id: i32,
+    period_id: &i32,
 ) -> Result<CountByCycle, postgres::error::Error> {
     let mut count = CountByCycle {
         c1: 0,
@@ -119,7 +128,7 @@ SELECT COUNT(student.id)::int, student_current_cycle.current_cycle
     WHERE eval_period_id = $1
     GROUP BY student_current_cycle.current_cycle
 ",
-        &[&period_id],
+        &[period_id],
     )? {
         let c = row.get(0);
         let cycle: &str = row.get(1);
@@ -144,7 +153,7 @@ SELECT COUNT(student.id)::int, student_current_cycle.current_cycle
 
 fn competencies_count_by_cycle(
     client: &mut postgres::Client,
-    group_id: i64,
+    group_id: &i64,
 ) -> Result<CountByCycle, postgres::error::Error> {
     let mut count = CountByCycle {
         c1: 0,
@@ -160,7 +169,7 @@ SELECT COUNT(id)::int, cycle::text
         AND active = true
     GROUP BY cycle
 ",
-        &[&group_id],
+        &[group_id],
     )? {
         let c = row.get(0);
         let cycle: &str = row.get(1);
@@ -192,7 +201,7 @@ struct CurrentTotalByCycle {
 
 fn comments_count_by_cycle(
     client: &mut postgres::Client,
-    period_id: i32,
+    period_id: &i32,
 ) -> Result<CurrentTotalByCycle, postgres::error::Error> {
     let mut count = CurrentTotalByCycle {
         c1: CurrentTotal {
@@ -218,7 +227,7 @@ SELECT cycle::text, total::int, comments::int
     FROM eval_comment_stats_summary
     WHERE period_id = $1
 ",
-        &[&period_id],
+        &[period_id],
     )? {
         let cycle: &str = row.get(0);
         let total = row.get(1);
@@ -246,87 +255,9 @@ SELECT cycle::text, total::int, comments::int
     Ok(count)
 }
 
-struct EvalCount {
-    total: i32,
-    observations: i32,
-    evaluations: i32,
-}
-
-struct EvalByCycle {
-    c1: EvalCount,
-    c2: EvalCount,
-    c3: EvalCount,
-    c4: EvalCount,
-}
-
-fn eval_count_by_cycle(
-    client: &mut postgres::Client,
-    period_id: i32,
-) -> Result<EvalByCycle, postgres::error::Error> {
-    let mut count = EvalByCycle {
-        c1: EvalCount {
-            observations: 0,
-            evaluations: 0,
-            total: 0,
-        },
-        c2: EvalCount {
-            observations: 0,
-            evaluations: 0,
-            total: 0,
-        },
-        c3: EvalCount {
-            observations: 0,
-            evaluations: 0,
-            total: 0,
-        },
-        c4: EvalCount {
-            observations: 0,
-            evaluations: 0,
-            total: 0,
-        },
-    };
-    for row in client.query(
-        "
-SELECT cycle::text, total::int, observations::int, evaluations::int
-    FROM eval_stats_summary
-    WHERE period_id = $1
-",
-        &[&period_id],
-    )? {
-        let cycle: &str = row.get(0);
-        let total = row.get(1);
-        let observations = row.get(2);
-        let evaluations = row.get(3);
-        match cycle {
-            "c1" => {
-                count.c1.observations = observations;
-                count.c1.evaluations = evaluations;
-                count.c1.total = total;
-            }
-            "c2" => {
-                count.c2.observations = observations;
-                count.c2.evaluations = evaluations;
-                count.c2.total = total;
-            }
-            "c3" => {
-                count.c3.observations = observations;
-                count.c3.evaluations = evaluations;
-                count.c3.total = total;
-            }
-            "c4" => {
-                count.c4.observations = observations;
-                count.c4.evaluations = evaluations;
-                count.c4.total = total;
-            }
-            _ => panic!("Unknown cycle"),
-        }
-    }
-    Ok(count)
-}
-
 fn weeks_stats(
     client: &mut postgres::Client,
-    period_id: i32,
+    period_id: &i32,
 ) -> Result<Vec<StatsWeek>, postgres::error::Error> {
     let week_starts: Vec<NaiveDate> = client
         .query(
@@ -414,47 +345,48 @@ SELECT user_id::int, evaluations_count::int
 
 #[get("/")]
 pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
-    info!("home_content current_period_id");
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
+    info!("home_content current_period");
     let group_id1 = group_id.clone();
-    let period_id = db
-        .run(move |client| current_period_id(client, group_id1))
+    let period = db
+        .run(move |client| current_period(client, &group_id1))
         .await
         .unwrap();
     info!("home_content count_incomplete_observations");
-    let period_id1 = period_id.clone();
+    let period_id1 = period.id.clone();
     let incomplete_observations_count = db
-        .run(move |client| count_incomplete_observations(client, period_id1))
+        .run(move |client| count_incomplete_observations(client, &period_id1))
         .await
         .unwrap();
     info!("home_content students_count_by_cycle");
-    let period_id2 = period_id.clone();
+    let period_id2 = period.id.clone();
     let students_count = db
-        .run(move |client| students_count_by_cycle(client, period_id2))
+        .run(move |client| students_count_by_cycle(client, &period_id2))
         .await
         .unwrap();
     info!("home_content competencies_count_by_cycle");
     let group_id2 = group_id.clone();
     let competencies_count = db
-        .run(move |client| competencies_count_by_cycle(client, group_id2))
+        .run(move |client| competencies_count_by_cycle(client, &group_id2))
         .await
         .unwrap();
     info!("home_content comments_count_by_cycle");
-    let period_id3 = period_id.clone();
+    let period_id3 = period.id.clone();
     let comments_count = db
-        .run(move |client| comments_count_by_cycle(client, period_id3))
+        .run(move |client| comments_count_by_cycle(client, &period_id3))
         .await
         .unwrap();
-    info!("home_content eval_count_by_cycle");
-    let period_id4 = period_id.clone();
-    let eval_count = db
-        .run(move |client| eval_count_by_cycle(client, period_id4))
+    info!("home_content eval_stats_summary");
+    let group_id3 = group_id.clone();
+    let period_end = period.end.clone();
+    let stats_summary = db
+        .run(move |client| stats::eval_stats_summary(client, &group_id3, &period_end))
         .await
         .unwrap();
     info!("home_content week_stats");
-    let period_id5 = period_id.clone();
+    let period_id5 = period.id.clone();
     let weeks = db
-        .run(move |client| weeks_stats(client, period_id5))
+        .run(move |client| weeks_stats(client, &period_id5))
         .await
         .unwrap();
 
@@ -468,12 +400,12 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
                 total: comments_count.c1.total,
             },
             observations: CurrentTotal {
-                current: eval_count.c1.observations,
-                total: eval_count.c1.total,
+                current: stats_summary.c1.observations,
+                total: stats_summary.c1.total,
             },
             evaluations: CurrentTotal {
-                current: eval_count.c1.evaluations,
-                total: eval_count.c1.total,
+                current: stats_summary.c1.evaluations,
+                total: stats_summary.c1.total,
             },
         },
         c2: StatsSummaryByCycle {
@@ -484,12 +416,12 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
                 total: comments_count.c2.total,
             },
             observations: CurrentTotal {
-                current: eval_count.c2.observations,
-                total: eval_count.c2.total,
+                current: stats_summary.c2.observations,
+                total: stats_summary.c2.total,
             },
             evaluations: CurrentTotal {
-                current: eval_count.c2.evaluations,
-                total: eval_count.c2.total,
+                current: stats_summary.c2.evaluations,
+                total: stats_summary.c2.total,
             },
         },
         c3: StatsSummaryByCycle {
@@ -500,12 +432,12 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
                 total: comments_count.c3.total,
             },
             observations: CurrentTotal {
-                current: eval_count.c3.observations,
-                total: eval_count.c3.total,
+                current: stats_summary.c3.observations,
+                total: stats_summary.c3.total,
             },
             evaluations: CurrentTotal {
-                current: eval_count.c3.evaluations,
-                total: eval_count.c3.total,
+                current: stats_summary.c3.evaluations,
+                total: stats_summary.c3.total,
             },
         },
         c4: StatsSummaryByCycle {
@@ -516,12 +448,12 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
                 total: comments_count.c4.total,
             },
             observations: CurrentTotal {
-                current: eval_count.c4.observations,
-                total: eval_count.c4.total,
+                current: stats_summary.c4.observations,
+                total: stats_summary.c4.total,
             },
             evaluations: CurrentTotal {
-                current: eval_count.c4.evaluations,
-                total: eval_count.c4.total,
+                current: stats_summary.c4.evaluations,
+                total: stats_summary.c4.total,
             },
         },
         weeks: weeks,
