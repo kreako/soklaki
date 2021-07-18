@@ -8,15 +8,19 @@
     src: Rocket.toml.j2
     dest: "{{ soklaki_co_dir }}/backend/Rocket.toml"
 
+- name: Compile backend app
+  ansible.builtin.shell:
+    cmd: podman run --rm -v "{{ soklaki_co_dir }}/backend":/app:z -w /app rust:1.53 cargo build --release
+
 - name: Remove backend container
   containers.podman.podman_container:
     name: soklaki-backend
     state: absent
 
-#- name: Remove soklaki backend image
-#containers.podman.podman_image:
-#name: soklaki-backend
-#state: absent
+- name: Remove soklaki backend image
+  containers.podman.podman_image:
+    name: soklaki-backend
+    state: absent
 
 - name: Build soklaki backend image
   containers.podman.podman_image:
