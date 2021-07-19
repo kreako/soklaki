@@ -16,6 +16,7 @@ struct CurrentTotal {
 
 #[derive(Debug, Serialize)]
 struct StatsSummaryByCycle {
+    progress: i32,
     students_count: i32,
     competencies_count: i32,
     comments: CurrentTotal,
@@ -41,6 +42,7 @@ struct StatsWeek {
 #[derive(Debug, Serialize)]
 pub struct StatsSummary {
     incomplete_observations_count: i32,
+    progress: i32,
     c1: StatsSummaryByCycle,
     c2: StatsSummaryByCycle,
     c3: StatsSummaryByCycle,
@@ -390,9 +392,11 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
         .await
         .unwrap();
 
-    Json(StatsSummary {
+    let mut summary = StatsSummary {
         incomplete_observations_count: incomplete_observations_count,
+        progress: 0,
         c1: StatsSummaryByCycle {
+            progress: 0,
             students_count: students_count.c1,
             competencies_count: competencies_count.c1,
             comments: CurrentTotal {
@@ -409,6 +413,7 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
             },
         },
         c2: StatsSummaryByCycle {
+            progress: 0,
             students_count: students_count.c2,
             competencies_count: competencies_count.c2,
             comments: CurrentTotal {
@@ -425,6 +430,7 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
             },
         },
         c3: StatsSummaryByCycle {
+            progress: 0,
             students_count: students_count.c3,
             competencies_count: competencies_count.c3,
             comments: CurrentTotal {
@@ -441,6 +447,7 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
             },
         },
         c4: StatsSummaryByCycle {
+            progress: 0,
             students_count: students_count.c4,
             competencies_count: competencies_count.c4,
             comments: CurrentTotal {
@@ -457,5 +464,30 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
             },
         },
         weeks: weeks,
-    })
+    };
+    summary.c1.progress = (100 as f64
+        * ((summary.c1.comments.current as f64) / (summary.c1.comments.total as f64)
+            + (summary.c1.observations.current as f64) / (summary.c1.observations.total as f64)
+            + (summary.c1.evaluations.current as f64) / (summary.c1.evaluations.total as f64))
+        / 3 as f64) as i32;
+    summary.c2.progress = (100 as f64
+        * ((summary.c2.comments.current as f64) / (summary.c2.comments.total as f64)
+            + (summary.c2.observations.current as f64) / (summary.c2.observations.total as f64)
+            + (summary.c2.evaluations.current as f64) / (summary.c2.evaluations.total as f64))
+        / 3 as f64) as i32;
+    summary.c3.progress = (100 as f64
+        * ((summary.c3.comments.current as f64) / (summary.c3.comments.total as f64)
+            + (summary.c3.observations.current as f64) / (summary.c3.observations.total as f64)
+            + (summary.c3.evaluations.current as f64) / (summary.c3.evaluations.total as f64))
+        / 3 as f64) as i32;
+    summary.c4.progress = (100 as f64
+        * ((summary.c4.comments.current as f64) / (summary.c4.comments.total as f64)
+            + (summary.c4.observations.current as f64) / (summary.c4.observations.total as f64)
+            + (summary.c4.evaluations.current as f64) / (summary.c4.evaluations.total as f64))
+        / 3 as f64) as i32;
+    summary.progress =
+        (((summary.c1.progress + summary.c2.progress + summary.c3.progress + summary.c4.progress)
+            as f64)
+            / 4 as f64) as i32;
+    Json(summary)
 }
