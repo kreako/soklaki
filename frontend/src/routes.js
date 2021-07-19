@@ -121,6 +121,10 @@ const routes = [
         path: "/report-draft/:periodId/:cycle/:studentId",
         component: () => import("./pages/ReportDraft.vue"),
       },
+      {
+        path: "/help",
+        component: () => import("./pages/Help.vue"),
+      },
     ],
   },
 ];
