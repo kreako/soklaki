@@ -25,8 +25,15 @@ struct StatsSummaryByCycle {
 }
 
 #[derive(Debug, Serialize)]
+struct User {
+    id: i32,
+    firstname: String,
+    lastname: String,
+}
+
+#[derive(Debug, Serialize)]
 struct WeekCount {
-    user: i32,
+    user: User,
     observations: i32,
     evaluations: i32,
 }
@@ -281,8 +288,10 @@ SELECT week_start::date
         let mut counts = vec![];
         for row in client.query(
             "
-SELECT user_id::int, observations_count::int
+SELECT public.user.id::int, observations_count::int, public.user.firstname, public.user.lastname
     FROM eval_observations_count_period_weeks
+    JOIN public.user
+        ON public.user.id = eval_observations_count_period_weeks.user_id
     WHERE eval_period_id = $1
         AND week_start::date = $2
 ",
@@ -290,16 +299,24 @@ SELECT user_id::int, observations_count::int
         )? {
             let user_id = row.get(0);
             let observations_count = row.get(1);
+            let user_firstname = row.get(2);
+            let user_lastname = row.get(3);
             counts.push(WeekCount {
-                user: user_id,
+                user: User {
+                    id: user_id,
+                    firstname: user_firstname,
+                    lastname: user_lastname,
+                },
                 observations: observations_count,
                 evaluations: 0,
             })
         }
         for row in client.query(
             "
-SELECT user_id::int, evaluations_count::int
+SELECT user_id::int, evaluations_count::int, public.user.firstname, public.user.lastname
     FROM eval_evaluations_count_period_weeks
+    JOIN public.user
+        ON public.user.id = eval_evaluations_count_period_weeks.user_id
     WHERE eval_period_id = $1
         AND week_start::date = $2
 ",
@@ -307,7 +324,13 @@ SELECT user_id::int, evaluations_count::int
         )? {
             let user_id = row.get(0);
             let evaluations_count = row.get(1);
-            let idx = match counts.iter().enumerate().find(|(_, e)| e.user == user_id) {
+            let user_firstname = row.get(2);
+            let user_lastname = row.get(3);
+            let idx = match counts
+                .iter()
+                .enumerate()
+                .find(|(_, e)| e.user.id == user_id)
+            {
                 Some((i, _)) => Some(i),
                 None => None,
             };
@@ -317,7 +340,11 @@ SELECT user_id::int, evaluations_count::int
                 }
                 None => {
                     counts.push(WeekCount {
-                        user: user_id,
+                        user: User {
+                            id: user_id,
+                            firstname: user_firstname,
+                            lastname: user_lastname,
+                        },
                         observations: 0,
                         evaluations: evaluations_count,
                     });

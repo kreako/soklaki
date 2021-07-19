@@ -103,8 +103,8 @@
                 class="mt-2"
               >
                 <div>
-                  {{ idx + 1 }}. {{ userById(count.user).firstname }}&nbsp;{{
-                    userById(count.user).lastname
+                  {{ idx + 1 }}. {{ count.user.firstname }}&nbsp;{{
+                    count.user.lastname
                   }}
                 </div>
 
@@ -171,8 +171,6 @@ import MascotteTip from "../components/MascotteTip.vue";
 useTitle("Accueil - soklaki.fr");
 
 const store = useStore();
-
-const userById = computed(() => store.getters.userById);
 
 const loading = ref(true);
 
