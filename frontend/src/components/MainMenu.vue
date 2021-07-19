@@ -94,7 +94,7 @@
               </router-link>
             </div>
             <div class="hover:text-teal-500">
-              <router-link to="/">
+              <router-link to="/help">
                 <div class="group flex flex-row items-center space-x-2">
                   <IconSupport
                     class="w-4 text-gray-400 group-hover:text-teal-500"
