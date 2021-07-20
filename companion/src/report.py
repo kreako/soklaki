@@ -117,9 +117,15 @@ async def report(gql_client, reports_dir, input: ReportInput):
                 e.write(f"{l2['full_rank']} {l2['text']}")
                 e.empty_line()
 
+            if l2_raw["competencies"]:
+                output_competency_legend(pdf)
+
             for competency_raw in l2_raw["competencies"]:
                 competency_id = competency_raw["id"]
                 output_competency_table(pdf, competency_id, data)
+
+        if l1_raw["competencies"]:
+            output_competency_legend(pdf)
 
         for competency_raw in l1_raw["competencies"]:
             competency_id = competency_raw["id"]
@@ -323,9 +329,11 @@ def output_bar_progression(pdf, not_acquired, in_progress, acquired, tiptop, tot
     pdf.set_y(y + 10)
 
 
+MARKER_WIDTH = 8
+RIGHT_STOP = 200 - 4 * MARKER_WIDTH  # 10 for page right margin
+
+
 def output_competency_table(pdf, competency_id, data):
-    MARKER_WIDTH = 8
-    RIGHT_STOP = 200 - 4 * MARKER_WIDTH  # 10 for page right margin
     competency = data["competency_by_id"][competency_id]
     evaluations = data["evaluations_by_competency_id"][competency_id]
     if evaluations:
@@ -383,6 +391,57 @@ def output_competency_table(pdf, competency_id, data):
             e.fill_white()
         e.rect(RIGHT_STOP + 3 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
         e.borders(RIGHT_STOP + 3 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+
+
+def output_competency_legend(pdf):
+    ANGLE = 60
+    y = pdf.get_y()
+    pdf.set_y(y)
+    pdf.set_x(RIGHT_STOP + 0 * MARKER_WIDTH + 2)
+    with pdf.rotation(angle=ANGLE):
+        with pdf.edit().text_xs() as e:
+            pdf.cell(
+                w=0,
+                h=e.line_height,
+                txt="Insuffisante",
+                align="L",
+                ln=1,
+            )
+    pdf.set_y(y)
+    pdf.set_x(RIGHT_STOP + 1 * MARKER_WIDTH + 2)
+    with pdf.rotation(angle=ANGLE):
+        with pdf.edit().text_xs() as e:
+            pdf.cell(
+                w=0,
+                h=e.line_height,
+                txt="Fragile",
+                align="L",
+                ln=1,
+            )
+    pdf.set_y(y)
+    pdf.set_x(RIGHT_STOP + 2 * MARKER_WIDTH + 2)
+    with pdf.rotation(angle=ANGLE):
+        with pdf.edit().text_xs() as e:
+            pdf.cell(
+                w=0,
+                h=e.line_height,
+                txt="Satisfaisante",
+                align="L",
+                ln=1,
+            )
+    pdf.set_y(y)
+    pdf.set_x(RIGHT_STOP + 3 * MARKER_WIDTH + 2)
+    with pdf.rotation(angle=ANGLE):
+        with pdf.edit().text_xs() as e:
+            pdf.cell(
+                w=0,
+                h=e.line_height,
+                txt="Bonne",
+                align="L",
+                ln=1,
+            )
+    # pdf.set_y(pdf.get_y() + 5)
+    # pdf.set_x(10)
 
 
 def output_competency(pdf, competency_id, data, output_domain, output_sub_domain):
@@ -523,6 +582,16 @@ class PdfWriter(object):
     def text_sm(self):
         self.pdf.set_font_size(8)
         self.line_height = 4
+        return self
+
+    def text_xs(self):
+        self.pdf.set_font_size(6)
+        self.line_height = 2
+        return self
+
+    def text_xxs(self):
+        self.pdf.set_font_size(5)
+        self.line_height = 1
         return self
 
     def text_gray_700(self):
