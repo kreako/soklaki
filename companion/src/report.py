@@ -343,8 +343,6 @@ def output_competency_table(pdf, competency_id, data):
             )
         )
         y = pdf.get_y()
-        if competency["full_rank"] == "2.1.3.":
-            print(y, lines, e.line_height)
         if y + lines * e.line_height >= 297 - 15 - 10:  # 10 margin, 15 footer
             pdf.add_page()
             y = pdf.get_y()
