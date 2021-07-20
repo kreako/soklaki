@@ -436,6 +436,7 @@ class PDF(FPDF):
             "dejavu-bold", fname=CURRENT_DIR / "DejaVuSerif-Bold.ttf", uni=True
         )
         self.add_font("dejavu-mono", fname=CURRENT_DIR / "DejaVuSansMono.ttf", uni=True)
+        self.black_and_white = True
 
     def footer(self):
         # Position at 1.5 cm from bottom
@@ -562,12 +563,44 @@ class PdfWriter(object):
         self.pdf.set_fill_color(0xFF, 0xFF, 0xFF)
         return self
 
+    def fill_gray_50(self):
+        self.pdf.set_fill_color(0xF9, 0xFA, 0xFB)
+        return self
+
+    def fill_gray_100(self):
+        self.pdf.set_fill_color(0xF3, 0xF4, 0xF6)
+        return self
+
     def fill_gray_200(self):
         self.pdf.set_fill_color(0xE5, 0xE7, 0xEB)
         return self
 
+    def fill_gray_300(self):
+        self.pdf.set_fill_color(0xD1, 0xD5, 0xDB)
+        return self
+
+    def fill_gray_400(self):
+        self.pdf.set_fill_color(0x9C, 0xA3, 0xAF)
+        return self
+
+    def fill_gray_500(self):
+        self.pdf.set_fill_color(0x6B, 0x72, 0x80)
+        return self
+
+    def fill_gray_600(self):
+        self.pdf.set_fill_color(0x4B, 0x55, 0x63)
+        return self
+
     def fill_gray_700(self):
         self.pdf.set_fill_color(0x37, 0x41, 0x51)
+        return self
+
+    def fill_gray_800(self):
+        self.pdf.set_fill_color(0x1F, 0x29, 0x37)
+        return self
+
+    def fill_gray_900(self):
+        self.pdf.set_fill_color(0x11, 0x18, 0x27)
         return self
 
     def fill_black(self):
@@ -575,14 +608,20 @@ class PdfWriter(object):
         return self
 
     def fill_red_600(self):
+        if self.pdf.black_and_white:
+            return self.fill_gray_600()
         self.pdf.set_fill_color(0xDC, 0x26, 0x26)
         return self
 
     def fill_yellow_600(self):
+        if self.pdf.black_and_white:
+            return self.fill_gray_500()
         self.pdf.set_fill_color(0xD9, 0x77, 0x06)
         return self
 
     def fill_green_600(self):
+        if self.pdf.black_and_white:
+            return self.fill_gray_400()
         self.pdf.set_fill_color(0x05, 0x96, 0x69)
         return self
 
@@ -591,6 +630,8 @@ class PdfWriter(object):
         return self
 
     def fill_pink_600(self):
+        if self.pdf.black_and_white:
+            return self.fill_gray_300()
         self.pdf.set_fill_color(0xDB, 0x27, 0x77)
         return self
 
