@@ -800,7 +800,7 @@ query Report(
         created_at
         updated_at
         date
-        competencies {
+        competencies(where: {competency: {active: {_eq: true}}}) {
             competency_id
         }
         text
