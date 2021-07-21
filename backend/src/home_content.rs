@@ -27,8 +27,8 @@ struct StatsSummaryByCycle {
 #[derive(Debug, Serialize)]
 struct User {
     id: i32,
-    firstname: String,
-    lastname: String,
+    firstname: Option<String>,
+    lastname: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
