@@ -789,7 +789,7 @@ query Report(
     observations: eval_observation(
         where: {
             active: {_eq: true}
-            competencies: {competency: {cycle: {_eq: $cycle}}, active: {_eq: true}}
+            competencies: {competency: {cycle: {_eq: $cycle}, active: {_eq: true}}}
             complete: {complete: {_eq: true}}
             date: {_lte: $period_end}
             students: {student_id: {_eq: $student_id}}
