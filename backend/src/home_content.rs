@@ -1,5 +1,5 @@
 use chrono::naive::NaiveDate;
-use log::info;
+use log::debug;
 use rocket::serde::json::Json;
 use rocket_sync_db_pools::postgres;
 use serde::Serialize;
@@ -375,44 +375,44 @@ SELECT user_id::int, evaluations_count::int, public.user.firstname, public.user.
 #[get("/")]
 pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
-    info!("home_content current_period");
+    debug!("home_content current_period");
     let group_id1 = group_id.clone();
     let period = db
         .run(move |client| current_period(client, &group_id1))
         .await
         .unwrap();
-    info!("home_content count_incomplete_observations");
+    debug!("home_content count_incomplete_observations");
     let period_id1 = period.id.clone();
     let incomplete_observations_count = db
         .run(move |client| count_incomplete_observations(client, &period_id1))
         .await
         .unwrap();
-    info!("home_content students_count_by_cycle");
+    debug!("home_content students_count_by_cycle");
     let period_id2 = period.id.clone();
     let students_count = db
         .run(move |client| students_count_by_cycle(client, &period_id2))
         .await
         .unwrap();
-    info!("home_content competencies_count_by_cycle");
+    debug!("home_content competencies_count_by_cycle");
     let group_id2 = group_id.clone();
     let competencies_count = db
         .run(move |client| competencies_count_by_cycle(client, &group_id2))
         .await
         .unwrap();
-    info!("home_content comments_count_by_cycle");
+    debug!("home_content comments_count_by_cycle");
     let period_id3 = period.id.clone();
     let comments_count = db
         .run(move |client| comments_count_by_cycle(client, &period_id3))
         .await
         .unwrap();
-    info!("home_content eval_stats_summary");
+    debug!("home_content eval_stats_summary");
     let group_id3 = group_id.clone();
     let period_end = period.end.clone();
     let stats_summary = db
         .run(move |client| stats::eval_stats_summary(client, &group_id3, &period_end))
         .await
         .unwrap();
-    info!("home_content week_stats");
+    debug!("home_content week_stats");
     let period_id5 = period.id.clone();
     let weeks = db
         .run(move |client| weeks_stats(client, &period_id5))
