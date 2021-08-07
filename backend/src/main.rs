@@ -55,18 +55,16 @@ async fn forward_to_hasura(
     }
 }
 
-#[post("/ping", data = "<data>")]
-async fn forward_ping_to_hasura(
-    data: Data<'_>,
-) -> Result<content::Json<String>, BadRequest<String>> {
-    // Try to forward ping request to hasura
+async fn forward_unauthentified_to_hasura(data: Data<'_>, api_end: &'static str) -> Result<content::Json<String>, BadRequest<String>> {
+    // Try to forward request to hasura
     let body = data
         .open(ByteUnit::Megabyte(5))
         .into_bytes()
         .await
         .map_err(|e| BadRequest(Some(e.to_string())))?;
     let client = reqwest::Client::new();
-    let hasura_path = PathBuf::from("http://localhost:8080/api/rest/ping");
+    let mut hasura_path = PathBuf::from("http://localhost:8080/api/rest/");
+    hasura_path.push(api_end);
     let res = client
         .post(hasura_path.to_string_lossy().to_string())
         .body(body.into_inner())
@@ -86,6 +84,29 @@ async fn forward_ping_to_hasura(
                 .map_err(|e| BadRequest(Some(e.to_string())))?,
         )))
     }
+    
+}
+
+#[post("/ping", data = "<data>")]
+async fn forward_ping_to_hasura(
+    data: Data<'_>,
+) -> Result<content::Json<String>, BadRequest<String>> {
+    forward_unauthentified_to_hasura(data, "ping").await
+}
+
+#[post("/login", data = "<data>")]
+async fn forward_login_to_hasura(
+    data: Data<'_>,
+) -> Result<content::Json<String>, BadRequest<String>> {
+    forward_unauthentified_to_hasura(data, "login").await
+}
+
+#[post("/signup", data = "<data>")]
+async fn forward_signup_to_hasura(
+    data: Data<'_>,
+) -> Result<content::Json<String>, BadRequest<String>> {
+    forward_unauthentified_to_hasura(data, "signup").await
+}
 }
 
 #[launch]
@@ -94,5 +115,5 @@ fn rocket() -> _ {
     rocket::build()
         .attach(db::Db::fairing())
         .mount("/home_content", routes![home_content::index])
-        .mount("/", routes![forward_ping_to_hasura, forward_to_hasura])
+        .mount("/", routes![forward_ping_to_hasura, forward_login_to_hasura, forward_signup_to_hasura, forward_to_hasura])
 }
