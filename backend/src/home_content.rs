@@ -1,11 +1,12 @@
 use chrono::naive::NaiveDate;
-use log::debug;
 use rocket::serde::json::Json;
 use rocket_sync_db_pools::postgres;
 use serde::Serialize;
+use tracing::debug;
 
 use super::db;
 use super::jwt;
+use super::period;
 use super::stats;
 
 #[derive(Debug, Serialize)]
@@ -55,31 +56,6 @@ pub struct StatsSummary {
     c3: StatsSummaryByCycle,
     c4: StatsSummaryByCycle,
     weeks: Vec<StatsWeek>,
-}
-
-struct Period {
-    id: i32,
-    end: NaiveDate,
-}
-
-fn current_period(
-    client: &mut postgres::Client,
-    group_id: &i64,
-) -> Result<Period, postgres::error::Error> {
-    let row = client.query_one(
-        "
-SELECT eval_period.id, eval_period.end
-	FROM eval_period_current
-	JOIN eval_period
-		ON eval_period_current.id = eval_period.id
-	WHERE eval_period.group_id = $1
-	",
-        &[group_id],
-    )?;
-    Ok(Period {
-        id: row.get(0),
-        end: row.get(1),
-    })
 }
 
 fn count_incomplete_observations(
@@ -378,7 +354,7 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
     debug!("home_content current_period");
     let group_id1 = group_id.clone();
     let period = db
-        .run(move |client| current_period(client, &group_id1))
+        .run(move |client| period::current_period_end(client, &group_id1))
         .await
         .unwrap();
     debug!("home_content count_incomplete_observations");
