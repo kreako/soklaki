@@ -5,6 +5,7 @@
     - git
     - db
     - hasura
+    - backend
     - companion
     - exporter
     - frontend
