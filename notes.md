@@ -24,7 +24,7 @@ Take a look at ansible/roles/podman to see if something is missing
 
 ### Creation
 
-podman pod create -p 8080:8080 -p 5432:5432 -p 8000:8000 --name soklaki
+podman pod create -p 8080:8080 -p 5432:5432 -p 8000:8000 -p 8001:8001 --name soklaki
 
 podman run -d \
  --restart=always \
