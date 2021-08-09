@@ -8,4 +8,4 @@
     - companion
     - exporter
     - frontend
-    - nginx
+    - copy_frontend
