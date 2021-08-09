@@ -2,12 +2,15 @@
 extern crate rocket;
 
 use dotenv::dotenv;
+use eyre::{self, WrapErr};
 use reqwest;
 use rocket::data::ByteUnit;
 use rocket::response::content;
 use rocket::response::status::BadRequest;
 use rocket::Data;
 use std::path::PathBuf;
+use tracing::info;
+use tracing_subscriber::EnvFilter;
 
 mod auth_header;
 mod competency;
@@ -110,11 +113,29 @@ async fn forward_signup_to_hasura(
 ) -> Result<content::Json<String>, BadRequest<String>> {
     forward_unauthentified_to_hasura(data, "signup").await
 }
+
+fn setup() -> eyre::Result<()> {
+    dotenv().wrap_err("Unable to initialize dotenv :(")?;
+
+    if std::env::var("RUST_LIB_BACKTRACE").is_err() {
+        std::env::set_var("RUST_LIB_BACKTRACE", "1")
+    }
+    color_eyre::install().wrap_err("Unable to install color_eyre :(")?;
+
+    if std::env::var("RUST_LOG").is_err() {
+        std::env::set_var("RUST_LOG", "info")
+    }
+    tracing_subscriber::fmt::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+
+    info!("Setup done successfully !");
+    Ok(())
 }
 
 #[launch]
 fn rocket() -> _ {
-    dotenv().ok();
+    setup().unwrap();
     rocket::build()
         .attach(db::Db::fairing())
         .mount("/home_content", routes![home_content::index])
