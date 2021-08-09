@@ -1,9 +1,118 @@
 <template>
   <div class="my-4 px-2">
     <Loading :loading="loading">
-      <div class="form-label">
-        Plein de statistiques sur le cycle {{ cycleNb(route.params.cycle) }}
-      </div>
+      <Disclosure>
+        <DisclosureButton class="">
+          <div class="flex flex-row items-center space-x-2">
+            <div class="form-label">
+              Plein de statistiques sur le cycle
+              {{ cycleNb(route.params.cycle) }}
+            </div>
+            <IconQuestionMark class="w-6 h-6 text-gray-500" />
+          </div>
+        </DisclosureButton>
+        <DisclosurePanel class="py-2">
+          <MascotteTip class="my-2">
+            <template v-slot:title>
+              Bienvenue sur la page des statistiques détaillées ! 🧐
+            </template>
+            <template v-slot:default>
+              <div class="mt-4">
+                Un grand tableau avec :
+                <ul class="list-disc list-inside">
+                  <li>une colonne par élève</li>
+                  <li>une ligne par compétence du socle</li>
+                </ul>
+              </div>
+              <div class="mt-4">
+                À la croisée de chaque colonne et de chaque ligne, 2 indicateurs
+                :
+                <ul class="list-disc list-inside">
+                  <li class="mt-2">
+                    Le nombre d'observations enregistrées pour cet élève et
+                    cette compétence (sur la gauche), avec :
+                    <ul class="ml-2">
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-gray-500"></div>
+                          <div>Aucune observation enregistrée</div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-green-500"></div>
+                          <div>Au moins un observation enregistrée ! \o/</div>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="mt-2">
+                    L'évaluation associée à cet élève pour cette compétence (sur
+                    la droite), avec :
+                    <ul class="ml-2">
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-gray-500"></div>
+                          <div>Aucune évaluation enregistrée</div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-red-500"></div>
+                          <div>Une évaluation "Maitrise insuffisante"</div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-yellow-500"></div>
+                          <div>Une évaluation "Maitrise fragile"</div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-green-500"></div>
+                          <div>Une évaluation "Maitrise satisfaisante"</div>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex items-center space-x-2">
+                          <div class="w-5 h-5 rounded-md bg-pink-500"></div>
+                          <div>Une évaluation "Très bonne maitrise"</div>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+                <div class="mt-4">
+                  <div>
+                    Chaque petit carré
+                    <div
+                      class="
+                        inline-block
+                        align-middle
+                        w-5
+                        h-5
+                        rounded-md
+                        border border-gray-500
+                      "
+                    ></div>
+                    est cliquable et vous emmène là où vous pourrez observer ou
+                    évaluer !
+                  </div>
+                  <div>
+                    D'ailleurs, les numéros de chaque compétence sont cliquables
+                    également !
+                  </div>
+                </div>
+                <div class="mt-4">
+                  Et maintenant, votre mission, si vous l'acceptez, mettre de la
+                  couleur sur cette page ! 🎨
+                </div>
+              </div>
+            </template>
+          </MascotteTip>
+        </DisclosurePanel>
+      </Disclosure>
       <div
         class="
           my-4
@@ -103,8 +212,7 @@
                         'bg-pink-500': byStudent.evaluation === 'TipTop',
                       }"
                       class="w-5 h-5 rounded-md align-middle block mx-auto"
-                    >
-                    </router-link>
+                    ></router-link>
                   </div>
                 </td>
               </template>
@@ -221,6 +329,9 @@ import { cycleNb } from "../utils/cycle";
 import { fathers } from "../utils/competency";
 import Modal from "../components/Modal.vue";
 import Loading from "../components/Loading.vue";
+import MascotteTip from "../components/MascotteTip.vue";
+import IconQuestionMark from "../icons/IconQuestionMark.vue";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import HashSubjects from "../components/HashSubjects.vue";
 import CompetencyTemplates from "../components/CompetencyTemplates.vue";
