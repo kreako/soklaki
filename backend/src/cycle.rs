@@ -23,6 +23,15 @@ impl Cycle {
             Cycle::C4 => "c4",
         }
     }
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "c1" => Some(Cycle::C1),
+            "c2" => Some(Cycle::C2),
+            "c3" => Some(Cycle::C3),
+            "c4" => Some(Cycle::C4),
+            _ => None,
+        }
+    }
 }
 
 pub fn estimate_cycle(observation_date: &NaiveDate, birthdate: &NaiveDate) -> Cycle {
