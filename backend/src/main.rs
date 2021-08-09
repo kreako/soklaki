@@ -10,11 +10,14 @@ use rocket::Data;
 use std::path::PathBuf;
 
 mod auth_header;
+mod competency;
 mod cycle;
 mod db;
 mod home_content;
 mod jwt;
+mod period;
 mod stats;
+mod students;
 
 #[post("/<path..>", data = "<data>")]
 async fn forward_to_hasura(
