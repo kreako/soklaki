@@ -13,5 +13,8 @@
     "scripts/env": true,
     "scripts/__pycache__": true
   },
-  "python.formatting.provider": "black"
+  "python.formatting.provider": "black",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  }
 }
