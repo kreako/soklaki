@@ -1543,6 +1543,11 @@ const actions = {
     const answer = await axios.get("home_content/");
     return answer.data;
   },
+
+  async statsByCycle({}, cycle) {
+    const answer = await axios.get(`stats/${cycle}`);
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
