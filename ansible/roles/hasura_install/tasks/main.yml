@@ -1,5 +1,5 @@
 - name: Download hasura cli
   get_url:
-    url: https://github.com/hasura/graphql-engine/releases/download/v2.0.0-beta.2/cli-hasura-linux-amd64
+    url: https://github.com/hasura/graphql-engine/releases/download/v2.0.5/cli-hasura-linux-amd64
     dest: "{{ hasura_cli }}"
     mode: "0700"
