@@ -107,7 +107,10 @@ def rehash_and_save_password_if_needed(user, plaintext_password):
 
 @app.post("/login")
 async def login(login: LoginInput):
-    user = await gql_client.find_user_by_email(login.input.email)
+    try:
+        user = await gql_client.find_user_by_email(login.input.email)
+    except IndexError:
+        return LoginOutput(error=True)
     try:
         Password.verify(user["hash"], login.input.password)
         # TODO rehash if needed
