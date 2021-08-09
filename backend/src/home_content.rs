@@ -4,6 +4,7 @@ use rocket_sync_db_pools::postgres;
 use serde::Serialize;
 use tracing::debug;
 
+use super::cycle::Cycle;
 use super::db;
 use super::jwt;
 use super::period;
@@ -348,6 +349,85 @@ SELECT user_id::int, evaluations_count::int, public.user.firstname, public.user.
     Ok(weeks)
 }
 
+#[derive(Debug)]
+pub struct EvalSingleSummary {
+    pub total: i32,
+    pub observations: i32,
+    pub evaluations: i32,
+}
+
+impl EvalSingleSummary {
+    fn new() -> Self {
+        EvalSingleSummary {
+            total: 0,
+            observations: 0,
+            evaluations: 0,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct EvalStatsSummary {
+    pub c1: EvalSingleSummary,
+    pub c2: EvalSingleSummary,
+    pub c3: EvalSingleSummary,
+    pub c4: EvalSingleSummary,
+}
+
+impl EvalStatsSummary {
+    fn new() -> Self {
+        EvalStatsSummary {
+            c1: EvalSingleSummary::new(),
+            c2: EvalSingleSummary::new(),
+            c3: EvalSingleSummary::new(),
+            c4: EvalSingleSummary::new(),
+        }
+    }
+}
+
+fn eval_stats_summary_by_cycle(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    date: &NaiveDate,
+    cycle: &Cycle,
+    stats: &mut EvalSingleSummary,
+) -> Result<(), postgres::error::Error> {
+    let e = stats::eval_stats_by_cycle(client, group_id, date, cycle)?;
+    stats.total = e.students.len() as i32 * e.stats.len() as i32;
+    stats.observations = e.stats.iter().fold(0, |acc1, stat| {
+        acc1 + stat.by_students.iter().fold(0, |acc2, student| {
+            if student.observations > 0 {
+                acc2 + 1
+            } else {
+                acc2
+            }
+        })
+    });
+    stats.evaluations = e.stats.iter().fold(0, |acc1, stat| {
+        acc1 + stat.by_students.iter().fold(0, |acc2, student| {
+            if student.evaluation != stats::EvaluationStatus::Empty {
+                acc2 + 1
+            } else {
+                acc2
+            }
+        })
+    });
+    Ok(())
+}
+
+pub fn eval_stats_summary(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    date: &NaiveDate,
+) -> Result<EvalStatsSummary, postgres::error::Error> {
+    let mut s = EvalStatsSummary::new();
+    eval_stats_summary_by_cycle(client, group_id, date, &Cycle::C1, &mut s.c1)?;
+    eval_stats_summary_by_cycle(client, group_id, date, &Cycle::C2, &mut s.c2)?;
+    eval_stats_summary_by_cycle(client, group_id, date, &Cycle::C3, &mut s.c3)?;
+    eval_stats_summary_by_cycle(client, group_id, date, &Cycle::C4, &mut s.c4)?;
+    Ok(s)
+}
+
 #[get("/")]
 pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
@@ -385,7 +465,7 @@ pub async fn index(db: db::Db, token: jwt::JwtToken) -> Json<StatsSummary> {
     let group_id3 = group_id.clone();
     let period_end = period.end.clone();
     let stats_summary = db
-        .run(move |client| stats::eval_stats_summary(client, &group_id3, &period_end))
+        .run(move |client| eval_stats_summary(client, &group_id3, &period_end))
         .await
         .unwrap();
     debug!("home_content week_stats");
