@@ -12,9 +12,10 @@
     - db
     - hasura_install
     - hasura
+    - backend
     - companion
     - frontend
     - nginx_install
     - certbot_install
-    - nginx
+    - copy_frontend
     - exporter
