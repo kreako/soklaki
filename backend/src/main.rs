@@ -139,5 +139,6 @@ fn rocket() -> _ {
     rocket::build()
         .attach(db::Db::fairing())
         .mount("/home_content", routes![home_content::index])
+        .mount("/stats", routes![stats::stats_by_cycle])
         .mount("/", routes![forward_ping_to_hasura, forward_login_to_hasura, forward_signup_to_hasura, forward_to_hasura])
 }
