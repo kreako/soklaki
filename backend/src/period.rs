@@ -63,6 +63,30 @@ INSERT INTO eval_period
     Ok(PeriodId { id: row.get(0) })
 }
 
+pub fn search_period_or_insert(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    date: &NaiveDate,
+) -> Result<PeriodId, postgres::error::Error> {
+    let r = client.query_opt(
+        "
+SELECT eval_period.id, eval_period.end
+	FROM eval_period
+	WHERE eval_period.group_id = $1
+        AND eval_period.start >= $2
+        AND eval_period.end <= $2
+	",
+        &[group_id, &date],
+    )?;
+    match r {
+        Some(row) => Ok(PeriodId { id: row.get(0) }),
+        None => {
+            let default_period = default_period(date);
+            Ok(insert_default_period(client, group_id, &default_period)?)
+        }
+    }
+}
+
 pub struct PeriodEnd {
     pub id: i32,
     pub end: NaiveDate,
