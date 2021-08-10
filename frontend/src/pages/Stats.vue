@@ -128,7 +128,7 @@
             <tr>
               <th class="w-16 sticky top-0 left-0 z-[3] bg-white">&nbsp;</th>
               <th
-                v-for="(student, idx) in stats2.students"
+                v-for="(student, idx) in stats.students"
                 :key="student.id"
                 colspan="2"
                 class="font-bold w-16 sticky top-0 z-[2] text-center"
@@ -154,7 +154,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="byCompetency in stats2.stats"
+              v-for="byCompetency in stats.stats"
               :key="byCompetency.competency.id"
             >
               <td class="sticky left-0 h-6 z-[1] bg-white text-center">
@@ -321,7 +321,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { until, useTitle } from "@vueuse/core";
@@ -392,14 +392,18 @@ const competencyFathers = computed(() =>
 );
 
 const loading = ref(true);
-const stats2 = ref({});
+const stats = ref({});
+
+const loadStats = async () => {
+  loading.value = true;
+  stats.value = await store.dispatch("statsByCycle", route.params.cycle);
+  loading.value = false;
+};
 
 onMounted(async () => {
-  stats2.value = await store.dispatch("statsByCycle", route.params.cycle);
-  loading.value = false;
-  await until(() => store.state.currentPeriod).not.toBeNull();
-  await store.dispatch("stats", { periodId: store.state.currentPeriod });
+  await loadStats();
 });
+watch(() => route.params.cycle, loadStats);
 </script>
 
 <style>
