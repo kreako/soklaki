@@ -37,7 +37,7 @@ pub fn default_period(date: &NaiveDate) -> DefaultPeriod {
 }
 
 pub struct PeriodId {
-    id: i32,
+    pub id: i32,
 }
 
 pub fn insert_default_period(
