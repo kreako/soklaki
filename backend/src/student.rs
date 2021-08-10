@@ -57,17 +57,11 @@ impl StudentEvalInfo {
 }
 
 #[derive(Debug, Serialize)]
-pub struct CurrentTotal {
-    pub total: i32,
-    pub current: i32,
-}
-
-#[derive(Debug, Serialize)]
 pub struct Summary {
     pub progress: i32,
     pub comment: bool,
-    pub observations: CurrentTotal,
-    pub evaluations: CurrentTotal,
+    pub observations: i32,
+    pub evaluations: i32,
 }
 
 #[derive(Debug, Serialize)]
@@ -292,14 +286,8 @@ pub async fn student_by_id(
     let summary = Summary {
         comment: comment,
         progress: progress as i32,
-        evaluations: CurrentTotal {
-            current: evaluations,
-            total: competency_count,
-        },
-        observations: CurrentTotal {
-            current: observations,
-            total: competency_count,
-        },
+        evaluations: (100.0 * (evaluations as f64) / (competency_count as f64)) as i32,
+        observations: (100.0 * (observations as f64) / (competency_count as f64)) as i32,
     };
     let info = StudentInfo {
         student: student,
