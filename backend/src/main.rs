@@ -20,6 +20,7 @@ mod home_content;
 mod jwt;
 mod period;
 mod stats;
+mod student;
 mod students;
 
 #[post("/<path..>", data = "<data>")]
@@ -61,7 +62,10 @@ async fn forward_to_hasura(
     }
 }
 
-async fn forward_unauthentified_to_hasura(data: Data<'_>, api_end: &'static str) -> Result<content::Json<String>, BadRequest<String>> {
+async fn forward_unauthentified_to_hasura(
+    data: Data<'_>,
+    api_end: &'static str,
+) -> Result<content::Json<String>, BadRequest<String>> {
     // Try to forward request to hasura
     let body = data
         .open(ByteUnit::Megabyte(5))
@@ -90,7 +94,6 @@ async fn forward_unauthentified_to_hasura(data: Data<'_>, api_end: &'static str)
                 .map_err(|e| BadRequest(Some(e.to_string())))?,
         )))
     }
-    
 }
 
 #[post("/ping", data = "<data>")]
@@ -140,5 +143,14 @@ fn rocket() -> _ {
         .attach(db::Db::fairing())
         .mount("/home_content", routes![home_content::index])
         .mount("/stats", routes![stats::stats_by_cycle])
-        .mount("/", routes![forward_ping_to_hasura, forward_login_to_hasura, forward_signup_to_hasura, forward_to_hasura])
+        .mount("/student", routes![student::student_by_id])
+        .mount(
+            "/",
+            routes![
+                forward_ping_to_hasura,
+                forward_login_to_hasura,
+                forward_signup_to_hasura,
+                forward_to_hasura
+            ],
+        )
 }
