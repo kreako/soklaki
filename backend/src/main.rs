@@ -143,7 +143,17 @@ fn rocket() -> _ {
         .attach(db::Db::fairing())
         .mount("/home_content", routes![home_content::index])
         .mount("/stats", routes![stats::stats_by_cycle])
-        .mount("/student", routes![student::student_by_id])
+        .mount(
+            "/student",
+            routes![
+                student::student_by_id,
+                student::lastname,
+                student::firstname,
+                student::birthdate,
+                student::school_entry,
+                student::school_exit,
+            ],
+        )
         .mount(
             "/",
             routes![

@@ -3,7 +3,7 @@ use chrono::NaiveDate;
 use eyre::WrapErr;
 use rocket::http::Status;
 use rocket::serde::json::Json;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tracing::debug;
 
@@ -296,4 +296,140 @@ pub async fn student_by_id(
         summary: summary,
     };
     Ok(Json(info))
+}
+
+#[derive(Debug, Serialize)]
+pub struct Done {
+    pub done: bool,
+}
+
+impl Done {
+    fn done() -> Self {
+        Done { done: true }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StudentLastname {
+    pub id: i64,
+    pub lastname: String,
+}
+
+#[post("/lastname", data = "<student>")]
+pub async fn lastname(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student: Json<StudentLastname>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "UPDATE student SET lastname = $1 WHERE id = $2 AND group_id = $3",
+            &[&student.lastname, &student.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StudentFirstname {
+    pub id: i64,
+    pub firstname: String,
+}
+
+#[post("/firstname", data = "<student>")]
+pub async fn firstname(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student: Json<StudentFirstname>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "UPDATE student SET firstname = $1 WHERE id = $2 AND group_id = $3",
+            &[&student.firstname, &student.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StudentBirthdate {
+    pub id: i64,
+    pub birthdate: NaiveDate,
+}
+
+#[post("/birthdate", data = "<student>")]
+pub async fn birthdate(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student: Json<StudentBirthdate>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "UPDATE student SET birthdate = $1 WHERE id = $2 AND group_id = $3",
+            &[&student.birthdate, &student.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StudentSchoolEntry {
+    pub id: i64,
+    pub school_entry: NaiveDate,
+}
+
+#[post("/school_entry", data = "<student>")]
+pub async fn school_entry(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student: Json<StudentSchoolEntry>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "UPDATE student SET school_entry = $1 WHERE id = $2 AND group_id = $3",
+            &[&student.school_entry, &student.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StudentSchoolExit {
+    pub id: i64,
+    pub school_exit: Option<NaiveDate>,
+}
+
+#[post("/school_exit", data = "<student>")]
+pub async fn school_exit(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student: Json<StudentSchoolExit>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "UPDATE student SET school_exit = $1 WHERE id = $2 AND group_id = $3",
+            &[&student.school_exit, &student.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
 }
