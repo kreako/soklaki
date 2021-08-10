@@ -1548,6 +1548,11 @@ const actions = {
     const answer = await axios.get(`stats/${cycle}`);
     return answer.data;
   },
+
+  async student({}, student_id) {
+    const answer = await axios.get(`student/${student_id}`);
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
