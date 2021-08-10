@@ -1553,6 +1553,46 @@ const actions = {
     const answer = await axios.get(`student/${student_id}`);
     return answer.data;
   },
+
+  async saveStudentLastname({}, {id, lastname}) {
+    const answer = await axios.post("student/lastname", {
+      id: Number(id)  ,
+      lastname: lastname,
+    });
+    return answer.data;
+  },
+
+  async saveStudentFirstname({}, {id, firstname}) {
+    const answer = await axios.post("student/firstname", {
+      id: Number(id)  ,
+      firstname: firstname,
+    });
+    return answer.data;
+  },
+
+  async saveStudentBirthdate({}, {id, birthdate}) {
+    const answer = await axios.post("student/birthdate", {
+      id: Number(id)  ,
+      birthdate: birthdate,
+    });
+    return answer.data;
+  },
+
+  async saveStudentSchoolEntry({}, {id, schoolEntry}) {
+    const answer = await axios.post("student/school_entry", {
+      id: Number(id)  ,
+      school_entry: schoolEntry,
+    });
+    return answer.data;
+  },
+
+  async saveStudentSchoolExit({}, {id, schoolExit}) {
+    const answer = await axios.post("student/school_exit", {
+      id: Number(id)  ,
+      school_exit: schoolExit,
+    });
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
