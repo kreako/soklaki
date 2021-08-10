@@ -1,11 +1,18 @@
+use chrono;
 use chrono::NaiveDate;
 use eyre::WrapErr;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 use serde::Serialize;
+use std::collections::HashMap;
+use tracing::debug;
 
+use super::competency;
+use super::cycle;
 use super::db;
 use super::jwt;
+use super::period;
+use super::stats::EvaluationStatus;
 
 #[derive(Debug, Serialize)]
 pub struct Student {
@@ -17,6 +24,58 @@ pub struct Student {
     pub school_exit: Option<NaiveDate>,
     pub group_id: i64,
     pub active: bool,
+}
+
+#[derive(Debug, Serialize)]
+pub struct EvalSingle {
+    pub observations: i32,
+    pub evaluation: EvaluationStatus,
+}
+
+impl EvalSingle {
+    fn new() -> Self {
+        EvalSingle {
+            observations: 0,
+            evaluation: EvaluationStatus::Empty,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct StudentEvalInfo {
+    pub competency: competency::Competency,
+    pub eval: EvalSingle,
+}
+
+impl StudentEvalInfo {
+    fn new(competency: competency::Competency) -> Self {
+        StudentEvalInfo {
+            competency: competency,
+            eval: EvalSingle::new(),
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct CurrentTotal {
+    pub total: i32,
+    pub current: i32,
+}
+
+#[derive(Debug, Serialize)]
+pub struct Summary {
+    pub progress: i32,
+    pub comment: bool,
+    pub observations: CurrentTotal,
+    pub evaluations: CurrentTotal,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StudentInfo {
+    pub student: Student,
+    pub cycle: &'static str,
+    pub eval: Vec<StudentEvalInfo>,
+    pub summary: Summary,
 }
 
 fn _student_by_id(
@@ -43,12 +102,147 @@ SELECT id, firstname, lastname, birthdate, school_entry, school_exit, group_id, 
     })
 }
 
+fn eval_evaluation_stat(
+    client: &mut postgres::Client,
+    date: &NaiveDate,
+    cycle: &cycle::Cycle,
+    student_id: &i64,
+    competencies_index: &HashMap<i32, usize>,
+    eval: &mut Vec<StudentEvalInfo>,
+) -> Result<(), postgres::error::Error> {
+    for row in client.query(
+        "
+SELECT
+	eval_evaluation.competency_id,
+	eval_evaluation.status
+FROM eval_evaluation
+	JOIN socle_competency
+		ON socle_competency.id = eval_evaluation.competency_id
+	WHERE eval_evaluation.active = true
+		AND socle_competency.active = true
+		AND eval_evaluation.student_id = $1
+		AND eval_evaluation.date <= $2
+		AND socle_competency.cycle::text = $3
+	ORDER BY eval_evaluation.date DESC, eval_evaluation.updated_at DESC
+	",
+        &[student_id, date, &cycle.to_str()],
+    )? {
+        let competency_id = row.get(0);
+        let status = row.get(1);
+
+        if let Some(competency_index) = competencies_index.get(&competency_id) {
+            if eval[*competency_index].eval.evaluation == EvaluationStatus::Empty {
+                eval[*competency_index].eval.evaluation = status;
+            }
+        }
+    }
+    Ok(())
+}
+
+fn eval_observation_stat(
+    client: &mut postgres::Client,
+    date: &NaiveDate,
+    cycle: &cycle::Cycle,
+    student_id: &i64,
+    competencies_index: &HashMap<i32, usize>,
+    eval: &mut Vec<StudentEvalInfo>,
+) -> Result<(), postgres::error::Error> {
+    debug!("eval_observation_stats_by_cycle 1");
+    for row in client.query(
+        "
+SELECT
+	eval_observation_competency.competency_id
+FROM eval_observation 
+	JOIN eval_observation_competency
+		ON eval_observation_competency.observation_id = eval_observation.id 
+	JOIN eval_observation_student
+		ON eval_observation_student.observation_id = eval_observation.id 
+	JOIN socle_competency
+		ON socle_competency.id = eval_observation_competency.competency_id 
+WHERE socle_competency.active = true
+    AND socle_competency.cycle::text = $3
+	AND eval_observation.active = true
+	AND eval_observation.date <= $2
+	AND eval_observation_student.student_id = $1
+		",
+        &[student_id, date, &cycle.to_str()],
+    )? {
+        // debug!(?row, "eval_observation_stats_by_cycle 2");
+        let competency_id = row.get(0);
+        if let Some(competency_index) = competencies_index.get(&competency_id) {
+            eval[*competency_index].eval.observations += 1;
+            //debug!("eval_observation_stats_by_cycle 3");
+        }
+    }
+
+    debug!("eval_observation_stats_by_cycle 4");
+    Ok(())
+}
+
+fn student_eval(
+    client: &mut postgres::Client,
+    student_id: &i64,
+    group_id: &i64,
+    cycle: &cycle::Cycle,
+    date: &NaiveDate,
+) -> Result<Vec<StudentEvalInfo>, postgres::error::Error> {
+    let competencies = competency::competencies_from_cycle(client, group_id, cycle)?;
+    // competency id -> index cache for easier update
+    let mut competencies_index = HashMap::new();
+    for (idx, competency) in (&competencies).iter().enumerate() {
+        competencies_index.insert(competency.id, idx);
+    }
+    let mut eval = competencies
+        .into_iter()
+        .map(|c| StudentEvalInfo::new(c))
+        .collect();
+    eval_evaluation_stat(
+        client,
+        date,
+        cycle,
+        student_id,
+        &competencies_index,
+        &mut eval,
+    )?;
+    eval_observation_stat(
+        client,
+        date,
+        cycle,
+        student_id,
+        &competencies_index,
+        &mut eval,
+    )?;
+    Ok(eval)
+}
+
+fn is_there_a_comment(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    student_id: &i64,
+    cycle: &cycle::Cycle,
+    date: &NaiveDate,
+) -> Result<bool, postgres::error::Error> {
+    let period = period::search_period_or_insert(client, group_id, date)?;
+    let row = client.query_one(
+        "
+SELECT comments_count::int
+	FROM eval_comment_stats
+    WHERE student_id = $1
+        AND period_id = $2
+        AND cycle::text = $3
+",
+        &[student_id, &period.id, &cycle.to_str()],
+    )?;
+    let comments_count: i32 = row.get(0);
+    Ok(comments_count > 1)
+}
+
 #[get("/<id>")]
 pub async fn student_by_id(
     db: db::Db,
     token: jwt::JwtToken,
     id: i64,
-) -> Result<Json<Student>, Status> {
+) -> Result<Json<StudentInfo>, Status> {
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
     let student = db
         .run(move |client| _student_by_id(client, &id))
@@ -58,5 +252,60 @@ pub async fn student_by_id(
     if student.group_id != group_id {
         return Err(Status::NotFound);
     }
-    Ok(Json(student))
+    let today = chrono::Local::today().naive_local();
+    let cycle = cycle::estimate_cycle(&today, &student.birthdate);
+    let cloned_cycle = cycle.clone();
+    let cloned_today = today.clone();
+    let eval = db
+        .run(move |client| student_eval(client, &id, &group_id, &cloned_cycle, &cloned_today))
+        .await
+        .wrap_err("student_eval error")
+        .map_err(|_err| Status::InternalServerError)?;
+    let cloned_cycle2 = cycle.clone();
+    let cloned_today2 = today.clone();
+    let comment = db
+        .run(move |client| {
+            is_there_a_comment(client, &group_id, &id, &cloned_cycle2, &cloned_today2)
+        })
+        .await
+        .wrap_err("is_there_a_comment")
+        .map_err(|_err| Status::InternalServerError)?;
+    let competency_count = eval.len() as i32;
+    let observations = eval.iter().fold(0, |acc, e| {
+        if e.eval.observations > 0 {
+            acc + 1
+        } else {
+            acc
+        }
+    });
+    let evaluations = eval.iter().fold(0, |acc, e| {
+        if e.eval.evaluation != EvaluationStatus::Empty {
+            acc + 1
+        } else {
+            acc
+        }
+    });
+    let progress = 100.0 as f64
+        * (if comment { 1.0 / 3.0 as f64 } else { 0 as f64 }
+            + ((evaluations as f64) / (3.0 * competency_count as f64))
+            + ((observations as f64) / (3.0 * competency_count as f64)));
+    let summary = Summary {
+        comment: comment,
+        progress: progress as i32,
+        evaluations: CurrentTotal {
+            current: evaluations,
+            total: competency_count,
+        },
+        observations: CurrentTotal {
+            current: observations,
+            total: competency_count,
+        },
+    };
+    let info = StudentInfo {
+        student: student,
+        cycle: cycle.to_str(),
+        eval: eval,
+        summary: summary,
+    };
+    Ok(Json(info))
 }
