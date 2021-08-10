@@ -230,44 +230,41 @@ const route = useRoute();
 const router = useRouter();
 
 const saveLastname = async (value) => {
-  const studentId = Number(route.params.id);
-  await store.dispatch("updateStudentLastname", {
-    studentId: studentId,
+  student.value.lastname = value;
+  await store.dispatch("saveStudentLastname", {
+    id: route.params.id,
     lastname: value,
   });
 };
 const saveFirstname = async (value) => {
-  const studentId = Number(route.params.id);
-  await store.dispatch("updateStudentFirstname", {
-    studentId: studentId,
+  student.value.firstname = value;
+  await store.dispatch("saveStudentFirstname", {
+    id: route.params.id,
     firstname: value,
   });
 };
 const saveBirthdate = async (value) => {
-  // TODO check date validity ?
-  const studentId = Number(route.params.id);
-  await store.dispatch("updateStudentBirthdate", {
-    studentId: studentId,
+  student.value.birthdate = value;
+  await store.dispatch("saveStudentBirthdate", {
+    id: route.params.id,
     birthdate: value,
   });
 };
 const saveSchoolEntry = async (value) => {
-  // TODO check date validity ?
-  const studentId = Number(route.params.id);
-  await store.dispatch("updateStudentSchoolEntry", {
-    studentId: studentId,
+  student.value.school_entry = value;
+  await store.dispatch("saveStudentSchoolEntry", {
+    id: route.params.id,
     schoolEntry: value,
   });
 };
 const addSchoolExit = ref(false);
 const saveSchoolExit = async (value) => {
-  // TODO check date validity ?
-  const studentId = Number(route.params.id);
-  await store.dispatch("updateStudentSchoolExit", {
-    studentId: studentId,
+  addSchoolExit.value = false;
+  student.value.school_exit = value;
+  await store.dispatch("saveStudentSchoolExit", {
+    id: route.params.id,
     schoolExit: value,
   });
-  addSchoolExit.value = false;
 };
 
 const loading = ref(true);
