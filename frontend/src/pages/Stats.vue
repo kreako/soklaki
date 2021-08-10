@@ -171,30 +171,10 @@
                   :class="idx % 2 === 1 ? 'bg-gray-200' : 'bg-white'"
                 >
                   <div class="block ml-2">
-                    <button
-                      @click="
-                        selectObservation(
-                          byCompetency.competency.id,
-                          byStudent.student_id
-                        )
-                      "
-                      :class="
-                        byStudent.observations > 0
-                          ? 'bg-green-500'
-                          : 'bg-gray-500'
-                      "
-                      class="
-                        align-middle
-                        w-5
-                        h-5
-                        text-xs
-                        rounded-md
-                        block
-                        mx-auto
-                      "
-                    >
-                      {{ byStudent.observations }}
-                    </button>
+                    <StatObservationBox
+                      :link="'meuh'"
+                      :observations="byStudent.observations"
+                    />
                   </div>
                 </td>
                 <td
@@ -202,17 +182,10 @@
                   :class="idx % 2 === 1 ? 'bg-gray-200' : 'bg-white'"
                 >
                   <div class="block mr-2">
-                    <router-link
-                      :to="`/evaluation-single/${route.params.cycle}/${byCompetency.competency.id}/${byStudent.student_id}`"
-                      :class="{
-                        'bg-gray-500': byStudent.evaluation === 'Empty',
-                        'bg-red-500': byStudent.evaluation === 'NotAcquired',
-                        'bg-yellow-500': byStudent.evaluation === 'InProgress',
-                        'bg-green-500': byStudent.evaluation === 'Acquired',
-                        'bg-pink-500': byStudent.evaluation === 'TipTop',
-                      }"
-                      class="w-5 h-5 rounded-md align-middle block mx-auto"
-                    ></router-link>
+                    <StatEvaluationBox
+                      :link="`/evaluation-single/${route.params.cycle}/${byCompetency.competency.id}/${byStudent.student_id}`"
+                      :status="byStudent.evaluation"
+                    />
                   </div>
                 </td>
               </template>
@@ -332,9 +305,10 @@ import Loading from "../components/Loading.vue";
 import MascotteTip from "../components/MascotteTip.vue";
 import IconQuestionMark from "../icons/IconQuestionMark.vue";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import HashSubjects from "../components/HashSubjects.vue";
 import CompetencyTemplates from "../components/CompetencyTemplates.vue";
+import StatEvaluationBox from "../components/StatEvaluationBox.vue";
+import StatObservationBox from "../components/StatObservationBox.vue";
 import IconPlusCircle from "../icons/IconPlusCircle.vue";
 
 const store = useStore();
@@ -344,11 +318,6 @@ useTitle(`Statistiques avancées ${route.params.cycle}  - soklaki.fr`);
 
 const studentById = computed(() => store.getters.studentById);
 const competencyById = computed(() => store.getters.competencyById);
-
-const stats = computed(() => store.state.stats[route.params.cycle]);
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const mobile = breakpoints.smaller("md");
 
 const selectedCompetency = ref(null);
 const selectedStudent = ref(null);
