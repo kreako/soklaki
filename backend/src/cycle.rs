@@ -1,7 +1,7 @@
 use chrono::{Datelike, NaiveDate};
 use postgres_types::{FromSql, ToSql};
 
-#[derive(PartialEq, Debug, FromSql, ToSql)]
+#[derive(PartialEq, Debug, FromSql, ToSql, Clone)]
 #[postgres(name = "eval_status")]
 pub enum Cycle {
     #[postgres(name = "c1")]
