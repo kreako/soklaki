@@ -1554,41 +1554,41 @@ const actions = {
     return answer.data;
   },
 
-  async saveStudentLastname({}, {id, lastname}) {
+  async saveStudentLastname({}, { id, lastname }) {
     const answer = await axios.post("student/lastname", {
-      id: Number(id)  ,
+      id: Number(id),
       lastname: lastname,
     });
     return answer.data;
   },
 
-  async saveStudentFirstname({}, {id, firstname}) {
+  async saveStudentFirstname({}, { id, firstname }) {
     const answer = await axios.post("student/firstname", {
-      id: Number(id)  ,
+      id: Number(id),
       firstname: firstname,
     });
     return answer.data;
   },
 
-  async saveStudentBirthdate({}, {id, birthdate}) {
+  async saveStudentBirthdate({}, { id, birthdate }) {
     const answer = await axios.post("student/birthdate", {
-      id: Number(id)  ,
+      id: Number(id),
       birthdate: birthdate,
     });
     return answer.data;
   },
 
-  async saveStudentSchoolEntry({}, {id, schoolEntry}) {
+  async saveStudentSchoolEntry({}, { id, schoolEntry }) {
     const answer = await axios.post("student/school_entry", {
-      id: Number(id)  ,
+      id: Number(id),
       school_entry: schoolEntry,
     });
     return answer.data;
   },
 
-  async saveStudentSchoolExit({}, {id, schoolExit}) {
+  async saveStudentSchoolExit({}, { id, schoolExit }) {
     const answer = await axios.post("student/school_exit", {
-      id: Number(id)  ,
+      id: Number(id),
       school_exit: schoolExit,
     });
     return answer.data;
