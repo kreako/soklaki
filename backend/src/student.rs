@@ -10,6 +10,7 @@ use tracing::debug;
 use super::competency;
 use super::cycle;
 use super::db;
+use super::done::Done;
 use super::jwt;
 use super::period;
 use super::stats::EvaluationStatus;
@@ -296,17 +297,6 @@ pub async fn student_by_id(
         summary: summary,
     };
     Ok(Json(info))
-}
-
-#[derive(Debug, Serialize)]
-pub struct Done {
-    pub done: bool,
-}
-
-impl Done {
-    fn done() -> Self {
-        Done { done: true }
-    }
 }
 
 #[derive(Debug, Deserialize)]
