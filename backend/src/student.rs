@@ -72,7 +72,7 @@ pub struct StudentInfo {
     pub summary: Summary,
 }
 
-fn _student_by_id(
+pub fn student(
     client: &mut postgres::Client,
     student_id: &i64,
 ) -> Result<Student, postgres::error::Error> {
@@ -239,7 +239,7 @@ pub async fn student_by_id(
 ) -> Result<Json<StudentInfo>, Status> {
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
     let student = db
-        .run(move |client| _student_by_id(client, &id))
+        .run(move |client| student(client, &id))
         .await
         .wrap_err("student_by_id error")
         .map_err(|_err| Status::InternalServerError)?;
