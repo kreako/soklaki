@@ -1461,18 +1461,6 @@ const actions = {
     await dispatch("evaluations", { periodId: period.id });
   },
 
-  async evaluationSingle(
-    { state, commit },
-    { competencyId, periodId, studentId }
-  ) {
-    const answer = await axios.post("evaluation-single", {
-      competency_id: competencyId,
-      period_id: periodId,
-      student_id: studentId,
-    });
-    return answer.data;
-  },
-
   async reports({ commit }) {
     const answer = await axios.post("reports");
     const data = answer.data.report;
@@ -1591,6 +1579,13 @@ const actions = {
       id: Number(id),
       school_exit: schoolExit,
     });
+    return answer.data;
+  },
+
+  async evaluationSingle({}, { studentId, competencyId }) {
+    const answer = await axios.get(
+      `evaluation/single/${studentId}/${competencyId}`
+    );
     return answer.data;
   },
 };
