@@ -16,12 +16,15 @@ mod auth_header;
 mod competency;
 mod cycle;
 mod db;
+mod evaluation;
 mod home_content;
 mod jwt;
+mod observation;
 mod period;
 mod stats;
 mod student;
 mod students;
+mod user;
 
 #[post("/<path..>", data = "<data>")]
 async fn forward_to_hasura(
@@ -154,6 +157,7 @@ fn rocket() -> _ {
                 student::school_exit,
             ],
         )
+        .mount("/evaluation", routes![evaluation::evaluation_single])
         .mount(
             "/",
             routes![
