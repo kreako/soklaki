@@ -6,6 +6,7 @@ use tracing::debug;
 
 use super::cycle::Cycle;
 use super::db;
+use super::evaluation_status::EvaluationStatus;
 use super::jwt;
 use super::period;
 use super::stats;
@@ -405,7 +406,7 @@ fn eval_stats_summary_by_cycle(
     });
     stats.evaluations = e.stats.iter().fold(0, |acc1, stat| {
         acc1 + stat.by_students.iter().fold(0, |acc2, student| {
-            if student.evaluation != stats::EvaluationStatus::Empty {
+            if student.evaluation != EvaluationStatus::Empty {
                 acc2 + 1
             } else {
                 acc2

@@ -11,9 +11,9 @@ use super::competency;
 use super::cycle;
 use super::db;
 use super::done::Done;
+use super::evaluation_status::EvaluationStatus;
 use super::jwt;
 use super::period;
-use super::stats::EvaluationStatus;
 
 #[derive(Debug, Serialize)]
 pub struct Student {

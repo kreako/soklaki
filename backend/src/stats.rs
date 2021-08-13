@@ -1,6 +1,5 @@
 use chrono::NaiveDate;
 use eyre::{eyre, WrapErr};
-use postgres_types::FromSql;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket_sync_db_pools::postgres;
@@ -12,18 +11,9 @@ use tracing::debug;
 use super::competency;
 use super::cycle::Cycle;
 use super::db;
+use super::evaluation_status::EvaluationStatus;
 use super::jwt;
 use super::students;
-
-#[derive(PartialEq, Debug, FromSql, Serialize)]
-#[postgres(name = "eval_status")]
-pub enum EvaluationStatus {
-    Empty,
-    NotAcquired,
-    InProgress,
-    Acquired,
-    TipTop,
-}
 
 #[derive(Debug, Serialize)]
 pub struct EvalSingle {
