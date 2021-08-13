@@ -433,3 +433,14 @@ pub async fn school_exit(
     .map_err(|_err| Status::InternalServerError)?;
     Ok(Json(Done::done()))
 }
+
+/** @return true if permission is granted to use this competency for this group id */
+pub fn permission(
+    client: &mut postgres::Client,
+    student_id: &i64,
+    group_id: &i64,
+) -> Result<bool, postgres::error::Error> {
+    let c = client.query_one("SELECT group_id FROM student WHERE id = $1", &[student_id])?;
+    let student_group_id: i64 = c.get(0);
+    Ok(*group_id == student_group_id)
+}
