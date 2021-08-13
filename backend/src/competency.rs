@@ -187,3 +187,17 @@ ORDER BY alpha_full_rank
         unreachable!();
     }
 }
+
+/** @return true if permission is granted to use this competency for this group id */
+pub fn permission(
+    client: &mut postgres::Client,
+    competency_id: &i32,
+    group_id: &i64,
+) -> Result<bool, postgres::error::Error> {
+    let c = client.query_one(
+        "SELECT group_id FROM socle_competency WHERE id = $1",
+        &[competency_id],
+    )?;
+    let socle_group_id: i64 = c.get(0);
+    Ok(*group_id == socle_group_id)
+}
