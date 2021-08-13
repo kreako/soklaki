@@ -1,14 +1,15 @@
 use chrono::NaiveDate;
 use rocket::http::Status;
 use rocket::serde::json::Json;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use super::competency;
 use super::db;
+use super::done::Done;
+use super::evaluation_status::EvaluationStatus;
 use super::jwt;
 use super::observation;
 use super::period;
-use super::stats::EvaluationStatus;
 use super::student;
 use super::user;
 
@@ -131,4 +132,63 @@ pub async fn evaluation_single(
         observations: observations,
         evaluation: evaluation,
     }))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct NewEvaluation {
+    pub student_id: i64,
+    pub competency_id: i32,
+    pub status: EvaluationStatus,
+    pub comment: Option<String>,
+    pub date: NaiveDate,
+}
+
+#[post("/new", data = "<new>")]
+pub async fn new_evaluation(
+    db: db::Db,
+    token: jwt::JwtToken,
+    new: Json<NewEvaluation>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+    let user_id = token.claim.user_id.parse::<i64>().unwrap();
+
+    // competency permission
+    let competency_id = new.competency_id.clone();
+    if !db
+        .run(move |client| competency::permission(client, &competency_id, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?
+    {
+        return Err(Status::InternalServerError);
+    }
+    // student permission
+    let student_id = new.student_id.clone();
+    if !db
+        .run(move |client| student::permission(client, &student_id, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?
+    {
+        return Err(Status::InternalServerError);
+    }
+    db.run(move |client| {
+        client.execute(
+            "
+INSERT INTO eval_evaluation
+    (user_id, student_id, competency_id, status, comment, date)
+    VALUES
+    ($1, $2, $3, $4, $5, $6)
+       ",
+            &[
+                &user_id,
+                &new.student_id,
+                &new.competency_id,
+                &new.status,
+                &new.comment,
+                &new.date,
+            ],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
 }
