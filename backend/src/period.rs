@@ -1,5 +1,6 @@
 use chrono::naive::NaiveDate;
 use chrono::Datelike;
+use serde::Serialize;
 use tracing::debug;
 
 #[derive(Debug, PartialEq)]
@@ -120,6 +121,49 @@ SELECT eval_period.id, eval_period.end
             Ok(PeriodEnd {
                 id: period.id,
                 end: default_period.end,
+            })
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct Period {
+    pub id: i32,
+    pub start: NaiveDate,
+    pub end: NaiveDate,
+    pub name: String,
+}
+
+pub fn current_period(
+    client: &mut postgres::Client,
+    group_id: &i64,
+) -> Result<Period, postgres::error::Error> {
+    let today = chrono::Local::today().naive_local();
+    let r = client.query_opt(
+        "
+SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
+	FROM eval_period
+	WHERE eval_period.group_id = $1
+        AND eval_period.start >= $2
+        AND eval_period.end <= $2
+	",
+        &[group_id, &today],
+    )?;
+    match r {
+        Some(row) => Ok(Period {
+            id: row.get(0),
+            start: row.get(1),
+            end: row.get(2),
+            name: row.get(3),
+        }),
+        None => {
+            let default_period = default_period(&today);
+            let period = insert_default_period(client, group_id, &default_period)?;
+            Ok(Period {
+                id: period.id,
+                start: default_period.start,
+                end: default_period.end,
+                name: default_period.name,
             })
         }
     }
