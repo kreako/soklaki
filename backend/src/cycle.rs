@@ -6,12 +6,16 @@ use serde::Serialize;
 #[postgres(name = "eval_status")]
 pub enum Cycle {
     #[postgres(name = "c1")]
+    #[serde(rename = "c1")]
     C1,
     #[postgres(name = "c2")]
+    #[serde(rename = "c2")]
     C2,
     #[postgres(name = "c3")]
+    #[serde(rename = "c3")]
     C3,
     #[postgres(name = "c4")]
+    #[serde(rename = "c4")]
     C4,
 }
 
