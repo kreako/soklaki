@@ -1588,6 +1588,17 @@ const actions = {
     );
     return answer.data;
   },
+
+  async evaluationNew({}, { studentId, competencyId, status, comment, date }) {
+    const answer = await axios.post("evaluation/new", {
+      student_id: Number(studentId),
+      competency_id: Number(competencyId),
+      status: status,
+      comment: comment,
+      date: date,
+    });
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
