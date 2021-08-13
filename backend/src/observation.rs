@@ -1,11 +1,14 @@
 use chrono::NaiveDate;
 use serde::Serialize;
 
+use super::user;
+
 #[derive(Debug, Serialize)]
 pub struct SingleObservation {
     pub id: i64,
     pub text: String,
     pub date: NaiveDate,
+    pub user: user::User,
 }
 
 pub fn single_competency_observations(
@@ -16,7 +19,7 @@ pub fn single_competency_observations(
     Ok(client
         .query(
             "
-SELECT eval_observation.id, eval_observation.text, eval_observation.date
+SELECT eval_observation.id, eval_observation.text, eval_observation.date, eval_observation.user_id
 FROM eval_observation
     JOIN eval_observation_student
         ON eval_observation_student.observation_id = eval_observation.id
@@ -29,10 +32,13 @@ FROM eval_observation
             &[student_id, competency_id],
         )?
         .iter()
-        .map(|row| SingleObservation {
-            id: row.get(0),
-            text: row.get(1),
-            date: row.get(2),
+        .map(|row| {
+            Ok(SingleObservation {
+                id: row.get(0),
+                text: row.get(1),
+                date: row.get(2),
+                user: user::user(client, &row.get(3))?,
+            })
         })
-        .collect())
+        .collect())?
 }
