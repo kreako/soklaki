@@ -2,69 +2,93 @@
   <div class="my-4 px-2">
     <Loading :loading="loading">
       <div class="form-label">
-        Évaluation - {{ competencyById(competencyId).full_rank }}
+        Évaluation - {{ competency.full_rank }} - {{ student.firstname }}
+        {{ student.lastname }}
       </div>
       <div class="mt-4">
-        <div class="uppercase tracking-wide text-gray-700">
-          {{ competencyFathers[0].rank }}.
-          {{ competencyFathers[0].text }}
+        <div class="uppercase tracking-wide text-gray-700 text-xs">
+          {{ competency.parent.rank }}.
+          {{ competency.parent.text }}
         </div>
-        <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
-          {{ competencyFathers[1].rank }}.
-          {{ competencyFathers[1].text }}
+        <div
+          v-if="competency.parent.parent != null"
+          class="text-gray-700 text-xs"
+        >
+          {{ competency.parent.parent.rank }}.
+          {{ competency.parent.parent.text }}
         </div>
         <div>
-          {{ competencyById(competencyId).rank }}.
-          {{ competencyById(competencyId).text }}
+          {{ competency.rank }}.
+          {{ competency.text }}
         </div>
       </div>
-      <div class="">
-        <div class="mt-14">
-          <div class="form-label">
-            {{ studentById(studentId).firstname }}
-            {{ studentById(studentId).lastname }}
-          </div>
-          <div class="mt-2">
-            <div v-if="observations.length > 0" class="text-sm">
-              <Disclosure>
-                <DisclosureButton>
-                  <div
-                    class="text-gray-700 flex flex-row items-center space-x-2"
-                  >
-                    <div>
-                      {{ observations.length }}
-                      <span v-if="observations.length > 1"> observations </span>
-                      <span v-else> observation </span>
-                    </div>
-                    <IconChevronDown class="h-4 text-gray-400" />
-                  </div>
-                </DisclosureButton>
-                <DisclosurePanel>
-                  <div v-for="o in observations" class="mb-1">
-                    <div class="flex flex-row space-x-4 items-center">
-                      <div>
-                        {{ o.date }}
-                      </div>
-                      <div
-                        class="text-xs rounded-full px-1 border border-gray-600"
-                      >
-                        {{ userInitials(userById(o.user_id)) }}
-                      </div>
-                    </div>
-                    <div>
-                      {{ o.text }}
-                    </div>
-                  </div>
-                </DisclosurePanel>
-              </Disclosure>
+      <div class="mt-8">
+        <div class="flex flex-col items-end text-xs text-gray-700">
+          <div
+            v-if="!evaluation.from_current_period"
+            class="flex items-center space-x-1"
+          >
+            <IconExclamation class="h-4" />
+            <div>
+              Cette évaluation n'a pas encore été mise à jour pour cette
+              période.
             </div>
-            <EvalCompetency
-              :edit="true"
-              :comment="evaluation.comment"
-              :status="evaluation.status"
-              @save="saveEvaluation"
-              @cancel="cancelEvaluation"
-            />
+          </div>
+          <div>le {{ evaluation.date }} par {{ evaluation.user.initials }}</div>
+        </div>
+        <EvalCompetency
+          :edit="true"
+          :comment="evaluation.comment"
+          :status="evaluation.status"
+          @save="saveEvaluation"
+          @cancel="cancelEvaluation"
+        />
+        <div class="mt-12">
+          <div class="flex flex-row justify-center space-x-2">
+            <router-link
+              v-if="competency.previous != null"
+              :to="`/evaluation-single/${route.params.cycle}/${competency.previous.id}/${route.params.studentId}`"
+              class="
+                border border-gray-300
+                rounded-md
+                shadow-md
+                hover:text-teal-500 hover:border-teal-500
+              "
+            >
+              <IconChevronLeft class="h-8 text-gray-700" />
+            </router-link>
+            <router-link
+              v-if="competency.next != null"
+              :to="`/evaluation-single/${route.params.cycle}/${competency.next.id}/${route.params.studentId}`"
+              class="
+                border border-gray-300
+                rounded-md
+                shadow-md
+                hover:text-teal-500 hover:border-teal-500
+              "
+            >
+              <IconChevronRight class="h-8 text-gray-700" />
+            </router-link>
+          </div>
+        </div>
+        <div class="mt-12">
+          <div class="form-label">
+            {{ observations.length }}
+            <span v-if="observations.length > 1">observations</span>
+            <span v-else>observation</span>
+          </div>
+          <div v-for="o in observations" class="mb-1 mt-2">
+            <div class="flex flex-row space-x-4 items-center">
+              <div>
+                {{ o.date }}
+              </div>
+              <div class="text-xs rounded-full px-1 border border-gray-600">
+                {{ o.user.initials }}
+              </div>
+            </div>
+            <div class="whitespace-pre ml-1">
+              {{ o.text }}
+            </div>
           </div>
         </div>
       </div>
@@ -82,8 +106,9 @@ import { fathers } from "../utils/competency";
 import { userInitials } from "../utils/user";
 import EvalCompetency from "../components/EvalCompetency.vue";
 import Loading from "../components/Loading.vue";
-import IconChevronDown from "../icons/IconChevronDown.vue";
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import IconChevronLeft from "../icons/IconChevronLeft.vue";
+import IconChevronRight from "../icons/IconChevronRight.vue";
+import IconExclamation from "../icons/IconExclamation.vue";
 import { useTitle } from "@vueuse/core";
 
 useTitle("Évaluation - soklaki.fr");
@@ -93,44 +118,24 @@ const route = useRoute();
 
 const loading = ref(true);
 
-const competencyId = computed(() =>
-  route.params.competencyId == null ? null : Number(route.params.competencyId)
-);
-const competencyById = computed(() => store.getters.competencyById);
-const userById = computed(() => store.getters.userById);
-const studentById = computed(() => store.getters.studentById);
-const studentId = computed(() =>
-  route.params.studentId == null ? null : Number(route.params.studentId)
-);
-
-const containerById = computed(() => store.getters.containerById);
-const competencyFathers = computed(() => fathers(store, competencyId.value));
-
 const evaluation = ref(null);
 const observations = ref(null);
+const student = ref(null);
+const competency = ref(null);
 
 const saveEvaluation = async ({ comment, status }) => {
-  if (evaluation.value.id == null) {
-    const e = await store.dispatch("insertEvaluation", {
-      studentId: studentId.value,
-      competencyId: competencyId.value,
-      periodId: store.state.currentPeriod,
-      date: today(),
-      status: status,
-      comment: comment,
-    });
-    evaluation.value = e;
-  } else {
-    await store.dispatch("updateEvaluation", {
-      id: evaluation.value.id,
-      comment: comment,
-      date: today(),
-      status: status,
-      periodId: store.state.currentPeriod,
-    });
-    evaluation.value.comment = comment;
-    evaluation.value.status = status;
-  }
+  let date = today();
+  await store.dispatch("evaluationNew", {
+    studentId: route.params.studentId,
+    competencyId: route.params.competencyId,
+    status: status,
+    comment: comment,
+    date: date,
+  });
+  evaluation.value.status = status;
+  evaluation.value.comment = comment;
+  evaluation.value.date = date;
+  evaluation.value.from_current_period = true;
 };
 
 const cancelEvaluation = () => {};
@@ -140,36 +145,29 @@ const getEvaluation = async () => {
     // ok... Still at init... wait for it
     return;
   }
+  loading.value = true;
   const data = await store.dispatch("evaluationSingle", {
-    competencyId: competencyId.value,
-    periodId: store.state.currentPeriod,
-    studentId: studentId.value,
+    competencyId: Number(route.params.competencyId),
+    studentId: Number(route.params.studentId),
   });
-  if (data.evaluations.length === 0) {
-    // no evaluation
-    evaluation.value = {
-      id: null,
-      comment: null,
-      status: "Emtpy",
-    };
-  } else {
-    evaluation.value = data.evaluations[0];
-  }
   observations.value = data.observations;
+  evaluation.value = data.evaluation;
+  competency.value = data.competency;
+  student.value = data.student;
+  useTitle(
+    `Évaluation ${data.evaluation.full_rank} - ${data.student.firstname} ${data.student.lastname} - soklaki.fr`
+  );
+  loading.value = false;
 };
 
 watch(
   () => [route.params.competencyId, route.params.studentId],
   async () => {
-    loading.value = true;
     await getEvaluation();
-    loading.value = false;
   }
 );
 
 onMounted(async () => {
-  await until(() => store.state.currentPeriod).not.toBeNull();
   await getEvaluation();
-  loading.value = false;
 });
 </script>
