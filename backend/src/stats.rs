@@ -125,11 +125,11 @@ WHERE socle_competency.active = true
     )? {
         let competency_id = row.get(0);
         let student_id = row.get(1);
-        debug!(?row, "eval_observation_stats_by_cycle 2");
+        // debug!(?row, "eval_observation_stats_by_cycle 2");
         if let Some(student_index) = students_index.get(&student_id) {
             if let Some(competency_index) = competencies_index.get(&competency_id) {
                 e.stats[*competency_index].by_students[*student_index].observations += 1;
-                debug!("eval_observation_stats_by_cycle 3");
+                // debug!("eval_observation_stats_by_cycle 3");
             }
         }
     }
