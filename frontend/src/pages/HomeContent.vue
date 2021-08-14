@@ -20,7 +20,11 @@
             </template>
           </MascotteTip>
         </div>
-        <StatBoxPercent label="Progression générale" :value="stats.progress" />
+        <StatBoxPercent
+          label="Progression générale"
+          :value="stats.progress"
+          :enable="true"
+        />
         <router-link
           :to="{
             path: '/observations',
@@ -33,16 +37,32 @@
           />
         </router-link>
         <button @click="showC1 = !showC1">
-          <StatBoxPercent label="Cycle 1" :value="stats.c1.progress" />
+          <StatBoxPercent
+            label="Cycle 1"
+            :value="stats.c1.progress"
+            :enable="stats.c1.students_count > 0"
+          />
         </button>
         <button @click="showC2 = !showC2">
-          <StatBoxPercent label="Cycle 2" :value="stats.c2.progress" />
+          <StatBoxPercent
+            label="Cycle 2"
+            :value="stats.c2.progress"
+            :enable="stats.c2.students_count > 0"
+          />
         </button>
         <button @click="showC3 = !showC3">
-          <StatBoxPercent label="Cycle 3" :value="stats.c3.progress" />
+          <StatBoxPercent
+            label="Cycle 3"
+            :value="stats.c3.progress"
+            :enable="stats.c3.students_count > 0"
+          />
         </button>
         <button @click="showC4 = !showC4">
-          <StatBoxPercent label="Cycle 4" :value="stats.c4.progress" />
+          <StatBoxPercent
+            label="Cycle 4"
+            :value="stats.c4.progress"
+            :enable="stats.c4.students_count > 0"
+          />
         </button>
 
         <StatDetailCycle
