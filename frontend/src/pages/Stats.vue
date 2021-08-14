@@ -298,7 +298,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { until, useTitle } from "@vueuse/core";
-import { cycleNb } from "../utils/cycle";
+import { cycleNb, cycleValid } from "../utils/cycle";
 import { fathers } from "../utils/competency";
 import Modal from "../components/Modal.vue";
 import Loading from "../components/Loading.vue";
@@ -364,6 +364,9 @@ const loading = ref(true);
 const stats = ref({});
 
 const loadStats = async () => {
+  if (!cycleValid(route.params.cycle)) {
+    return;
+  }
   loading.value = true;
   stats.value = await store.dispatch("statsByCycle", route.params.cycle);
   useTitle(`Statistiques avancées ${route.params.cycle}  - soklaki.fr`);
