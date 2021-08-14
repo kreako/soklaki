@@ -1599,6 +1599,22 @@ const actions = {
     });
     return answer.data;
   },
+
+  async observationPrefill({}, { studentId, competencyId }) {
+    const answer = await axios.get(
+      `observation/prefill/${studentId}/${competencyId}`
+    );
+    return answer.data;
+  },
+
+  async observationNewPrefill({}, { studentId, competencyId, text }) {
+    const answer = await axios.post("observation/new-prefill", {
+      student_id: Number(studentId),
+      competency_id: Number(competencyId),
+      text: text,
+    });
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
