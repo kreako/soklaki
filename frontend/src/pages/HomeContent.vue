@@ -10,7 +10,7 @@
                 Un menu à gauche avec toutes les actions disponibles. 👈 Des
                 statistiques pour se motiver ici. 👇👉
               </div>
-              <div>
+              <div class="mt-1">
                 Et si quelque chose ne se passait pas comme prévu,
                 <router-link class="font-bold underline" to="/help">
                   contactez moi
