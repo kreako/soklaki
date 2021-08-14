@@ -15,3 +15,17 @@ export const cycleFullName = (cycle) => {
     return null;
   }
 };
+
+export const cycleValid = (cycle) => {
+  if (cycle[0] == "c") {
+    if (
+      cycle[1] == "1" ||
+      cycle[1] == "2" ||
+      cycle[1] == "3" ||
+      cycle[1] == "4"
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
