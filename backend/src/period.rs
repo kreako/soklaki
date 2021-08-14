@@ -74,8 +74,8 @@ pub fn search_period_or_insert(
 SELECT eval_period.id, eval_period.end
 	FROM eval_period
 	WHERE eval_period.group_id = $1
-        AND eval_period.start >= $2
-        AND eval_period.end <= $2
+        AND eval_period.start <= $2
+        AND eval_period.end >= $2
 	",
         &[group_id, &date],
     )?;
@@ -104,8 +104,8 @@ pub fn current_period_end(
 SELECT eval_period.id, eval_period.end
 	FROM eval_period
 	WHERE eval_period.group_id = $1
-        AND eval_period.start >= $2
-        AND eval_period.end <= $2
+        AND eval_period.start <= $2
+        AND eval_period.end >= $2
 	",
         &[group_id, &today],
     )?;
@@ -144,8 +144,8 @@ pub fn current_period(
 SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
 	FROM eval_period
 	WHERE eval_period.group_id = $1
-        AND eval_period.start >= $2
-        AND eval_period.end <= $2
+        AND eval_period.start <= $2
+        AND eval_period.end >= $2
 	",
         &[group_id, &today],
     )?;
