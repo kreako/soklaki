@@ -17,6 +17,9 @@ export const cycleFullName = (cycle) => {
 };
 
 export const cycleValid = (cycle) => {
+  if (cycle == null) {
+    return false;
+  }
   if (cycle[0] == "c") {
     if (
       cycle[1] == "1" ||

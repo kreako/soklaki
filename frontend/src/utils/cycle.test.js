@@ -25,4 +25,7 @@ test("cycleValid", () => {
   expect(cycleValid("")).toBeFalsy();
   expect(cycleValid("e3")).toBeFalsy();
   expect(cycleValid("e")).toBeFalsy();
+
+  expect(cycleValid(null)).toBeFalsy();
+  expect(cycleValid(undefined)).toBeFalsy();
 });
