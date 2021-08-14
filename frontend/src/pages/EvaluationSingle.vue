@@ -72,10 +72,18 @@
           </div>
         </div>
         <div class="mt-12">
-          <div class="form-label">
-            {{ observations.length }}
-            <span v-if="observations.length > 1">observations</span>
-            <span v-else>observation</span>
+          <div class="flex items-center space-x-4">
+            <div class="form-label">
+              {{ observations.length }}
+              <span v-if="observations.length > 1">observations</span>
+              <span v-else>observation</span>
+            </div>
+            <router-link
+              :to="`/new-observation-prefill/${route.params.studentId}/${route.params.competencyId}`"
+              class="text-xs hover:text-teal-500"
+            >
+              En ajoutez-une ?
+            </router-link>
           </div>
           <div v-for="o in observations" class="mb-1 mt-2">
             <div class="flex flex-row space-x-4 items-center">
@@ -109,6 +117,7 @@ import Loading from "../components/Loading.vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconExclamation from "../icons/IconExclamation.vue";
+import IconPlusCircle from "../icons/IconPlusCircle.vue";
 import { useTitle } from "@vueuse/core";
 
 useTitle("Évaluation - soklaki.fr");
@@ -147,15 +156,15 @@ const getEvaluation = async () => {
   }
   loading.value = true;
   const data = await store.dispatch("evaluationSingle", {
-    competencyId: Number(route.params.competencyId),
-    studentId: Number(route.params.studentId),
+    competencyId: route.params.competencyId,
+    studentId: route.params.studentId,
   });
   observations.value = data.observations;
   evaluation.value = data.evaluation;
   competency.value = data.competency;
   student.value = data.student;
   useTitle(
-    `Évaluation ${data.evaluation.full_rank} - ${data.student.firstname} ${data.student.lastname} - soklaki.fr`
+    `Évaluation ${data.competency.full_rank} - ${data.student.firstname} ${data.student.lastname} - soklaki.fr`
   );
   loading.value = false;
 };
