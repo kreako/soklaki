@@ -185,7 +185,7 @@
         <div v-for="stat in stats" class="flex items-center space-x-2">
           <div class="w-16">{{ stat.competency.full_rank }}</div>
           <StatObservationBox
-            :link="'meuh'"
+            :link="`/new-observation-prefill/${route.params.id}/${stat.competency.id}`"
             :observations="stat.eval.observations"
           />
           <StatEvaluationBox

@@ -172,7 +172,7 @@
                 >
                   <div class="block ml-2">
                     <StatObservationBox
-                      :link="'meuh'"
+                      :link="`/new-observation-prefill/${byStudent.student_id}/${byCompetency.competency.id}`"
                       :observations="byStudent.observations"
                     />
                   </div>
@@ -366,6 +366,7 @@ const stats = ref({});
 const loadStats = async () => {
   loading.value = true;
   stats.value = await store.dispatch("statsByCycle", route.params.cycle);
+  useTitle(`Statistiques avancées ${route.params.cycle}  - soklaki.fr`);
   loading.value = false;
 };
 
