@@ -30,6 +30,10 @@ const routes = [
         component: () => import("./pages/NewObservationFromTemplate.vue"),
       },
       {
+        path: "/new-observation-prefill/:studentId/:competencyId",
+        component: () => import("./pages/NewObservationPrefill.vue"),
+      },
+      {
         path: "/observation/:id",
         component: () => import("./pages/Observation.vue"),
       },
