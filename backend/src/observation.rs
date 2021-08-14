@@ -1,6 +1,12 @@
 use chrono::NaiveDate;
+use rocket::http::Status;
+use rocket::serde::json::Json;
 use serde::Serialize;
 
+use super::competency;
+use super::db;
+use super::jwt;
+use super::student;
 use super::user;
 
 #[derive(Debug, Serialize)]
@@ -41,4 +47,38 @@ FROM eval_observation
             })
         })
         .collect())?
+}
+
+#[derive(Debug, Serialize)]
+pub struct Prefill {
+    pub student: student::Student,
+    pub competency: competency::SingleCompetency,
+}
+
+#[get("/prefill/<student_id>/<competency_id>")]
+pub async fn prefill(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student_id: i64,
+    competency_id: i32,
+) -> Result<Json<Prefill>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+    let competency = db
+        .run(move |client| competency::single_competency(client, &competency_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    if group_id != competency.group_id {
+        return Err(Status::NotFound);
+    }
+    let student = db
+        .run(move |client| student::student(client, &student_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    if group_id != student.group_id {
+        return Err(Status::NotFound);
+    }
+    Ok(Json(Prefill {
+        student: student,
+        competency: competency,
+    }))
 }

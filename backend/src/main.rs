@@ -163,6 +163,7 @@ fn rocket() -> _ {
             "/evaluation",
             routes![evaluation::evaluation_single, evaluation::new_evaluation],
         )
+        .mount("/observation", routes![observation::prefill])
         .mount(
             "/",
             routes![
