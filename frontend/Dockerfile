@@ -4,7 +4,7 @@ WORKDIR /app
 
 # First install dependencies
 COPY package*.json .
-RUN npm install
+RUN npm install --production
 
 # Copy src package
 COPY . .
