@@ -183,7 +183,11 @@
       </div>
       <div class="mt-8 grid grid-cols-2 md:grid-cols-4">
         <div v-for="stat in stats" class="flex items-center space-x-2">
-          <div class="w-16">{{ stat.competency.full_rank }}</div>
+          <div class="w-16">
+            <button @click="selectCompetency(stat.competency.id)">
+              {{ stat.competency.full_rank }}
+            </button>
+          </div>
           <StatObservationBox
             :link="`/new-observation-prefill/${route.params.id}/${stat.competency.id}`"
             :observations="stat.eval.observations"
@@ -203,6 +207,36 @@
         </router-link>
       </div>
     </Loading>
+    <Modal
+      :title="competencyModalTitle"
+      :show="showCompetencyModal"
+      @close="closeCompetencyModal"
+    >
+      <div>
+        <div class="uppercase tracking-wide text-gray-700">
+          {{ competencyFathers[0].rank }}.
+          {{ competencyFathers[0].text }}
+        </div>
+        <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
+          {{ competencyFathers[1].rank }}.
+          {{ competencyFathers[1].text }}
+        </div>
+        <div>
+          {{ competencyById(selectedCompetency).rank }}.
+          {{ competencyById(selectedCompetency).text }}
+        </div>
+        <div class="mt-2 pl-2">
+          <HashSubjects
+            :subjects="competencyById(selectedCompetency).subjects"
+          />
+        </div>
+        <div class="mt-2 pl-2">
+          <CompetencyTemplates
+            :templates="competencyById(selectedCompetency).templates"
+          />
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -212,9 +246,11 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, ref, onMounted, watch } from "vue";
 import { useTitle } from "@vueuse/core";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { fathers } from "../utils/competency";
 import IconCheck from "../icons/IconCheck.vue";
 import IconPencil from "../icons/IconPencil.vue";
 import IconQuestionMark from "../icons/IconQuestionMark.vue";
+import Modal from "../components/Modal.vue";
 import Loading from "../components/Loading.vue";
 import MascotteTip from "../components/MascotteTip.vue";
 import InputTextWithLabel from "../components/InputTextWithLabel.vue";
@@ -222,6 +258,8 @@ import InputDateWithLabel from "../components/InputDateWithLabel.vue";
 import StatEvaluationBox from "../components/StatEvaluationBox.vue";
 import StatObservationBox from "../components/StatObservationBox.vue";
 import StatBoxPercent from "../components/StatBoxPercent.vue";
+import HashSubjects from "../components/HashSubjects.vue";
+import CompetencyTemplates from "../components/CompetencyTemplates.vue";
 
 useTitle("Élève - soklaki.fr");
 
@@ -266,6 +304,29 @@ const saveSchoolExit = async (value) => {
     schoolExit: value,
   });
 };
+
+const competencyById = computed(() => store.getters.competencyById);
+
+const selectedCompetency = ref(null);
+
+const showCompetencyModal = ref(false);
+const selectCompetency = (id) => {
+  selectedCompetency.value = id;
+  showCompetencyModal.value = true;
+};
+const closeCompetencyModal = () => {
+  showCompetencyModal.value = false;
+};
+const competencyModalTitle = computed(() => {
+  if (selectedCompetency.value == null) {
+    return null;
+  }
+  const competency = competencyById.value(selectedCompetency.value);
+  return `Compétence - ${competency.full_rank}`;
+});
+const competencyFathers = computed(() =>
+  fathers(store, selectedCompetency.value)
+);
 
 const loading = ref(true);
 const student = ref(null);
