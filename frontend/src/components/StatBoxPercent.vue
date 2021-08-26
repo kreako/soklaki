@@ -70,6 +70,9 @@ import { defineProps } from "vue";
 const props = defineProps({
   label: String,
   value: Number,
-  enable: Boolean,
+  enable: {
+    type: Boolean,
+    default: true,
+  },
 });
 </script>
