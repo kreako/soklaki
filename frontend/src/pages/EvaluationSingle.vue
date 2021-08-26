@@ -34,7 +34,9 @@
               période.
             </div>
           </div>
-          <div>le {{ evaluation.date }} par {{ evaluation.user.initials }}</div>
+          <div v-if="evaluation.status != 'Empty'">
+            le {{ evaluation.date }} par {{ evaluation.user.initials }}
+          </div>
         </div>
         <EvalCompetency
           :edit="true"
@@ -145,6 +147,7 @@ const saveEvaluation = async ({ comment, status }) => {
   evaluation.value.comment = comment;
   evaluation.value.date = date;
   evaluation.value.from_current_period = true;
+  evaluation.value.user.initials = null; // TODO
 };
 
 const cancelEvaluation = () => {};
@@ -160,7 +163,17 @@ const getEvaluation = async () => {
     studentId: route.params.studentId,
   });
   observations.value = data.observations;
-  evaluation.value = data.evaluation;
+  if (data.evaluation == null) {
+    evaluation.value = {
+      status: "Empty",
+      comment: null,
+      date: null,
+      from_current_period: false,
+      user: { initials: null },
+    };
+  } else {
+    evaluation.value = data.evaluation;
+  }
   competency.value = data.competency;
   student.value = data.student;
   useTitle(
