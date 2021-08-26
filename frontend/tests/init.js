@@ -34,10 +34,47 @@ const newTestUser = async () => {
   let data = await graphql(
     `mutation { signup(email: "${EMAIL}", password: "${PASSWORD}") { id group token } } `
   );
+  const userId = data.signup.id;
+  const groupId = data.signup.group;
+  const token = data.signup.token;
+
+  // Set firstname, lastname and group name to avoid "first steps" screen
+  await graphql(
+    `
+      mutation UpdateUser(
+        $userId: bigint!
+        $firstname: String!
+        $lastname: String!
+      ) {
+        update_user_by_pk(
+          pk_columns: { id: $userId }
+          _set: { firstname: $firstname, lastname: $lastname }
+        ) {
+          id
+        }
+      }
+    `,
+    { userId: userId, firstname: "Test", lastname: "Intégration" }
+  );
+
+  await graphql(
+    `
+      mutation UpdateGroup($groupId: bigint!, $name: String!) {
+        update_group_by_pk(
+          pk_columns: { id: $groupId }
+          _set: { name: $name }
+        ) {
+          id
+        }
+      }
+    `,
+    { groupId: groupId, name: "L'école du test et de l'intégration" }
+  );
+
   return {
-    userId: data.signup.id,
-    groupId: data.signup.group,
-    token: data.signup.token,
+    userId: userId,
+    groupId: groupId,
+    token: token,
     email: EMAIL,
   };
 };
