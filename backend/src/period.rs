@@ -1,7 +1,7 @@
 use chrono::naive::NaiveDate;
 use chrono::Datelike;
 use serde::Serialize;
-use tracing::debug;
+use tracing::{debug, info};
 
 #[derive(Debug, PartialEq)]
 pub struct DefaultPeriod {
@@ -93,6 +93,8 @@ pub struct PeriodEnd {
     pub end: NaiveDate,
 }
 
+// TODO : There is potentialy a race condition in here
+// Maybe using a with new_row as (insert ... returning *) select * from new_row ... union select * from ...
 pub fn current_period_end(
     client: &mut postgres::Client,
     group_id: &i64,
