@@ -1,7 +1,7 @@
 use chrono::naive::NaiveDate;
 use chrono::Datelike;
 use serde::Serialize;
-use tracing::{debug, info};
+use tracing::debug;
 
 #[derive(Debug, PartialEq)]
 pub struct DefaultPeriod {
