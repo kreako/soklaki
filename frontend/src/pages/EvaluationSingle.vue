@@ -50,6 +50,7 @@
             <router-link
               v-if="competency.previous != null"
               :to="`/evaluation-single/${route.params.cycle}/${competency.previous.id}/${route.params.studentId}`"
+              aria-label="Compétence précédente"
               class="
                 border border-gray-300
                 rounded-md
@@ -62,6 +63,7 @@
             <router-link
               v-if="competency.next != null"
               :to="`/evaluation-single/${route.params.cycle}/${competency.next.id}/${route.params.studentId}`"
+              aria-label="Compétence suivante"
               class="
                 border border-gray-300
                 rounded-md
