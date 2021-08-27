@@ -36,59 +36,34 @@
             :value="stats.incomplete_observations_count"
           />
         </router-link>
-        <button @click="showC1 = !showC1">
+        <router-link to="/stats/c1">
           <StatBoxPercent
             label="Cycle 1"
             :value="stats.c1.progress"
             :enable="stats.c1.students_count > 0"
           />
-        </button>
-        <button @click="showC2 = !showC2">
+        </router-link>
+        <router-link to="/stats/c2">
           <StatBoxPercent
             label="Cycle 2"
             :value="stats.c2.progress"
             :enable="stats.c2.students_count > 0"
           />
-        </button>
-        <button @click="showC3 = !showC3">
+        </router-link>
+        <router-link to="/stats/c3">
           <StatBoxPercent
             label="Cycle 3"
             :value="stats.c3.progress"
             :enable="stats.c3.students_count > 0"
           />
-        </button>
-        <button @click="showC4 = !showC4">
+        </router-link>
+        <router-link to="/stats/c4">
           <StatBoxPercent
             label="Cycle 4"
             :value="stats.c4.progress"
             :enable="stats.c4.students_count > 0"
           />
-        </button>
-
-        <StatDetailCycle
-          v-if="showC1"
-          class="col-span-2 md:col-span-4"
-          :cycle="1"
-          :stats="stats.c1"
-        />
-        <StatDetailCycle
-          v-if="showC2"
-          class="col-span-2 md:col-span-4"
-          :cycle="2"
-          :stats="stats.c2"
-        />
-        <StatDetailCycle
-          v-if="showC3"
-          class="col-span-2 md:col-span-4"
-          :cycle="3"
-          :stats="stats.c3"
-        />
-        <StatDetailCycle
-          v-if="showC4"
-          class="col-span-2 md:col-span-4"
-          :cycle="4"
-          :stats="stats.c4"
-        />
+        </router-link>
 
         <button
           @click="showWeek.splice(index, 1, !showWeek[index])"
@@ -183,7 +158,6 @@ import IconQuestionMark from "../icons/IconQuestionMark.vue";
 import StatBox from "../components/StatBox.vue";
 import StatBoxPercent from "../components/StatBoxPercent.vue";
 import StatBoxWeek from "../components/StatBoxWeek.vue";
-import StatDetailCycle from "../components/StatDetailCycle.vue";
 import ProgressBar from "../components/ProgressBar.vue";
 import Loading from "../components/Loading.vue";
 import MascotteTip from "../components/MascotteTip.vue";
@@ -193,11 +167,6 @@ useTitle("Accueil - soklaki.fr");
 const store = useStore();
 
 const loading = ref(true);
-
-const showC1 = ref(false);
-const showC2 = ref(false);
-const showC3 = ref(false);
-const showC4 = ref(false);
 
 const showWeek = ref([false, false, false, false]);
 
