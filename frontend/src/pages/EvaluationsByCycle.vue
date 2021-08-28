@@ -1,47 +1,49 @@
 <template>
   <div class="my-4 px-2">
-    <div class="form-label">Les Évaluations du cycle {{ cycle }}</div>
-    <div class="my-8 flex flex-row justify-center">
-      <div>
-        <router-link
-          :to="`/evaluation/${route.params.cycle}/${firstCompetency}`"
-          class="button-main-action"
-        >
-          Démarrer une évaluation
-        </router-link>
-      </div>
-    </div>
-    <div class="mt-4">
-      <div v-for="stat in competencyStats">
-        <router-link
-          :to="`/evaluation/${route.params.cycle}/${stat.competencyId}`"
-        >
-          <div class="flex flex-row items-center space-x-2">
-            <div class="w-20">
-              {{ competencyById(stat.competencyId).full_rank }}
-            </div>
-            <ProgressBar :current="stat.current" :total="stat.total" />
-            <div class="text-gray-700 text-xs">
-              {{ stat.current }}/{{ stat.total }}
-            </div>
-          </div>
-        </router-link>
-      </div>
-    </div>
-    <div class="mt-4">
-      <router-link :to="`/evaluation/${route.params.cycle}/comment`">
-        <div class="flex flex-row items-center space-x-2">
-          <div>Commentaire</div>
-          <ProgressBar
-            :current="commentStats.current"
-            :total="commentStats.total"
-          />
-          <div class="text-gray-700 text-xs">
-            {{ commentStats.current }}/{{ commentStats.total }}
-          </div>
+    <Loading :loading="loading">
+      <div class="form-label">Les Évaluations du cycle {{ cycle }}</div>
+      <div class="my-8 flex flex-row justify-center">
+        <div>
+          <router-link
+            :to="`/evaluation/${route.params.cycle}/${firstCompetency}`"
+            class="button-main-action"
+          >
+            Démarrer une évaluation
+          </router-link>
         </div>
-      </router-link>
-    </div>
+      </div>
+      <div class="mt-4">
+        <div v-for="stat in competencyStats">
+          <router-link
+            :to="`/evaluation/${route.params.cycle}/${stat.competencyId}`"
+          >
+            <div class="flex flex-row items-center space-x-2">
+              <div class="w-20">
+                {{ competencyById(stat.competencyId).full_rank }}
+              </div>
+              <ProgressBar :current="stat.current" :total="stat.total" />
+              <div class="text-gray-700 text-xs">
+                {{ stat.current }}/{{ stat.total }}
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </div>
+      <div class="mt-4">
+        <router-link :to="`/evaluation/${route.params.cycle}/comment`">
+          <div class="flex flex-row items-center space-x-2">
+            <div>Commentaire</div>
+            <ProgressBar
+              :current="commentStats.current"
+              :total="commentStats.total"
+            />
+            <div class="text-gray-700 text-xs">
+              {{ commentStats.current }}/{{ commentStats.total }}
+            </div>
+          </div>
+        </router-link>
+      </div>
+    </Loading>
   </div>
 </template>
 
@@ -53,11 +55,14 @@ import { until } from "@vueuse/core";
 import { cycleNb } from "../utils/cycle";
 import ProgressBar from "../components/ProgressBar.vue";
 import { useTitle } from "@vueuse/core";
+import Loading from "../components/Loading.vue";
 
 const store = useStore();
 const route = useRoute();
 
 useTitle(`Évaluations ${route.params.cycle} - soklaki.fr`);
+
+const loading = ref(true);
 
 const cycle = computed(() => cycleNb(route.params.cycle));
 
@@ -101,9 +106,11 @@ const firstCompetency = computed(() => {
 const competencyById = computed(() => store.getters.competencyById);
 
 onMounted(async () => {
+  loading.value = true;
   await until(() => store.state.currentPeriod).not.toBeNull();
   await store.dispatch("stats", {
     periodId: store.state.currentPeriod,
   });
+  loading.value = false;
 });
 </script>
