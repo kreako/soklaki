@@ -218,7 +218,7 @@ fn is_there_a_comment(
     date: &NaiveDate,
 ) -> Result<bool, postgres::error::Error> {
     let period = period::search_period_or_insert(client, group_id, date)?;
-    let row = client.query_one(
+    let res = client.query_one(
         "
 SELECT comments_count::int
 	FROM eval_comment_stats
@@ -227,9 +227,17 @@ SELECT comments_count::int
         AND cycle::text = $3
 ",
         &[student_id, &period.id, &cycle.to_str()],
-    )?;
-    let comments_count: i32 = row.get(0);
-    Ok(comments_count > 1)
+    );
+    match res {
+        Ok(row) => {
+            let comments_count: i32 = row.get(0);
+            Ok(comments_count > 1)
+        }
+        Err(_) => {
+            // Here probably because the student has already exited the school
+            Ok(false)
+        }
+    }
 }
 
 #[get("/<id>")]
