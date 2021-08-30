@@ -1,6 +1,46 @@
 <template>
   <div class="my-4 px-2">
-    <div class="form-label">Commentaires généraux</div>
+    <Disclosure>
+      <DisclosureButton class="">
+        <div class="flex flex-row items-center space-x-2">
+          <div class="form-label">Commentaires généraux</div>
+          <IconQuestionMark class="w-6 h-6 text-gray-500" />
+        </div>
+      </DisclosureButton>
+      <DisclosurePanel class="py-2">
+        <MascotteTip class="my-2">
+          <template v-slot:title>
+            Bienvenue sur la page des commentaires ! 🧐
+          </template>
+          <template v-slot:default>
+            <div class="mt-4">
+              Il s'agit du commentaire final de l'évaluation.
+              <span class="text-xs">
+                (Il apparaîtra dans le rapport sur sa propre page, après le
+                tableau des évaluations...)
+              </span>
+            </div>
+            <div class="mt-4">
+              C'est un texte libre qui peut parler, par exemple, de :
+              <ul class="list-disc list-inside">
+                <li class="mt-1">
+                  L'engagement, l'implication dans le groupe et le
+                  fonctionnement de l'école
+                </li>
+                <li>Le rapport aux apprentissages</li>
+                <li>Le rapport aux autres</li>
+                <li>Les intérêts, les projets de l'élève</li>
+                <li>Les forces et les difficultés de l'élève</li>
+              </ul>
+            </div>
+            <div class="mt-4">
+              Et maintenant, votre mission, si vous l'acceptez, écrivez ! ✍️
+              <span class="text-xs">(Quelques lignes suffiront...)</span>
+            </div>
+          </template>
+        </MascotteTip>
+      </DisclosurePanel>
+    </Disclosure>
     <div class="">
       <div v-for="student in students" class="mt-14">
         <div class="form-label">
@@ -46,8 +86,7 @@
           border border-gray-300
           rounded-md
           shadow-md
-          hover:text-teal-500
-          hover:border-teal-500
+          hover:text-teal-500 hover:border-teal-500
         "
       >
         <IconChevronLeft class="h-8" />
@@ -58,8 +97,7 @@
           border border-gray-300
           rounded-md
           shadow-md
-          hover:text-teal-500
-          hover:border-teal-500
+          hover:text-teal-500 hover:border-teal-500
         "
       >
         <IconChevronUp class="h-8" />
@@ -70,8 +108,7 @@
           border border-gray-300
           rounded-md
           shadow-md
-          hover:text-teal-500
-          hover:border-teal-500
+          hover:text-teal-500 hover:border-teal-500
         "
       >
         <IconChevronRight class="h-8" />
@@ -86,7 +123,9 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { until } from "@vueuse/core";
 import { today } from "../utils/date";
-import EvalCompetency from "../components/EvalCompetency.vue";
+import MascotteTip from "../components/MascotteTip.vue";
+import IconQuestionMark from "../icons/IconQuestionMark.vue";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconChevronUp from "../icons/IconChevronUp.vue";
