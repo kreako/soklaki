@@ -161,7 +161,11 @@ fn rocket() -> _ {
         )
         .mount(
             "/evaluation",
-            routes![evaluation::evaluation_single, evaluation::new_evaluation],
+            routes![
+                evaluation::evaluation_single,
+                evaluation::evaluation_multi,
+                evaluation::new_evaluation
+            ],
         )
         .mount(
             "/observation",

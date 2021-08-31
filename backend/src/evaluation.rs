@@ -11,6 +11,7 @@ use super::jwt;
 use super::observation;
 use super::period;
 use super::student;
+use super::students;
 use super::user;
 
 #[derive(Debug, Serialize)]
@@ -131,6 +132,65 @@ pub async fn evaluation_single(
         competency: competency,
         observations: observations,
         evaluation: evaluation,
+    }))
+}
+
+#[derive(Debug, Serialize)]
+pub struct MultiStudent {
+    pub student: students::Student,
+    pub observations: Vec<observation::SingleObservation>,
+    pub evaluation: Option<Evaluation>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct Multi {
+    pub competency: competency::SingleCompetency,
+    pub by_students: Vec<MultiStudent>,
+}
+
+#[get("/multi/<competency_id>")]
+pub async fn evaluation_multi(
+    db: db::Db,
+    token: jwt::JwtToken,
+    competency_id: i32,
+) -> Result<Json<Multi>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+    let competency = db
+        .run(move |client| competency::single_competency(client, &competency_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    if group_id != competency.group_id {
+        return Err(Status::NotFound);
+    }
+    let cycle = competency.cycle.clone();
+    let today = chrono::Local::today().naive_local();
+    let students = db
+        .run(move |client| students::students_by_cycle(client, &group_id, &today, &cycle))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    let mut by_students = Vec::new();
+    for student in students {
+        let student_id_1 = student.id.clone();
+        let observations = db
+            .run(move |client| {
+                observation::single_competency_observations(client, &competency_id, &student_id_1)
+            })
+            .await
+            .map_err(|_err| Status::InternalServerError)?;
+        let student_id_2 = student.id.clone();
+        let evaluation = db
+            .run(move |client| evaluation(client, &competency_id, &student_id_2, &group_id))
+            .await
+            .map_err(|_err| Status::InternalServerError)?;
+        by_students.push(MultiStudent {
+            student: student,
+            observations: observations,
+            evaluation: evaluation,
+        })
+    }
+    Ok(Json(Multi {
+        competency: competency,
+        by_students: by_students,
     }))
 }
 
