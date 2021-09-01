@@ -1,6 +1,8 @@
-import { folio as baseFolio } from "@playwright/test";
+import { config, folio as baseFolio } from "@playwright/test";
 import { BrowserContextOptions } from "playwright";
 import { readFile } from "fs/promises";
+
+config.timeout = 300000;
 
 const builder = baseFolio.extend();
 

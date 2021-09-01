@@ -7,9 +7,9 @@
     "build": "vite build",
     "serve": "vite preview",
     "test:unit": "node --experimental-vm-modules node_modules/.bin/jest ./src/",
-    "test:integration": "folio tests --param browserName=firefox --param screenshotOnFailure",
+    "test:integration": "folio tests --param browserName=firefox --param screenshotOnFailure --timeout=300000",
     "test:integration:init": "node -r dotenv/config tests/init.js dotenv_config_path=tests/.env",
-    "test:integration:headful": "folio tests/new-observation.spec.ts --param browserName=firefox --param screenshotOnFailure --param headful",
+    "test:integration:headful": "folio tests/stats-per-cycle.spec.ts --param browserName=firefox --param screenshotOnFailure --param headful --timeout=300000",
     "test:integration:codegen": "playwright codegen http://127.0.0.1:3000"
   },
   "dependencies": {
