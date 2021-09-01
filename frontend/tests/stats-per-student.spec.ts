@@ -78,7 +78,7 @@ it("is able to use stats per student to evaluate", async ({ page }) => {
     `text=Évaluation - 1.1.1. - ${FIRSTNAME} ${LASTNAME}`
   );
   await page.waitForSelector(
-    "text=Cette évaluation n'a pas encore été mise à jour pour cette période."
+    "text=L'évaluation n'a pas encore été faite sur cette période."
   );
   await page.waitForSelector("text=1 observation");
   await page.waitForSelector("text=Mais oui !");
