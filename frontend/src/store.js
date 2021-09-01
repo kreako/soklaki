@@ -1589,6 +1589,11 @@ const actions = {
     return answer.data;
   },
 
+  async evaluationMulti({}, { competencyId }) {
+    const answer = await axios.get(`evaluation/multi/${competencyId}`);
+    return answer.data;
+  },
+
   async evaluationNew({}, { studentId, competencyId, status, comment, date }) {
     const answer = await axios.post("evaluation/new", {
       student_id: Number(studentId),
