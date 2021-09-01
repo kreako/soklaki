@@ -1,83 +1,81 @@
 <template>
   <div class="my-4 px-2">
     <Loading :loading="loading">
-      <div class="form-label">
-        Évaluations - {{ competencyById(competencyId).full_rank }}
-      </div>
+      <div class="form-label">Évaluations - {{ competency.full_rank }}</div>
       <div class="mt-4">
-        <div class="uppercase tracking-wide text-gray-700">
-          {{ competencyFathers[0].rank }}.
-          {{ competencyFathers[0].text }}
+        <div class="uppercase tracking-wide text-gray-700 text-xs">
+          {{ competency.parent.rank }}.
+          {{ competency.parent.text }}
         </div>
-        <div v-if="competencyFathers[1].rank != null" class="text-gray-700">
-          {{ competencyFathers[1].rank }}.
-          {{ competencyFathers[1].text }}
+        <div
+          v-if="competency.parent.parent != null"
+          class="text-gray-700 text-xs"
+        >
+          {{ competency.parent.parent.rank }}.
+          {{ competency.parent.parent.text }}
         </div>
         <div>
-          {{ competencyById(competencyId).rank }}.
-          {{ competencyById(competencyId).text }}
+          {{ competency.rank }}.
+          {{ competency.text }}
         </div>
       </div>
       <div class="">
-        <div v-for="student in students" class="mt-14">
-          <div class="form-label">
-            {{ student.firstname }}
-            {{ student.lastname }}
+        <div v-for="(by, idx) in byStudents" class="mt-32">
+          <div class="uppercase text-md tracking-wide text-gray-700 font-bold">
+            {{ by.student.firstname }}
+            {{ by.student.lastname }}
           </div>
-          <div class="mt-2">
+          <div class="flex flex-col items-end text-xs text-gray-700">
             <div
-              v-if="evaluationByStudent[student.id].observations.length > 0"
-              class="text-sm"
+              v-if="!by.evaluation?.from_current_period"
+              class="flex items-center space-x-1"
             >
-              <Disclosure>
-                <DisclosureButton>
-                  <div
-                    class="text-gray-700 flex flex-row items-center space-x-2"
-                  >
-                    <div>
-                      {{ evaluationByStudent[student.id].observations.length }}
-                      <span
-                        v-if="
-                          evaluationByStudent[student.id].observations.length >
-                          1
-                        "
-                      >
-                        observations
-                      </span>
-                      <span v-else> observation </span>
-                    </div>
-                    <IconChevronDown class="h-4 text-gray-400" />
-                  </div>
-                </DisclosureButton>
-                <DisclosurePanel>
-                  <div
-                    v-for="o in evaluationByStudent[student.id].observations"
-                    class="mb-1"
-                  >
-                    <div class="flex flex-row space-x-4 items-center">
-                      <div>
-                        {{ o.date }}
-                      </div>
-                      <div
-                        class="text-xs rounded-full px-1 border border-gray-600"
-                      >
-                        {{ userInitials(userById(o.user_id)) }}
-                      </div>
-                    </div>
-                    <div>
-                      {{ o.text }}
-                    </div>
-                  </div>
-                </DisclosurePanel>
-              </Disclosure>
+              <IconExclamation class="h-4" />
+              <div>
+                L'évaluation n'a pas encore été faite sur cette période.
+              </div>
             </div>
-            <EvalCompetency
-              :edit="true"
-              :comment="evaluationByStudent[student.id].comment"
-              :status="evaluationByStudent[student.id].status"
-              @save="saveEvaluation(student.id, $event)"
-              @cancel="cancelEvaluation(student.id)"
-            />
+            <div
+              v-if="by.evaluation != null && by.evaluation.status != 'Empty'"
+            >
+              le {{ by.evaluation?.date }} par
+              {{ by.evaluation?.user?.initials }}
+            </div>
+          </div>
+          <EvalCompetency
+            :edit="true"
+            :comment="by.evaluation?.comment"
+            :status="by.evaluation?.status"
+            @save="saveEvaluation(idx, $event)"
+            @cancel="cancelEvaluation"
+          />
+          <div class="mt-8">
+            <div class="flex items-center space-x-4">
+              <div class="form-label">
+                {{ by.observations.length }}
+                <span v-if="by.observations.length > 1">observations</span>
+                <span v-else>observation</span>
+              </div>
+              <router-link
+                :to="`/new-observation-prefill/${by.student.id}/${route.params.id}`"
+                class="text-xs hover:text-teal-500"
+              >
+                En ajoutez-une ?
+              </router-link>
+            </div>
+            <div v-for="o in by.observations" class="mb-1 mt-2">
+              <div class="flex flex-row space-x-4 items-center">
+                <div>
+                  {{ o.date }}
+                </div>
+                <div class="text-xs rounded-full px-1 border border-gray-600">
+                  {{ o.user.initials }}
+                </div>
+              </div>
+              <div class="whitespace-pre ml-1">
+                {{ o.text }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -134,6 +132,7 @@ import IconChevronLeft from "../icons/IconChevronLeft.vue";
 import IconChevronRight from "../icons/IconChevronRight.vue";
 import IconChevronUp from "../icons/IconChevronUp.vue";
 import IconChevronDown from "../icons/IconChevronDown.vue";
+import IconExclamation from "../icons/IconExclamation.vue";
 import { useTitle } from "@vueuse/core";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 
@@ -144,93 +143,26 @@ const route = useRoute();
 
 const loading = ref(true);
 
-const competencyId = computed(() =>
-  route.params.id == null ? null : Number(route.params.id)
-);
-const competencyById = computed(() => store.getters.competencyById);
-const studentById = computed(() => store.getters.studentById);
-const userById = computed(() => store.getters.userById);
-const containerById = computed(() => store.getters.containerById);
-const competencyFathers = computed(() => fathers(store, competencyId.value));
+const byStudents = ref([]);
+const competency = ref(null);
 
-const evaluations = ref([]);
-const observations = ref([]);
-const competencies = ref([]);
-
-const students = computed(() => {
-  const period = store.state.periods[store.state.currentPeriod];
-  const full = period.students.map((x) =>
-    store.getters.studentById(x.student.id)
-  );
-  return full.filter(
-    (x) => x.current_cycle.current_cycle === route.params.cycle
-  );
-});
-
-const searchEvaluation = (studentId) => {
-  // evaluations are sorted by date desc, so the first one is the one I'm looking for
-  return evaluations.value.find((e) => {
-    if (e.student_id === studentId && e.competency_id == route.params.id) {
-      return true;
-    }
-    return false;
+const saveEvaluation = async (studentIndex, { comment, status }) => {
+  let date = today();
+  await store.dispatch("evaluationNew", {
+    studentId: byStudents.value[studentIndex].student.id,
+    competencyId: route.params.id,
+    status: status,
+    comment: comment,
+    date: date,
   });
-};
-
-const evaluationByStudent = computed(() => {
-  const e = {};
-  for (const student of students.value) {
-    // Search for an existing evaluation
-    const evaluation = searchEvaluation(student.id);
-    // Search for existing observations
-    const obs = observations.value.filter(
-      (o) =>
-        o.competencies.find((c) => c.competency_id == route.params.id) !=
-          null && o.students.find((c) => c.student_id == student.id) != null
-    );
-    if (evaluation == null) {
-      // No evaluation yet
-      e[student.id] = {
-        id: null,
-        comment: null,
-        status: "Emtpy",
-        observations: obs,
-      };
-    } else {
-      e[student.id] = {
-        id: evaluation.id,
-        comment: evaluation.comment,
-        status: evaluation.status,
-        observations: obs,
-      };
-    }
+  if (byStudents.value[studentIndex].evaluation == null) {
+    byStudents.value[studentIndex].evaluation = {};
   }
-  return e;
-});
-
-const saveEvaluation = async (studentId, { comment, status }) => {
-  const evaluation = searchEvaluation(studentId);
-  if (evaluation == null) {
-    const e = await store.dispatch("insertEvaluation", {
-      studentId: studentId,
-      competencyId: Number(route.params.id),
-      periodId: store.state.currentPeriod,
-      date: today(),
-      status: status,
-      comment: comment,
-    });
-    evaluations.value.push(e);
-  } else {
-    await store.dispatch("updateEvaluation", {
-      id: evaluation.id,
-      comment: comment,
-      date: today(),
-      status: status,
-      periodId: store.state.currentPeriod,
-    });
-    evaluation.comment = comment;
-    evaluation.status = status;
-  }
+  byStudents.value[studentIndex].evaluation.status = status;
+  byStudents.value[studentIndex].evaluation.comment = comment;
+  byStudents.value[studentIndex].evaluation.date = date;
+  byStudents.value[studentIndex].evaluation.from_current_period = true;
+  byStudents.value[studentIndex].evaluation.user.initials = null; //TODO
 };
 
 const cancelEvaluation = (studentId) => {
@@ -238,27 +170,17 @@ const cancelEvaluation = (studentId) => {
 };
 
 const previousCompetency = computed(() => {
-  const current = competencies.value.findIndex((x) => x == route.params.id);
-  if (current === -1) {
-    // Oups ?
-    return "";
-  } else if (current === 0) {
+  if (competency.value.previous == null) {
     return `/evaluations-by-cycle/${route.params.cycle}`;
   } else {
-    const previous = competencies.value[current - 1];
-    return `/evaluation/${route.params.cycle}/${previous}`;
+    return `/evaluation/${route.params.cycle}/${competency.value.previous.id}`;
   }
 });
 const nextCompetency = computed(() => {
-  const current = competencies.value.findIndex((x) => x == route.params.id);
-  if (current === -1) {
-    // Oups ?
-    return "";
-  } else if (current === competencies.value.length - 1) {
+  if (competency.value.next == null) {
     return `/evaluation/${route.params.cycle}/comment`;
   } else {
-    const next = competencies.value[current + 1];
-    return `/evaluation/${route.params.cycle}/${next}`;
+    return `/evaluation/${route.params.cycle}/${competency.value.next.id}`;
   }
 });
 
@@ -267,27 +189,26 @@ const getEvaluations = async () => {
     // Of course
     return;
   }
-  const data = await store.dispatch("evaluationsByCompetency", {
-    competencyId: Number(route.params.id),
-    cycle: route.params.cycle,
+  loading.value = true;
+  const data = await store.dispatch("evaluationMulti", {
+    competencyId: route.params.id,
   });
-  evaluations.value = data.evaluations;
-  observations.value = data.observations;
-  competencies.value = data.competencies.map((x) => x.id);
+  competency.value = data.competency;
+  byStudents.value = data.by_students;
+  useTitle(
+    `Évaluations ${data.competency.full_rank} - ${route.params.cycle} - soklaki.fr`
+  );
+  loading.value = false;
 };
 
 watch(
   () => route.params.id,
   async () => {
-    loading.value = true;
     await getEvaluations();
-    loading.value = false;
   }
 );
 
 onMounted(async () => {
-  await until(() => store.state.currentPeriod).not.toBeNull();
   await getEvaluations();
-  loading.value = false;
 });
 </script>
