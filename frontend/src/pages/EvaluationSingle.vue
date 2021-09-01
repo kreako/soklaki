@@ -29,10 +29,7 @@
             class="flex items-center space-x-1"
           >
             <IconExclamation class="h-4" />
-            <div>
-              Cette évaluation n'a pas encore été mise à jour pour cette
-              période.
-            </div>
+            <div>L'évaluation n'a pas encore été faite sur cette période.</div>
           </div>
           <div v-if="evaluation.status != 'Empty'">
             le {{ evaluation.date }} par {{ evaluation.user.initials }}
