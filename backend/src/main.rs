@@ -122,6 +122,13 @@ async fn forward_signup_to_hasura(
     forward_unauthentified_to_hasura(data, "signup").await
 }
 
+#[post("/invitation-verify-token", data = "<data>")]
+async fn forward_invitation_verify_token_to_hasura(
+    data: Data<'_>,
+) -> Result<content::Json<String>, BadRequest<String>> {
+    forward_unauthentified_to_hasura(data, "invitation-verify-token").await
+}
+
 fn setup() -> eyre::Result<()> {
     dotenv().wrap_err("Unable to initialize dotenv :(")?;
 
@@ -177,6 +184,7 @@ fn rocket() -> _ {
                 forward_ping_to_hasura,
                 forward_login_to_hasura,
                 forward_signup_to_hasura,
+                forward_invitation_verify_token_to_hasura,
                 forward_to_hasura
             ],
         )
