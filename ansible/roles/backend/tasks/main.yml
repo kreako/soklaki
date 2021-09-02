@@ -33,6 +33,7 @@
     image: soklaki-backend
     restart_policy: always
     pod: soklaki
+    timezone: "Europe/Paris"
     volume:
       - "{{reports_dir}}:/reports:z"
     env:
