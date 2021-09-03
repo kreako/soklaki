@@ -7,6 +7,7 @@ const SCHOOL_ENTRY = "2020-03-11";
 const SCHOOL_EXIT = "2020-04-10"; // less than a month, it is short
 
 it("is able to use stats per cycle to evaluate", async ({ page }) => {
+  page.setDefaultTimeout(600000);
   await page.goto("http://127.0.0.1:3000/");
   await page.waitForFunction(() => document.title === "Accueil - soklaki.fr");
 
