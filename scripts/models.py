@@ -1,7 +1,17 @@
 from peewee import *
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
 
 database = PostgresqlDatabase(
-    "postgres", **{"host": "localhost", "user": "postgres", "password": "password"}
+    "postgres",
+    **{
+        "host": os.getenv("POSTGRES_HOST"),
+        "user": os.getenv("POSTGRES_USER"),
+        "password": os.getenv("POSTGRES_PASSWORD"),
+    }
 )
 
 
