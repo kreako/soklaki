@@ -22,7 +22,7 @@ frontend/tests/signup-data.json
 frontend/dist
 scripts/env
 scripts/__pycache__
-scripts/data
+scripts/.env
 visuals/archives
 pgdata
 private
