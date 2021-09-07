@@ -17,27 +17,46 @@ export const dateJsObj = (dt) => {
   const month = Number(dt.slice(5, 7));
   const separator2 = dt[7];
   const day = Number(dt.slice(8, 10));
+  const trailing = dt.slice(10);
   if (separator1 !== "-") {
-    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Chaque élément séparé par un tiret '-'.\n
-    Ici, le premier séparateur n'est pas un tiret '-', mais ${separator1} (date: ${dt}) !`);
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+
+Chaque élément séparé par un tiret '-'.
+
+Ici, le premier séparateur n'est pas un tiret '-', mais ${separator1} (date: ${dt}) !`);
   }
   if (separator2 !== "-") {
-    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Chaque élément séparé par un tiret '-'.\n
-    Ici, le deuxième séparateur n'est pas un tiret '-', mais ${separator2} (date: ${dt}) !`);
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+
+Chaque élément séparé par un tiret '-'.
+
+Ici, le deuxième séparateur n'est pas un tiret '-', mais ${separator2} (date: ${dt}) !`);
   }
-  if (!Number.isInteger(year) || year > 2100 || year < 1900) {
-    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, l'année '${dt.slice(0, 4)}' ne me semble pas valide (date: ${dt}) !`);
+  if (!Number.isInteger(year) || year > 2500 || year < 1500) {
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+
+Ici, l'année '${dt.slice(0, 4)}' ne me semble pas valide (date: ${dt}) !`);
   }
   if (!Number.isInteger(month) || month > 12 || month < 1) {
-    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, le mois '${dt.slice(5, 7)}' ne me semble pas valide (date: ${dt}) !`);
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+
+Ici, le mois '${dt.slice(5, 7)}' ne me semble pas valide (date: ${dt}) !`);
   }
   if (!Number.isInteger(day) || day > 31 || day < 1) {
-    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, le jour '${dt.slice(8, 10)}' ne me semble pas valide (date: ${dt}) !`);
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+
+Ici, le jour '${dt.slice(8, 10)}' ne me semble pas valide (date: ${dt}) !`);
+  }
+  if (trailing != "") {
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+    
+Ici, il y a un caractère supplémentaire '${trailing}' et ce n'est pas valide (date: ${dt}) !`);
   }
   const date = new Date(year, month - 1, day);
   if (
@@ -45,8 +64,10 @@ export const dateJsObj = (dt) => {
     month !== date.getMonth() + 1 ||
     day !== date.getDate()
   ) {
-    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.\n
-    Ici, la date ne me semble pas valide (date: ${dt}) ?`);
+    throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
+Exemple : 2015-02-11 ou 1871-03-18
+
+Ici, la date ne me semble pas valide (date: ${dt}) ?`);
   }
   return new Date(year, month - 1, day);
 };
@@ -75,9 +96,9 @@ export const dateToString = (d) => {
   const month = d.getMonth() + 1;
   const day = d.getDate();
 
-  return `${year}-${month
+  return `${year}-${month.toString().padStart(2, "0")}-${day
     .toString()
-    .padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}`;
 };
 
 /// Return today date in string format
