@@ -173,6 +173,7 @@ fn rocket() -> _ {
                 student::school_exit,
             ],
         )
+        .mount("/students", routes![students::students,])
         .mount(
             "/evaluation",
             routes![
