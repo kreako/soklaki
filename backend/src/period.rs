@@ -171,6 +171,28 @@ SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
     }
 }
 
+pub fn period_by_id(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    period_id: &i32,
+) -> Result<Period, postgres::error::Error> {
+    let row = client.query_one(
+        "
+SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
+	FROM eval_period
+	WHERE eval_period.group_id = $1
+        AND eval_period.id = $2
+	",
+        &[group_id, period_id],
+    )?;
+    Ok(Period {
+        id: row.get(0),
+        start: row.get(1),
+        end: row.get(2),
+        name: row.get(3),
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
