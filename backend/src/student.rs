@@ -432,6 +432,31 @@ pub async fn school_exit(
     Ok(Json(Done::done()))
 }
 
+#[derive(Debug, Deserialize)]
+pub struct StudentActive {
+    pub id: i64,
+    pub active: bool,
+}
+
+#[post("/active", data = "<student>")]
+pub async fn active(
+    db: db::Db,
+    token: jwt::JwtToken,
+    student: Json<StudentActive>,
+) -> Result<Json<Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "UPDATE student SET active = $1 WHERE id = $2 AND group_id = $3",
+            &[&student.active, &student.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Done::done()))
+}
+
 /** @return true if permission is granted to use this competency for this group id */
 pub fn permission(
     client: &mut postgres::Client,

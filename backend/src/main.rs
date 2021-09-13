@@ -171,6 +171,7 @@ fn rocket() -> _ {
                 student::birthdate,
                 student::school_entry,
                 student::school_exit,
+                student::active,
             ],
         )
         .mount("/students", routes![students::students,])
