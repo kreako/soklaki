@@ -982,57 +982,6 @@ const actions = {
     }
   },
 
-  async updateStudentBirthdate({ commit, dispatch }, { studentId, birthdate }) {
-    const answer = await axios.post("update-student-birthdate", {
-      student_id: studentId,
-      birthdate: birthdate,
-    });
-    // reload all students, a little bit too much - Maybe a TODO for the future me
-    await dispatch("students");
-  },
-
-  async updateStudentFirstname({ commit, dispatch }, { studentId, firstname }) {
-    const answer = await axios.post("update-student-firstname", {
-      student_id: studentId,
-      firstname: firstname,
-    });
-    // reload all students, a little bit too much - Maybe a TODO for the future me
-    await dispatch("students");
-  },
-
-  async updateStudentLastname({ commit, dispatch }, { studentId, lastname }) {
-    const answer = await axios.post("update-student-lastname", {
-      student_id: studentId,
-      lastname: lastname,
-    });
-    // reload all students, a little bit too much - Maybe a TODO for the future me
-    await dispatch("students");
-  },
-
-  async updateStudentSchoolEntry(
-    { commit, dispatch },
-    { studentId, schoolEntry }
-  ) {
-    const answer = await axios.post("update-student-school-entry", {
-      student_id: studentId,
-      school_entry: schoolEntry,
-    });
-    // reload all students, a little bit too much - Maybe a TODO for the future me
-    await dispatch("students");
-  },
-
-  async updateStudentSchoolExit(
-    { commit, dispatch },
-    { studentId, schoolExit }
-  ) {
-    const answer = await axios.post("update-student-school-exit", {
-      student_id: studentId,
-      school_exit: schoolExit,
-    });
-    // reload all students, a little bit too much - Maybe a TODO for the future me
-    await dispatch("students");
-  },
-
   async loadSocle({ state, dispatch }) {
     const answer = await axios.post("load-socle", {
       group_id: state.login.groupId,
