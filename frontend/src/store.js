@@ -1582,6 +1582,14 @@ const actions = {
     return answer.data;
   },
 
+  async saveStudentActive({}, { id, active }) {
+    const answer = await axios.post("student/active", {
+      id: Number(id),
+      active: active,
+    });
+    return answer.data;
+  },
+
   async evaluationSingle({}, { studentId, competencyId }) {
     const answer = await axios.get(
       `evaluation/single/${studentId}/${competencyId}`
