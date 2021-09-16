@@ -203,6 +203,7 @@ pub fn periods(
 SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
 	FROM eval_period
 	WHERE eval_period.group_id = $1
+    ORDER BY start DESC
 	",
         &[group_id],
     )? {
