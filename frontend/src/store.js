@@ -966,20 +966,18 @@ const actions = {
       school_exit: schoolExit,
     });
     const studentId = answer.data.insert_student_one.id;
-    // Reload students and periods
-    await dispatch("students");
     return studentId;
   },
 
-  async students({ commit, state }) {
-    const answer = await axios.post("students", {
-      group_id: state.login.groupId,
+  async students({ commit, state }, { period, cycle, current }) {
+    const answer = await axios.get("students", {
+      params: {
+        period: period,
+        cycle: cycle,
+        current: current,
+      },
     });
-    commit("setStudents", answer.data.students);
-    commit("setPeriods", answer.data.periods);
-    if (answer.data.current_period.length > 0) {
-      commit("setCurrentPeriod", answer.data.current_period[0]);
-    }
+    return answer.data;
   },
 
   async loadSocle({ state, dispatch }) {
