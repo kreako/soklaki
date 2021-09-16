@@ -198,6 +198,27 @@
           />
         </div>
       </div>
+      <!-- Allow to "delete" it but behind a disclosure  -->
+      <div class="mt-20">
+        <Disclosure>
+          <DisclosureButton class="">
+            <div class="flex flex-row items-center space-x-3">
+              <div class="form-label">Zone dangereuse</div>
+            </div>
+          </DisclosureButton>
+          <DisclosurePanel>
+            <div>
+              <div>
+                N'hésitez pas à bien réfléchir, une fois qu'il.elle est
+                supprimé.e... Elle est supprimé.e !
+              </div>
+              <button @click="setActiveFalse" class="button-cancel-action">
+                Supprimer cet élève 😱
+              </button>
+            </div>
+          </DisclosurePanel>
+        </Disclosure>
+      </div>
       <div class="mt-16">
         <router-link
           to="/students"
@@ -303,6 +324,13 @@ const saveSchoolExit = async (value) => {
     id: route.params.id,
     schoolExit: value,
   });
+};
+const setActiveFalse = async () => {
+  await store.dispatch("saveStudentActive", {
+    id: route.params.id,
+    active: false,
+  });
+  router.push("/students");
 };
 
 const competencyById = computed(() => store.getters.competencyById);
