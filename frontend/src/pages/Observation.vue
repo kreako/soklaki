@@ -265,7 +265,7 @@
         </div>
       </div>
     </div>
-    <!-- Details -->
+    <!-- Allow to "delete" it but behind a disclosure  -->
     <div class="mt-20">
       <Disclosure>
         <DisclosureButton class="">
