@@ -62,6 +62,13 @@ pub struct StudentFull {
     pub cycle: cycle::Cycle,
 }
 
+#[derive(Debug, Serialize)]
+pub struct Students {
+    pub students: Vec<StudentFull>,
+    pub periods: Vec<period::Period>,
+    pub current_period: period::Period,
+}
+
 pub fn filter_students_by_active(
     client: &mut postgres::Client,
     group_id: &i64,
@@ -125,7 +132,7 @@ pub async fn students(
     period: Option<i32>,
     current: Option<bool>,
     cycle: Option<&str>,
-) -> Result<Json<Vec<StudentFull>>, Status> {
+) -> Result<Json<Students>, Status> {
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
     let mut students = db
         .run(move |client| filter_students_by_active(client, &group_id, true))
@@ -152,5 +159,17 @@ pub async fn students(
             students = filter_students_by_cycle(students, c);
         }
     }
-    Ok(Json(students))
+    let periods = db
+        .run(move |client| period::periods(client, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    let current_period = db
+        .run(move |client| period::current_period(client, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(Students {
+        students: students,
+        periods: periods,
+        current_period: current_period,
+    }))
 }
