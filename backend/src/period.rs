@@ -193,6 +193,29 @@ SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
     })
 }
 
+pub fn periods(
+    client: &mut postgres::Client,
+    group_id: &i64,
+) -> Result<Vec<Period>, postgres::error::Error> {
+    let mut periods = Vec::new();
+    for row in client.query(
+        "
+SELECT eval_period.id, eval_period.start, eval_period.end, eval_period.name
+	FROM eval_period
+	WHERE eval_period.group_id = $1
+	",
+        &[group_id],
+    )? {
+        periods.push(Period {
+            id: row.get(0),
+            start: row.get(1),
+            end: row.get(2),
+            name: row.get(3),
+        });
+    }
+    Ok(periods)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
