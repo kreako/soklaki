@@ -118,11 +118,12 @@ pub fn filter_students_by_cycle(
     students.into_iter().filter(|s| s.cycle == cycle).collect()
 }
 
-#[get("/?<period>&<cycle>")]
+#[get("/?<period>&<cycle>&<current>")]
 pub async fn students(
     db: db::Db,
     token: jwt::JwtToken,
     period: Option<i32>,
+    current: Option<bool>,
     cycle: Option<&str>,
 ) -> Result<Json<Vec<StudentFull>>, Status> {
     let group_id = token.claim.user_group.parse::<i64>().unwrap();
@@ -136,6 +137,15 @@ pub async fn students(
             .await
             .map_err(|_err| Status::InternalServerError)?;
         students = filter_students_by_period(students, p);
+    }
+    if let Some(current_period) = current {
+        if current_period {
+            let p = db
+                .run(move |client| period::current_period(client, &group_id))
+                .await
+                .map_err(|_err| Status::InternalServerError)?;
+            students = filter_students_by_period(students, p);
+        }
     }
     if let Some(cycle_str) = cycle {
         if let Some(c) = cycle::Cycle::from_str(cycle_str) {
