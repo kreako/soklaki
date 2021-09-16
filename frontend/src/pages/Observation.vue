@@ -18,8 +18,7 @@
           v-model="observationEditText"
           class="mt-2 input w-full"
           rows="5"
-        >
-        </textarea>
+        ></textarea>
         <button @click="saveObservationText" class="button-main-action mt-2">
           Sauvegarder
         </button>
@@ -130,8 +129,8 @@
             class="form-sub-label"
           >
             cycle {{ cycleNb(cycle) }} - {{ cycleStudents.length }}
-            <span v-if="cycleStudents.length > 1"> élèves </span>
-            <span v-else> élève </span>
+            <span v-if="cycleStudents.length > 1">élèves</span>
+            <span v-else>élève</span>
           </span>
         </div>
         <div v-for="competencyId in competenciesByCycle[cycle]">
@@ -249,7 +248,7 @@
       </div>
       <div class="text-sm">
         <div>
-          <span>Observée par </span>
+          <span>Observée par</span>
           <!-- TODO link to user ?-->
           <span>
             {{ userById(observation.user_id).firstname }}
@@ -257,7 +256,7 @@
           </span>
         </div>
         <div>
-          <span>Complète : </span>
+          <span>Complète :</span>
           <span v-if="observation.complete.complete" class="text-green-600">
             Oui !
           </span>
