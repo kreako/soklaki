@@ -8,7 +8,7 @@ import HomeContent from "./pages/HomeContent.vue";
 const routes = [
   { path: "/login", component: Login },
   { path: "/lost-password", component: LostPassword },
-  { path: "/signup", component: Signup },
+  // { path: "/signup", component: Signup },
   {
     path: "/invitation-signup",
     component: () => import("./pages/InvitationSignup.vue"),
