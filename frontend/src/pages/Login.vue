@@ -4,10 +4,9 @@
     <div class="px-2 w-full sm:max-w-screen-sm">
       <MascotteTip>
         <template v-slot:title>Content de vous revoir ! 🙋</template>
-        <template v-slot:default
-          >Donnez-moi votre email, votre mot de passe et on est
-          reparti.</template
-        >
+        <template v-slot:default>
+          Donnez-moi votre email, votre mot de passe et on est reparti.
+        </template>
       </MascotteTip>
       <div class="mt-10 sm:mt-16">
         <MyEmailInput
@@ -15,8 +14,8 @@
           :email="email"
           :error="!emailValid || invalidLogin"
         >
-          <template v-slot:error
-            ><span v-if="!emailValid">
+          <template v-slot:error>
+            <span v-if="!emailValid">
               Oh non ! Il semblerait que votre email ne ressemble pas à un
               email...
             </span>
@@ -42,9 +41,9 @@
         </div>
 
         <div class="text-right">
-          <router-link to="/lost-password" class="text-gray-600 mt-1 text-sm"
-            >Mot de passe perdu ?</router-link
-          >
+          <router-link to="/lost-password" class="text-gray-600 mt-1 text-sm">
+            Mot de passe perdu ?
+          </router-link>
         </div>
       </div>
       <div class="mt-8 text-xs text-gray-700 text-right">
@@ -61,10 +60,14 @@
         <button @click="connect" class="button-main-action">Connexion</button>
       </div>
       <div class="mt-10 flex justify-end">
-        <router-link to="/signup" class="text-sm text-right">
+        <div class="text-sm text-right">
           Pas encore de compte ?
-          <br />Enregistrez-vous !
-        </router-link>
+          <br />
+          Demandez un lien d'invitation à votre équipe ou ...
+          <a href="https://soklaki.fr/#contact" class="text-blue-600">
+            Contactez moi
+          </a>
+        </div>
       </div>
     </div>
     <div class="flex-grow"></div>

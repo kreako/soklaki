@@ -4,36 +4,18 @@
     <div class="px-2 w-full sm:max-w-screen-sm">
       <MascotteTip>
         <template v-slot:title>
-          Vous avez oublié votre mot de passe ? 😭</template
-        >
-        <template v-slot:default
-          >Pas de problèmes ! Renseignez votre email et je vous fais parvenir un
-          lien pour le changer.</template
-        >
+          Vous avez oublié votre mot de passe ? 😭
+        </template>
+        <template v-slot:default>
+          Pas de problème !
+          <br />
+          <a href="https://soklaki.fr/#contact" class="text-blue-600">
+            Contactez moi
+          </a>
+
+          et je vous fais parvenir un lien pour le changer.
+        </template>
       </MascotteTip>
-      <div class="mt-8 sm:mt-16">
-        <MyEmailInput
-          @change="email = $event"
-          :email="email"
-          :error="!emailValid"
-        >
-          <template v-slot:error
-            >Oh non ! Il semblerait que votre email ne ressemble pas à un
-            email...</template
-          >
-        </MyEmailInput>
-      </div>
-      <div class="mt-8">
-        <button @click="reset" class="button-main-action">
-          Recevoir un email !
-        </button>
-      </div>
-      <div class="mt-10 flex justify-end">
-        <router-link to="/signup" class="text-sm text-right">
-          Pas encore de compte ?
-          <br />Enregistrez-vous !
-        </router-link>
-      </div>
     </div>
     <div class="flex-grow"></div>
   </div>
