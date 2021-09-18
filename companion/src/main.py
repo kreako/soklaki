@@ -11,6 +11,7 @@ import socle
 import invitation
 import ping
 import report
+import template_report
 from jwt_token import generate_jwt_token
 
 load_dotenv()
@@ -154,6 +155,11 @@ async def do_ping(input: ping.PingInput):
 @app.post("/generate_report")
 async def generate_report(input: report.ReportInput):
     return await report.report(gql_client, REPORTS_DIR, input)
+
+
+@app.post("/generate_template_report")
+async def generate_template_report(input: template_report.TemplateReportInput):
+    return await template_report.generate(gql_client, REPORTS_DIR, input)
 
 
 @app.get("/dl_report/reports/{group_id}/{period_id}/{filename}")
