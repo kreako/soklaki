@@ -6,6 +6,10 @@ actions:
     forward_client_headers: true
   permissions:
   - role: user
+- name: generate_template_report
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/generate_template_report
 - name: invitation_generate_token
   definition:
     kind: synchronous
@@ -72,4 +76,5 @@ custom_types:
   - name: SignupTokenOutput
   - name: PingOutput
   - name: ReportOutput
+  - name: TemplateReportOutput
   scalars: []

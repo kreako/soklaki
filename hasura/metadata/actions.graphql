@@ -6,6 +6,12 @@ type Mutation {
 }
 
 type Mutation {
+  generate_template_report (
+    cycle: String!
+  ): TemplateReportOutput
+}
+
+type Mutation {
   invitation_generate_token (
     user_id: bigint!
     group_id: bigint!
@@ -121,5 +127,9 @@ type ReportOutput {
   report_id : Int!
   pdf_path : String!
   json_path : String!
+}
+
+type TemplateReportOutput {
+  cycle : String!
 }
 
