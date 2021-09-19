@@ -65,8 +65,6 @@ async def generate(gql_client, reports_dir, input: TemplateReportInput):
             l2 = data["container_by_id"][l2_id]
 
             with pdf.edit().text_gray_700() as e:
-                if l2["full_rank"] == "3.2.":
-                    print(cycle, "3.2.", pdf.get_y())
                 if pdf.get_y() >= 219:
                     pdf.add_page()
                 if l2_idx > 0:
