@@ -1,3 +1,13 @@
+# Generate from companion (dev mode) with the following command :
+#
+# podman cp src/report.py soklaki-companion:/app &&
+# podman cp src/template_report.py soklaki-companion:/app &&
+# http POST http://127.0.0.1:8000/generate_template_report input:='{"cycle":"c4"}' &&
+# http POST http://127.0.0.1:8000/generate_template_report input:='{"cycle":"c3"}' &&
+# http POST http://127.0.0.1:8000/generate_template_report input:='{"cycle":"c2"}' &&
+# http POST http://127.0.0.1:8000/generate_template_report input:='{"cycle":"c1"}'
+#
+
 from pydantic import BaseModel, Field
 from path import Path
 
