@@ -177,7 +177,7 @@ async def generate(gql_client, reports_dir, input: TemplateReportInput):
         )
         e.empty_line()
         e.write(
-            "Ce modèle de rapport a été produit avec les données de soklaki produite par l'école démocratique du Tarn."
+            "Ce modèle de rapport a été généré avec les données de soklaki produite par l'école démocratique du Tarn."
         )
         e.empty_line()
         e.empty_line()
