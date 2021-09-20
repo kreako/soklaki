@@ -21,7 +21,7 @@ async def generate(gql_client, reports_dir, input: TemplateReportInput):
     data = await gql_report(gql_client, cycle)
 
     # Now generation
-    pdf = PDF()
+    pdf = PDF(total_pages=False)
     # Header
     pdf.add_page()
     with pdf.edit().font_bold().text_lg().text_black() as e:
@@ -98,6 +98,82 @@ async def generate(gql_client, reports_dir, input: TemplateReportInput):
         e.write("Commentaire", align="C")
         e.empty_line()
 
+    pdf.add_page()
+    with pdf.edit().font_bold().text_lg().text_black() as e:
+        e.write("Notice", align="C")
+        e.empty_line()
+
+    with pdf.edit().font_normal() as e:
+        e.write(
+            "Le socle commun de connaissances, de compétences et de culture est divisé en domaines. "
+            "Les domaines sont eux-même divisés en sous-domaines, puis en compétences."
+        )
+        e.empty_line()
+        e.write(
+            "Chaque compétence possède un numéro et un titre, suivie de quatre petites cases, une pour chaque niveau d'évaluation, avec de gauche à droite :"
+        )
+        e.write("· Maîtrise insuffisante")
+        e.write("· Maîtrise fragile")
+        e.write("· Maîtrise satisfaisante")
+        e.write("· Très bonne maîtrise")
+        e.empty_line()
+        e.write(
+            "Pour chaque compétence, vous pouvez cocher une case pour indiquer un niveau, puis utiliser l'espace en dessous pour ajouter un commentaire."
+        )
+        e.empty_line()
+        e.empty_line()
+        e.write("Par exemple :")
+        e.empty_line()
+        e.empty_line()
+        output_competency_legend(pdf)
+        _output_competency_table(
+            pdf,
+            "2.1.9. Manipuler avec soin",
+            check_last_case=True,
+            add_space_after=False,
+        )
+    with pdf.edit().font_mono() as e:
+        e.empty_line()
+        e.write(
+            "  Clémence fait de la sculpture sur grain de riz, la manipulation avec soin n'a aucun secret pour elle."
+        )
+        e.empty_line()
+        e.empty_line()
+
+    with pdf.edit().font_normal() as e:
+        e.write(
+            "La dernière page avec le titre \"Commentaire\" est là pour vous permettre d'écrire un commentaire général sur l'élève."
+        )
+        e.empty_line()
+        e.write("C'est un texte libre qui peut parler, par exemple, de :")
+        e.write(
+            "· L'engagement, l'implication dans le groupe et le fonctionnement de l'école"
+        )
+        e.write("· Le rapport aux apprentissages")
+        e.write("· Le rapport aux autres")
+        e.write("· Les intérêts, les projets de l'élève")
+        e.write("· Les forces et les difficultés de l'élève")
+        e.empty_line()
+        e.empty_line()
+        e.empty_line()
+        e.empty_line()
+        e.empty_line()
+        e.empty_line()
+        e.empty_line()
+
+    with pdf.edit().font_normal().text_xs() as e:
+        e.write(
+            "Ce modèle de rapport ne contient pas les observations que vous remplissez toute l'année et que vous pouvez utiliser comme \"preuves\" d'évaluation."
+        )
+        e.empty_line()
+        e.write(
+            "Ce modèle de rapport a été produit avec les données de soklaki produite par l'école démocratique du Tarn."
+        )
+        e.empty_line()
+        e.empty_line()
+        pdf.write_html(
+            'Pour plus d\'informations, et un logiciel qui vous aide à évaluer le socle, visitez <A HREF="https://soklaki.fr">soklaki.fr</A>'
+        )
     output_dir = Path(reports_dir) / "template"
     output_dir.makedirs_p()
     output_fname = f"template_{cycle}.pdf"
@@ -105,10 +181,8 @@ async def generate(gql_client, reports_dir, input: TemplateReportInput):
     pdf.output(output_path)
 
 
-def output_competency_table(pdf, competency_id, data):
-    competency = data["competency_by_id"][competency_id]
+def _output_competency_table(pdf, txt, check_last_case=False, add_space_after=True):
     with pdf.edit().text_gray_700().draw_gray_900() as e:
-        txt = f"{competency['full_rank']} {competency['text']}"
         lines = len(
             pdf.multi_cell(
                 w=RIGHT_STOP - 10,  # -10 for page left margin
@@ -146,10 +220,25 @@ def output_competency_table(pdf, competency_id, data):
         e.fill_white()
         e.rect(RIGHT_STOP + 3 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
         e.borders(RIGHT_STOP + 3 * MARKER_WIDTH, y, MARKER_WIDTH, e.line_height * lines)
+        if check_last_case:
+            pdf.set_y(y)
+            pdf.set_x(RIGHT_STOP + 3 * MARKER_WIDTH + 2)
+            pdf.cell(
+                w=0,
+                h=e.line_height,
+                txt="x",
+                align="L",
+            )
+        if add_space_after:
+            e.empty_line()
+            e.empty_line()
+            e.empty_line()
 
-        e.empty_line()
-        e.empty_line()
-        e.empty_line()
+
+def output_competency_table(pdf, competency_id, data):
+    competency = data["competency_by_id"][competency_id]
+    txt = f"{competency['full_rank']} {competency['text']}"
+    _output_competency_table(pdf, txt)
 
 
 def output_competency_legend(pdf):

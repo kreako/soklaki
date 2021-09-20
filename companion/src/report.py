@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 from typing import Optional
-from fpdf import FPDF
+from fpdf import FPDF, HTMLMixin
 from path import Path
 import jwt
 
@@ -485,9 +485,10 @@ def output_competency(pdf, competency_id, data, output_domain, output_sub_domain
             e.empty_line()
 
 
-class PDF(FPDF):
-    def __init__(self, *args, **kwargs):
+class PDF(FPDF, HTMLMixin):
+    def __init__(self, total_pages=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.total_pages = total_pages
         self.add_font("dejavu", fname=CURRENT_DIR / "DejaVuSerif.ttf", uni=True)
         self.add_font(
             "dejavu-bold", fname=CURRENT_DIR / "DejaVuSerif-Bold.ttf", uni=True
@@ -501,7 +502,10 @@ class PDF(FPDF):
         # helvetica italic 8
         self.set_font("helvetica", "I", 8)
         # Page number
-        self.cell(0, 10, "Page " + str(self.page_no()) + "/{nb}", 0, 0, "C")
+        if self.total_pages:
+            self.cell(0, 10, "Page " + str(self.page_no()) + "/{nb}", 0, 0, "C")
+        else:
+            self.cell(0, 10, "Page " + str(self.page_no()), 0, 0, "C")
 
     def edit(self):
         return PdfWriter(self)
