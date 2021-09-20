@@ -36,7 +36,7 @@ async def generate(gql_client, reports_dir, input: TemplateReportInput):
         e.empty_line()
         e.write("Prénom :")
         e.empty_line()
-        e.write("Cycle :")
+        e.write(f"Cycle : cycle {cycle[1]}")
         e.empty_line()
         e.write("Date d'anniversaire :")
         e.empty_line()
