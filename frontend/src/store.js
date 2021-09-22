@@ -685,8 +685,11 @@ const actions = {
     return data.id;
   },
 
-  async observation({ commit }, id) {
-    const answer = await axios.post("observation", { id: id });
+  async observation({ commit, state }, id) {
+    const answer = await axios.post("observation", {
+      id: id,
+      group_id: state.login.groupId,
+    });
     const data = answer.data.eval_observation_by_pk;
     if (data == null) {
       throw new Error(
@@ -694,6 +697,8 @@ const actions = {
       );
     } else {
       commit("setObservation", data);
+      commit("setPeriods", answer.data.periods);
+      commit("setStudents", answer.data.students);
     }
   },
 
