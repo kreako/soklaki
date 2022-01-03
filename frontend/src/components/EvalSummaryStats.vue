@@ -1,41 +1,37 @@
 <template>
   <div>
     <div class="flex flex-row space-x-2 text-xs text-gray-500 justify-end">
-      <div>{{ stats.studentsCount }} élèves</div>
+      <div>{{ stats.student_count }} élèves</div>
       <div class="text-xs text-gray-500">
-        {{ stats.competenciesCount }} Compétences
+        {{ stats.competencies_count }} Compétences
       </div>
     </div>
     <div>
       <div class="flex flex-row items-end">
         <div class="flex-grow">Commentaires</div>
         <div class="text-gray-700 text-xs">
-          {{ stats.comments.current }} / {{ stats.comments.total }}
+          {{ stats.comment_count }} / {{ stats.comment_total }}
         </div>
       </div>
       <ProgressBar
-        :current="stats.comments.current"
-        :total="stats.comments.total"
+        :current="stats.comment_count"
+        :total="stats.comment_total"
       />
     </div>
     <div>
       <div class="flex flex-row items-end">
         <div class="flex-grow">Évaluations</div>
         <div class="text-gray-700 text-xs">
-          {{ stats.evaluations.current }} / {{ stats.evaluations.total }}
+          {{ stats.eval_count }} / {{ stats.eval_total }}
         </div>
       </div>
-      <ProgressBar
-        :current="stats.evaluations.current"
-        :total="stats.evaluations.total"
-      />
+      <ProgressBar :current="stats.eval_count" :total="stats.eval_total" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmit, computed } from "vue";
-import { useStore } from "vuex";
 import ProgressBar from "./ProgressBar.vue";
 
 const props = defineProps({
