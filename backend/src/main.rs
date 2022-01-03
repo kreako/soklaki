@@ -17,6 +17,7 @@ mod competency;
 mod cycle;
 mod db;
 mod done;
+mod eval_stats;
 mod evaluation;
 mod evaluation_status;
 mod home_content;
@@ -160,6 +161,10 @@ fn rocket() -> _ {
     setup().unwrap();
     rocket::build()
         .attach(db::Db::fairing())
+        .mount(
+            "/eval_stats",
+            routes![eval_stats::eval_stats_by_cycle, eval_stats::summary],
+        )
         .mount("/home_content", routes![home_content::index])
         .mount("/stats", routes![stats::stats_by_cycle])
         .mount(
