@@ -22,6 +22,7 @@ pub struct EvalStatsByCycle {
   pub competencies: Vec<EvalStatsByCycleByCompetency>,
   pub comment_count: usize,
   pub total: usize,
+  pub first_competency: i32,
 }
 
 fn _eval_stats_by_cycle(
@@ -76,10 +77,17 @@ FROM eval_comment
     }
   }
 
+  let first_competency = competencies.iter().nth(0);
+  let first_competency_id = match first_competency {
+    None => 0,
+    Some(c) => c.id,
+  };
+
   let e = EvalStatsByCycle {
     competencies: by_competency,
     comment_count: comment_count,
     total: students.iter().count(),
+    first_competency: first_competency_id,
   };
   Ok(e)
 }
