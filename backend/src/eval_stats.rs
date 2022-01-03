@@ -104,6 +104,8 @@ pub async fn eval_stats_by_cycle(
 
 #[derive(Debug, Serialize)]
 pub struct EvalStatsSummaryByCycle {
+  pub student_count: usize,
+  pub competencies_count: usize,
   pub comment_count: usize,
   pub comment_total: usize,
   pub eval_count: usize,
@@ -119,6 +121,8 @@ pub struct EvalStatsSummary {
 }
 
 fn _summary(e: EvalStatsByCycle) -> EvalStatsSummaryByCycle {
+  let student_count = e.total;
+  let competencies_count = e.competencies.iter().count();
   let comment_count = e.comment_count;
   let comment_total = e.total;
   let eval_count = e
@@ -127,8 +131,10 @@ fn _summary(e: EvalStatsByCycle) -> EvalStatsSummaryByCycle {
     .map(|x| x.count)
     .reduce(|acc, e| acc + e)
     .unwrap_or(0);
-  let eval_total = e.competencies.iter().count() * e.total;
+  let eval_total = competencies_count * e.total;
   EvalStatsSummaryByCycle {
+    student_count,
+    competencies_count,
     comment_count,
     comment_total,
     eval_count,
