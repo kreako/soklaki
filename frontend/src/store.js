@@ -1580,6 +1580,16 @@ const actions = {
     });
     return answer.data;
   },
+
+  async evaluationStatsSummary() {
+    const answer = await axios.get("eval_stats/summary");
+    return answer.data;
+  },
+
+  async evaluationStatsByCycle({}, { cycle }) {
+    const answer = await axios.get(`eval_stats/by_cycle/${cycle}`);
+    return answer.data;
+  },
 };
 
 const buildStore = () => {
