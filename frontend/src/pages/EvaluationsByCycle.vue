@@ -5,7 +5,7 @@
       <div class="my-8 flex flex-row justify-center">
         <div>
           <router-link
-            :to="`/evaluation/${route.params.cycle}/${firstCompetency}`"
+            :to="`/evaluation/${route.params.cycle}/${stats.first_competency}`"
             class="button-main-action"
           >
             Démarrer une évaluation
@@ -13,17 +13,20 @@
         </div>
       </div>
       <div class="mt-4">
-        <div v-for="stat in competencyStats">
+        <div v-for="by_competency in stats.competencies">
           <router-link
-            :to="`/evaluation/${route.params.cycle}/${stat.competencyId}`"
+            :to="`/evaluation/${route.params.cycle}/${by_competency.competency.id}`"
           >
             <div class="flex flex-row items-center space-x-2">
               <div class="w-20">
-                {{ competencyById(stat.competencyId).full_rank }}
+                {{ by_competency.competency.full_rank }}
               </div>
-              <ProgressBar :current="stat.current" :total="stat.total" />
+              <ProgressBar
+                :current="by_competency.count"
+                :total="stats.total"
+              />
               <div class="text-gray-700 text-xs">
-                {{ stat.current }}/{{ stat.total }}
+                {{ by_competency.count }}/{{ stats.total }}
               </div>
             </div>
           </router-link>
@@ -33,12 +36,9 @@
         <router-link :to="`/evaluation/${route.params.cycle}/comment`">
           <div class="flex flex-row items-center space-x-2">
             <div>Commentaire</div>
-            <ProgressBar
-              :current="commentStats.current"
-              :total="commentStats.total"
-            />
+            <ProgressBar :current="stats.comment_count" :total="stats.total" />
             <div class="text-gray-700 text-xs">
-              {{ commentStats.current }}/{{ commentStats.total }}
+              {{ stats.comment_count }}/{{ stats.total }}
             </div>
           </div>
         </router-link>
@@ -48,10 +48,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { useRoute, useRouter } from "vue-router";
-import { until } from "@vueuse/core";
+import { useRoute } from "vue-router";
 import { cycleNb } from "../utils/cycle";
 import ProgressBar from "../components/ProgressBar.vue";
 import { useTitle } from "@vueuse/core";
@@ -63,54 +62,31 @@ const route = useRoute();
 useTitle(`Évaluations ${route.params.cycle} - soklaki.fr`);
 
 const loading = ref(true);
+const stats = ref(null);
 
 const cycle = computed(() => cycleNb(route.params.cycle));
 
-const commentStats = computed(() => {
-  const stats = store.state.stats[route.params.cycle].commentsCount;
-  const total = Object.keys(stats).length;
-  const current = Object.values(stats).reduce(
-    (acc, cur) => acc + (cur > 0 ? 1 : 0),
-    0
-  );
-  return { total, current };
-});
-
-const competencyStats = computed(() => {
-  const stats = [];
-  for (const [competencyId, statByStudents] of Object.entries(
-    store.state.stats[route.params.cycle].stats
-  )) {
-    const total = Object.keys(statByStudents).length;
-    const current = Object.values(statByStudents).reduce(
-      (acc, cur) => acc + (cur.evaluations.count > 0 ? 1 : 0),
-      0
-    );
-    stats.push({
-      competencyId: competencyId,
-      total: total,
-      current: current,
-    });
+const getStats = async () => {
+  if (route.params.cycle == null) {
+    // Of course
+    return;
   }
-  return stats;
-});
+  loading.value = true;
+  const data = await store.dispatch("evaluationStatsByCycle", {
+    cycle: route.params.cycle,
+  });
+  stats.value = data;
+  loading.value = false;
+};
 
-const firstCompetency = computed(() => {
-  if (competencyStats.value.length > 0) {
-    return competencyStats.value[0].competencyId;
-  } else {
-    return null;
+watch(
+  () => route.params.cycle,
+  async () => {
+    await getStats();
   }
-});
-
-const competencyById = computed(() => store.getters.competencyById);
+);
 
 onMounted(async () => {
-  loading.value = true;
-  await until(() => store.state.currentPeriod).not.toBeNull();
-  await store.dispatch("stats", {
-    periodId: store.state.currentPeriod,
-  });
-  loading.value = false;
+  await getStats();
 });
 </script>
