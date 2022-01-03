@@ -51,6 +51,42 @@ SELECT birthdate, id, firstname, lastname FROM student
     Ok(students)
 }
 
+pub fn students_by_cycle_in_period(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    period: &period::Period,
+    cycle: &cycle::Cycle,
+) -> Result<Vec<Student>, postgres::error::Error> {
+    let mut students = vec![];
+    for row in client.query(
+        "
+SELECT birthdate, id, firstname, lastname FROM student
+	WHERE group_id = $1
+		AND school_entry <= $3
+		AND (
+			(school_exit is null)
+			OR
+			(school_exit >= $2)
+		)
+    ORDER BY firstname, lastname
+	",
+        &[group_id, &period.start, &period.end],
+    )? {
+        let birthdate = row.get(0);
+        if &estimate_cycle(&period.start, &birthdate) == cycle {
+            let id = row.get(1);
+            let firstname = row.get(2);
+            let lastname = row.get(3);
+            students.push(Student {
+                id: id,
+                firstname: firstname,
+                lastname: lastname,
+            });
+        }
+    }
+    Ok(students)
+}
+
 #[derive(Debug, Serialize)]
 pub struct StudentFull {
     pub id: i64,
