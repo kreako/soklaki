@@ -224,12 +224,11 @@ async def report(gql_client, reports_dir, input: ReportInput):
         gql_client, input.input.student_id, input.input.period_id
     )
     # Add the report to the database
-    today = date.today().isoformat()
     id = await insert_report(
         gql_client,
         input.input.student_id,
         data["student"]["cycle"],
-        today,
+        data["period"]["end"],
         json_path,
         pdf_path,
     )
