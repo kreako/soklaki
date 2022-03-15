@@ -1623,3 +1623,12 @@
             }
           }
         }
+    - name: generate_summary_report
+      query: |-
+        mutation GenerateSummaryReport($period_id: Int!, $student_id: Int!) {
+          generate_summary_report(period_id: $period_id, student_id: $student_id) {
+            json_path
+            pdf_path
+            report_id
+          }
+        }

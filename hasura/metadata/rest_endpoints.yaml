@@ -82,6 +82,15 @@
 - definition:
     query:
       collection_name: allowed-queries
+      query_name: generate_summary_report
+  url: generate_summary_report
+  methods:
+  - POST
+  name: generate_summary_report
+  comment: null
+- definition:
+    query:
+      collection_name: allowed-queries
       query_name: insert-comment
   url: insert-comment
   methods:

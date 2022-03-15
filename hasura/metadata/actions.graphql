@@ -6,6 +6,13 @@ type Mutation {
 }
 
 type Mutation {
+  generate_summary_report (
+    student_id: Int!
+    period_id: Int!
+  ): SummaryReportOutput
+}
+
+type Mutation {
   generate_template_report (
     cycle: String!
   ): TemplateReportOutput
@@ -131,5 +138,11 @@ type ReportOutput {
 
 type TemplateReportOutput {
   cycle : String!
+}
+
+type SummaryReportOutput {
+  report_id : Int!
+  pdf_path : String!
+  json_path : String!
 }
 

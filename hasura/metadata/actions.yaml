@@ -6,6 +6,13 @@ actions:
     forward_client_headers: true
   permissions:
   - role: user
+- name: generate_summary_report
+  definition:
+    kind: synchronous
+    handler: http://localhost:8000/generate_summary_report
+    forward_client_headers: true
+  permissions:
+  - role: user
 - name: generate_template_report
   definition:
     kind: synchronous
@@ -77,4 +84,5 @@ custom_types:
   - name: PingOutput
   - name: ReportOutput
   - name: TemplateReportOutput
+  - name: SummaryReportOutput
   scalars: []
