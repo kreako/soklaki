@@ -42,6 +42,7 @@
 - "!include public_student.yaml"
 - "!include public_student_current_cycle.yaml"
 - "!include public_student_fullname.yaml"
+- "!include public_summary_report.yaml"
 - "!include public_user.yaml"
 - "!include public_user_login.yaml"
 - "!include public_user_manager.yaml"

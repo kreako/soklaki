@@ -1,0 +1,3 @@
+table:
+  name: summary_report
+  schema: public
