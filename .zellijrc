@@ -1,0 +1,66 @@
+---
+pane_frames: false
+template:
+  direction: Horizontal
+  parts:
+    - direction: Vertical
+      borderless: true
+      split_size:
+        Fixed: 1
+      run:
+        plugin:
+          location: "zellij:tab-bar"
+    - direction: Vertical
+      body: true
+    - direction: Vertical
+      borderless: true
+      split_size:
+        Fixed: 2
+      run:
+        plugin:
+          location: "zellij:status-bar"
+tabs:
+  - name: "Postgres"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args:
+          [
+            "podman run -it --rm --pod soklaki -e POSTGRES_PASSWORD='password' -v ./pgdata/:/var/lib/postgresql/data:z --name soklaki-db postgres",
+          ]
+  - name: "Companion"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args:
+          [
+            "cd companion && podman run -it --rm --pod soklaki --name soklaki-companion -v ./reports/:/reports:z soklaki-companion",
+          ]
+  - name: "Companion copy"
+    run:
+      command:
+        cmd: "./.prefill-input.expect"
+        args: ["cd companion && podman cp src/main.py soklaki-companion:/app/"]
+  - name: "Hasura"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args:
+          [
+            'cd hasura && sleep 10s && podman run -it --rm --pod soklaki -e HASURA_GRAPHQL_DATABASE_URL=''postgres://postgres:password@localhost:5432/postgres'' -e HASURA_GRAPHQL_ENABLE_CONSOLE=''false'' -e HASURA_GRAPHQL_DEV_MODE=''true'' -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=''startup, http-log, webhook-log, websocket-log, query-log'' -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE=''anonymous'' -e HASURA_GRAPHQL_ADMIN_SECRET=''hasura admin secret - keep in sync with hasura deployment'' -e HASURA_GRAPHQL_JWT_SECRET=''{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}'' --name soklaki-hasura hasura/graphql-engine:v2.0.5',
+          ]
+  - name: "Hasura console"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args: ["cd hasura && sleep 15s && hasura console --no-browser --skip-update-check"]
+  - name: "Backend"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args: ["cd backend && cargo run"]
+  - name: "Frontend"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args: ["cd frontend && npm run dev"]

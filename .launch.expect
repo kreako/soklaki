@@ -1,0 +1,19 @@
+#!/usr/bin/expect -f
+
+# Get command from argv
+set cmd [lindex $argv 0]
+
+# Get a Bash shell
+spawn -noecho bash
+
+# Wait for a prompt
+# expect "$ "
+after 1000
+
+# Type something
+send "$cmd\n"
+
+# Hand over control to the user
+interact
+
+exit
