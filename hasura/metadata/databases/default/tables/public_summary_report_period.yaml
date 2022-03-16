@@ -1,0 +1,32 @@
+table:
+  name: summary_report_period
+  schema: public
+object_relationships:
+- name: period
+  using:
+    manual_configuration:
+      column_mapping:
+        eval_period_id: id
+      insertion_order: null
+      remote_table:
+        name: eval_period
+        schema: public
+- name: summary_report
+  using:
+    manual_configuration:
+      column_mapping:
+        summary_report_id: id
+      insertion_order: null
+      remote_table:
+        name: summary_report
+        schema: public
+select_permissions:
+- permission:
+    columns:
+    - eval_period_id
+    - summary_report_id
+    filter:
+      period:
+        group_id:
+          _eq: X-Hasura-User-Group
+  role: user
