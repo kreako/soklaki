@@ -11,7 +11,7 @@
 from pydantic import BaseModel, Field
 from path import Path
 
-from report import PDF, RIGHT_STOP, MARKER_WIDTH
+from pdf import PDF, RIGHT_STOP, MARKER_WIDTH
 
 
 class TemplateReportData(BaseModel):
