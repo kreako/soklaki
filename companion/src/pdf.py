@@ -83,6 +83,9 @@ class PdfWriter(object):
     def rect(self, x, y, w, h):
         self.pdf.rect(x, y, w, h, "F")
 
+    def line(self, x1, y1, x2, y2):
+        self.pdf.line(x1, y1, x2, y2)
+
     def borders(self, x, y, w, h):
         self.pdf.rect(x, y, w, h, "D")
 
@@ -162,8 +165,48 @@ class PdfWriter(object):
         self.pdf.set_text_color(0xDB, 0x27, 0x77)
         return self
 
+    def draw_gray_300(self):
+        self.pdf.set_draw_color(0xD1, 0xD5, 0xDB)
+        return self
+
+    def draw_gray_400(self):
+        self.pdf.set_draw_color(0x9C, 0xA3, 0xAF)
+        return self
+
+    def draw_gray_500(self):
+        self.pdf.set_draw_color(0x6B, 0x72, 0x80)
+        return self
+
+    def draw_gray_600(self):
+        self.pdf.set_draw_color(0x4B, 0x55, 0x63)
+        return self
+
     def draw_gray_900(self):
         self.pdf.set_draw_color(0x11, 0x18, 0x27)
+        return self
+
+    def draw_red_600(self):
+        if self.pdf.black_and_white:
+            return self.draw_gray_600()
+        self.pdf.set_draw_color(0xDC, 0x26, 0x26)
+        return self
+
+    def draw_yellow_600(self):
+        if self.pdf.black_and_white:
+            return self.draw_gray_500()
+        self.pdf.set_draw_color(0xD9, 0x77, 0x06)
+        return self
+
+    def draw_green_600(self):
+        if self.pdf.black_and_white:
+            return self.draw_gray_400()
+        self.pdf.set_draw_color(0x05, 0x96, 0x69)
+        return self
+
+    def draw_pink_600(self):
+        if self.pdf.black_and_white:
+            return self.draw_gray_300()
+        self.pdf.set_draw_color(0xDB, 0x27, 0x77)
         return self
 
     def fill_white(self):
