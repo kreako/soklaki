@@ -34,7 +34,7 @@ tabs:
         cmd: "./.launch.expect"
         args:
           [
-            "cd companion && podman run -it --rm --pod soklaki --name soklaki-companion -v ./reports/:/reports:z soklaki-companion",
+            "cd companion; podman rm soklaki-companion; podman build -t soklaki-companion -f ./Dockerfile . && podman run -it --rm --pod soklaki --name soklaki-companion -v ./reports/:/reports:z soklaki-companion",
           ]
   - name: "Companion copy"
     run:
