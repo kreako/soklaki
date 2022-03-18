@@ -5,12 +5,14 @@ from typing import Optional
 from fastapi import FastAPI, Cookie
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from path import Path
 
 from gql_client import GqlClient, GqlClientException
 import socle
 import invitation
 import ping
 import report
+import summary_report
 import template_report
 from jwt_token import generate_jwt_token
 
@@ -29,6 +31,8 @@ INVITATION_SECRET = os.getenv("INVITATION_SECRET")
 PING_SECRET = os.getenv("PING_SECRET")
 # Reports directory
 REPORTS_DIR = os.getenv("REPORTS_DIR")
+# Summary reports directory
+SUMMARY_REPORTS_DIR = Path(REPORTS_DIR) / "summary"
 
 
 app = FastAPI()
@@ -181,6 +185,37 @@ async def dl_zip_reports(group_id: int, period_id: int, token: str = Cookie(None
     return await report.dl_zip_reports(
         gql_client,
         REPORTS_DIR,
+        group_id,
+        period_id,
+        token,
+        HASURA_GRAPHQL_JWT_SECRET,
+    )
+
+
+@app.post("/generate_summary_report")
+async def generate_summary_report(input: summary_report.SummaryReportInput):
+    return await summary_report.report(gql_client, SUMMARY_REPORTS_DIR, input)
+
+
+@app.get("/dl_report/summary_reports/{group_id}/{period_id}/{filename}")
+async def dl_report(
+    group_id: int, period_id: int, filename: str, token: str = Cookie(None)
+):
+    return await summary_report.dl_report(
+        SUMMARY_REPORTS_DIR,
+        group_id,
+        period_id,
+        filename,
+        token,
+        HASURA_GRAPHQL_JWT_SECRET,
+    )
+
+
+@app.get("/dl_zip_reports/zip_summary_reports/{group_id}/{period_id}")
+async def dl_zip_reports(group_id: int, period_id: int, token: str = Cookie(None)):
+    return await summary_report.dl_zip_reports(
+        gql_client,
+        SUMMARY_REPORTS_DIR,
         group_id,
         period_id,
         token,
