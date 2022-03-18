@@ -23,6 +23,7 @@ frontend/dist
 scripts/env
 scripts/__pycache__
 scripts/.env
+scripts/export
 visuals/archives
 pgdata
 private
