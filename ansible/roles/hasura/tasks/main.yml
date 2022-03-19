@@ -20,17 +20,17 @@
 - name: Apply metadata
   ansible.builtin.shell:
   args:
-    cmd: "{{ hasura_cli }} metadata apply --admin-secret {{ hasura_admin_secret }}"
+    cmd: "{{ hasura_cli }} metadata apply --admin-secret {{ hasura_admin_secret }} --skip-update-check"
     chdir: "{{ soklaki_co_dir }}/hasura"
 
 - name: Apply migration
   ansible.builtin.shell:
   args:
-    cmd: "{{ hasura_cli }} migrate apply --admin-secret {{ hasura_admin_secret }} --database-name default"
+    cmd: "{{ hasura_cli }} migrate apply --admin-secret {{ hasura_admin_secret }} --database-name default --skip-update-check"
     chdir: "{{ soklaki_co_dir }}/hasura"
 
 - name: Reload metadata
   ansible.builtin.shell:
   args:
-    cmd: "{{ hasura_cli }} metadata reload --admin-secret {{ hasura_admin_secret }}"
+    cmd: "{{ hasura_cli }} metadata reload --admin-secret {{ hasura_admin_secret }} --skip-update-check"
     chdir: "{{ soklaki_co_dir }}/hasura"
