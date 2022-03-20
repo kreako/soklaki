@@ -43,6 +43,13 @@ const state = {
     c3: [],
     c4: [],
   },
+  // competencies id sorted by alpha rank directly from backend
+  competenciesSorted: {
+    c1: [],
+    c2: [],
+    c3: [],
+    c4: [],
+  },
   // Individual observation
   observation: { id: null },
   // id -> observation object
@@ -276,6 +283,9 @@ const mutations = {
     state.socle.competencies = fromArrayToIdObjects(socle.competencies);
     state.socle.subjects = fromArrayToIdObjects(socle.subjects);
     state.socle.templates = fromArrayToIdObjects(socle.templates);
+  },
+  setCompetenciesSorted(state, competenciesSorted) {
+    state.competenciesSorted = competenciesSorted;
   },
   setObservation(state, observation) {
     state.observation = observation;
@@ -670,6 +680,11 @@ const actions = {
   async socle({ commit }) {
     const answer = await axios.post("socle");
     commit("setSocle", answer.data);
+  },
+
+  async competenciesSorted({ commit }) {
+    const answer = await axios.get("competencies/sorted");
+    commit("setCompetenciesSorted", answer.data);
   },
 
   async insertObservation({ commit, state, dispatch }, { text }) {
