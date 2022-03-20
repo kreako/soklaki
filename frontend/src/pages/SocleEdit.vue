@@ -2,32 +2,20 @@
   <div class="my-4 px-2">
     <Loading :loading="loading">
       <div>
-        <div
-          class="cursor-pointer hover:text-teal-500"
-          @click="selectCycle(null)"
-        >
+        <div class="cursor-pointer hover:text-teal-500" @click="selectCycle(null)">
           <IconHome class="h-4" />
         </div>
         <div v-if="selectedCycle" class="pl-2">
-          <div
-            class="cursor-pointer hover:text-teal-500"
-            @click="selectL1(null)"
-          >
+          <div class="cursor-pointer hover:text-teal-500" @click="selectL1(null)">
             {{ cycle.text }}
           </div>
           <div v-if="selectedL1" class="pl-2">
-            <div
-              class="cursor-pointer hover:text-teal-500"
-              @click="selectL2(null)"
-            >
+            <div class="cursor-pointer hover:text-teal-500" @click="selectL2(null)">
               {{ containerById(containerL1.id).full_rank }}
               {{ containerById(containerL1.id).text }}
             </div>
             <div v-if="selectedL2" class="pl-2">
-              <div
-                class="cursor-pointer hover:text-teal-500"
-                @click="selectCompetency(null)"
-              >
+              <div class="cursor-pointer hover:text-teal-500" @click="selectCompetency(null)">
                 {{ containerById(containerL2.id).full_rank }}
                 {{ containerById(containerL2.id).text }}
               </div>
@@ -223,10 +211,7 @@
       @cancel="cancelCompetencyMove"
     >
       <div>
-        <ContainerSelector
-          @selected="selectedMoveContainer"
-          :cycle="selectedCycle"
-        />
+        <ContainerSelector @selected="selectedMoveContainer" :cycle="selectedCycle" />
       </div>
     </ModalConfirmCancel>
   </div>
@@ -292,9 +277,7 @@ const containerL1 = computed(() => {
   if (selectedCycle.value == null) {
     return store.getters.containerById(null);
   }
-  return store.state.socle[selectedCycle.value].find(
-    (x) => x.id == selectedL1.value
-  );
+  return store.state.socle[selectedCycle.value].find((x) => x.id == selectedL1.value);
 });
 
 const selectedL2 = ref(route.query.l2);
@@ -362,8 +345,7 @@ const showNewContainerModal = ref(false);
 const newContainerRank = ref(null);
 const newContainerParentId = ref(null);
 const goToNewContainer = (containerParentId, list) => {
-  newContainerRank.value =
-    store.getters.containerById(list[list.length - 1].id).rank + 1;
+  newContainerRank.value = store.getters.containerById(list[list.length - 1].id).rank + 1;
   newContainerParentId.value = containerParentId;
   showNewContainerModal.value = true;
 };
@@ -403,8 +385,7 @@ const showNewCompetencyModal = ref(false);
 const newCompetencyRank = ref(null);
 const newCompetencyParentId = ref(null);
 const goToNewCompetency = (competencyParentId, list) => {
-  newCompetencyRank.value =
-    store.getters.competencyById(list[list.length - 1].id).rank + 1;
+  newCompetencyRank.value = store.getters.competencyById(list[list.length - 1].id).rank + 1;
   newCompetencyParentId.value = competencyParentId;
   showNewCompetencyModal.value = true;
 };
@@ -651,6 +632,7 @@ watch(route, () => {
 
 onMounted(async () => {
   await until(() => store.state.socle.c1.length > 0).toBeTruthy();
+  // OK should be in socle request but it is only used here (and this page is not used so much...)
   await store.dispatch("competenciesSorted");
   loading.value = false;
 });
