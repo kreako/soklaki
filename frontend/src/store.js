@@ -219,9 +219,7 @@ const mutations = {
     state.login.userId = Number(localStorage.getItem("userId"));
     state.login.groupId = Number(localStorage.getItem("groupId"));
     if (state.login.token) {
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${state.login.token}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${state.login.token}`;
       document.cookie = `token=${state.login.token}; SameSite=strict; Secure`;
     }
   },
@@ -322,10 +320,7 @@ const mutations = {
     state.users[userId].firstname = firstname;
     state.users[userId].lastname = lastname;
   },
-  setStats(
-    state,
-    { cycle, studentsCount, competenciesCount, stats, commentStats }
-  ) {
+  setStats(state, { cycle, studentsCount, competenciesCount, stats, commentStats }) {
     const root = state.stats[cycle];
     root.studentsCount = studentsCount;
     root.competenciesCount = competenciesCount;
@@ -428,10 +423,7 @@ const mutations = {
           o.counts.push(values);
         }
         // sort counts higher sum first
-        o.counts.sort(
-          (a, b) =>
-            b.observations + b.evaluations - (a.observations + a.evaluations)
-        );
+        o.counts.sort((a, b) => b.observations + b.evaluations - (a.observations + a.evaluations));
       }
       root.weeks.push(o);
     }
@@ -707,9 +699,7 @@ const actions = {
     });
     const data = answer.data.eval_observation_by_pk;
     if (data == null) {
-      throw new Error(
-        `Apparemment, je ne trouve pas cette observation : ${id}`
-      );
+      throw new Error(`Apparemment, je ne trouve pas cette observation : ${id}`);
     } else {
       commit("setObservation", data);
       commit("setPeriods", answer.data.periods);
@@ -782,15 +772,11 @@ const actions = {
       observation_id: observationId,
       student_id: studentId,
     });
-    const data =
-      answer.data.delete_eval_observation_student.returning[0].observation;
+    const data = answer.data.delete_eval_observation_student.returning[0].observation;
     commit("setObservation", data);
   },
 
-  async insertObservationCompetency(
-    { commit },
-    { observationId, competencyId }
-  ) {
+  async insertObservationCompetency({ commit }, { observationId, competencyId }) {
     const answer = await axios.post("insert-observation-competency", {
       observation_id: observationId,
       competency_id: competencyId,
@@ -799,16 +785,12 @@ const actions = {
     commit("setObservation", data);
   },
 
-  async deleteObservationCompetency(
-    { commit },
-    { observationId, competencyId }
-  ) {
+  async deleteObservationCompetency({ commit }, { observationId, competencyId }) {
     const answer = await axios.post("delete-observation-competency", {
       observation_id: observationId,
       competency_id: competencyId,
     });
-    const data =
-      answer.data.delete_eval_observation_competency.returning[0].observation;
+    const data = answer.data.delete_eval_observation_competency.returning[0].observation;
     commit("setObservation", data);
   },
 
@@ -824,10 +806,7 @@ const actions = {
       // TODO
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
-      commit(
-        "setObservationsCount",
-        answer.data.eval_observation_aggregate.aggregate.count
-      );
+      commit("setObservationsCount", answer.data.eval_observation_aggregate.aggregate.count);
     }
   },
 
@@ -844,10 +823,7 @@ const actions = {
       // TODO ?
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
-      commit(
-        "setObservationsCount",
-        answer.data.eval_observation_aggregate.aggregate.count
-      );
+      commit("setObservationsCount", answer.data.eval_observation_aggregate.aggregate.count);
     }
   },
 
@@ -863,10 +839,7 @@ const actions = {
       // TODO ?
     } else {
       commit("setObservations", { data: data, limit: limit, offset: offset });
-      commit(
-        "setObservationsCount",
-        answer.data.eval_observation_aggregate.aggregate.count
-      );
+      commit("setObservationsCount", answer.data.eval_observation_aggregate.aggregate.count);
     }
   },
 
@@ -1006,28 +979,19 @@ const actions = {
     });
     const data = answer.data.load_socle;
     if (data.errorNonEmptySocle) {
-      throw new Error(
-        "J'ai essayé de recharger le socle mais il n'était pas vide !"
-      );
+      throw new Error("J'ai essayé de recharger le socle mais il n'était pas vide !");
     }
     if (data.errorUnknownGroupId) {
-      throw new Error(
-        "J'ai essayé de recharger le socle mais je ne trouve pas votre groupe !"
-      );
+      throw new Error("J'ai essayé de recharger le socle mais je ne trouve pas votre groupe !");
     }
     if (data.errorUnknown) {
-      throw new Error(
-        "J'ai essayé de recharger le socle mais je n'ai pas réussi!"
-      );
+      throw new Error("J'ai essayé de recharger le socle mais je n'ai pas réussi!");
     }
     // Now reload the socle
     await dispatch("socle");
   },
 
-  async insertSocleContainer(
-    { state, dispatch },
-    { containerId, cycle, rank, text }
-  ) {
+  async insertSocleContainer({ state, dispatch }, { containerId, cycle, rank, text }) {
     const { alphaFullRank, fullRank } = computeRanks({
       state,
       rank,
@@ -1046,10 +1010,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async insertSocleCompetency(
-    { state, dispatch },
-    { containerId, cycle, rank, text }
-  ) {
+  async insertSocleCompetency({ state, dispatch }, { containerId, cycle, rank, text }) {
     const { alphaFullRank, fullRank } = computeRanks({
       state,
       rank,
@@ -1077,10 +1038,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async insertSocleCompetencySubject(
-    { state, dispatch },
-    { competencyId, subjectId }
-  ) {
+  async insertSocleCompetencySubject({ state, dispatch }, { competencyId, subjectId }) {
     await axios.post("insert-socle-competency-subject", {
       competency_id: competencyId,
       subject_id: subjectId,
@@ -1116,10 +1074,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async updateSocleCompetencySubjectActive(
-    { state, dispatch },
-    { id, active }
-  ) {
+  async updateSocleCompetencySubjectActive({ state, dispatch }, { id, active }) {
     await axios.post("update-socle-competency-subject-active", {
       id: id,
       active: active,
@@ -1128,10 +1083,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async deleteSocleCompetencySubject(
-    { state, dispatch },
-    { subjectId, competencyId }
-  ) {
+  async deleteSocleCompetencySubject({ state, dispatch }, { subjectId, competencyId }) {
     await axios.post("delete-socle-competency-subject", {
       subject_id: subjectId,
       competency_id: competencyId,
@@ -1140,10 +1092,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async updateSocleContainerContainerId(
-    { state, dispatch },
-    { id, containerId }
-  ) {
+  async updateSocleContainerContainerId({ state, dispatch }, { id, containerId }) {
     const rank = state.socle.containers[id].rank;
     const { alphaFullRank, fullRank } = computeRanks({
       state,
@@ -1160,10 +1109,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async updateSocleCompetencyContainerId(
-    { state, dispatch },
-    { id, containerId }
-  ) {
+  async updateSocleCompetencyContainerId({ state, dispatch }, { id, containerId }) {
     // Move this competency at the end of the current competencies
     // Find the future container
     const container = state.socle.containers[containerId];
@@ -1268,10 +1214,7 @@ const actions = {
     await dispatch("socle");
   },
 
-  async insertSocleCompetencyTemplate(
-    { state, dispatch },
-    { competencyId, text }
-  ) {
+  async insertSocleCompetencyTemplate({ state, dispatch }, { competencyId, text }) {
     await axios.post("insert-socle-competency-templates", {
       competency_id: competencyId,
       group_id: state.login.groupId,
@@ -1558,9 +1501,7 @@ const actions = {
   },
 
   async evaluationSingle({}, { studentId, competencyId }) {
-    const answer = await axios.get(
-      `evaluation/single/${studentId}/${competencyId}`
-    );
+    const answer = await axios.get(`evaluation/single/${studentId}/${competencyId}`);
     return answer.data;
   },
 
@@ -1581,9 +1522,7 @@ const actions = {
   },
 
   async observationPrefill({}, { studentId, competencyId }) {
-    const answer = await axios.get(
-      `observation/prefill/${studentId}/${competencyId}`
-    );
+    const answer = await axios.get(`observation/prefill/${studentId}/${competencyId}`);
     return answer.data;
   },
 
