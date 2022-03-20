@@ -651,6 +651,7 @@ watch(route, () => {
 
 onMounted(async () => {
   await until(() => store.state.socle.c1.length > 0).toBeTruthy();
+  await store.dispatch("competenciesSorted");
   loading.value = false;
 });
 </script>
