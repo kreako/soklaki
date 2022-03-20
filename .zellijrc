@@ -28,6 +28,11 @@ tabs:
           [
             "podman run -it --rm --pod soklaki -e POSTGRES_PASSWORD='password' -v ./pgdata/:/var/lib/postgresql/data:z --name soklaki-db postgres",
           ]
+  - name: "Pgcli"
+    run:
+      command:
+        cmd: "./.launch.expect"
+        args: ["sleep 10s && pgcli --host 127.0.0.1 --user postgres"]
   - name: "Companion"
     run:
       command:
