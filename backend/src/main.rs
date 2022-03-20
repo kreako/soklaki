@@ -13,6 +13,7 @@ use tracing::info;
 use tracing_subscriber::EnvFilter;
 
 mod auth_header;
+mod competencies;
 mod competency;
 mod cycle;
 mod db;
@@ -192,6 +193,7 @@ fn rocket() -> _ {
             "/observation",
             routes![observation::prefill, observation::new_prefill],
         )
+        .mount("/competencies", routes![competencies::sorted])
         .mount(
             "/",
             routes![
