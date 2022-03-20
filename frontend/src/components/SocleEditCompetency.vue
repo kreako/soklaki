@@ -5,21 +5,13 @@
         {{ competencyById(competency.id).full_rank }}
         {{ competencyById(competency.id).text }}
       </div>
-      <button
-        @click="goInEditCompetency"
-        class="hover:text-teal-500 text-gray-700"
-      >
+      <button @click="goInEditCompetency" class="hover:text-teal-500 text-gray-700">
         <IconPencil class="h-3" />
       </button>
     </div>
     <div class="flex flex-row items-center space-x-2 mt-8">
-      <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">
-        Tags
-      </div>
-      <button
-        @click="editSubjects = true"
-        class="hover:text-teal-500 text-gray-700"
-      >
+      <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">Tags</div>
+      <button @click="editSubjects = true" class="hover:text-teal-500 text-gray-700">
         <IconPencil class="h-3" />
       </button>
     </div>
@@ -39,18 +31,10 @@
       </div>
       <div v-if="editSubjects" class="mt-2">
         <SubjectSelector @select="addSubject" :subjects="nonSelectedSubjects" />
-        <div
-          class="flex flex-col md:flex-row md:items-center md:space-x-2 mt-2"
-        >
+        <div class="flex flex-col md:flex-row md:items-center md:space-x-2 mt-2">
           <button
             @click="newSubject"
-            class="
-              mt-2
-              rounded-md
-              px-3
-              border border-teal-700
-              hover:border-teal-300
-            "
+            class="mt-2 rounded-md px-3 border border-teal-700 hover:border-teal-300"
           >
             <div class="flex flex-row items-center space-x-2">
               <div>Nouveau tag</div>
@@ -59,13 +43,7 @@
           </button>
           <button
             @click="deleteSubject"
-            class="
-              mt-2
-              rounded-md
-              px-3
-              border border-teal-700
-              hover:border-teal-300
-            "
+            class="mt-2 rounded-md px-3 border border-teal-700 hover:border-teal-300"
           >
             <div class="flex flex-row items-center space-x-2">
               <div>Supprimer un tag</div>
@@ -74,13 +52,7 @@
           </button>
           <button
             @click="editSubjects = false"
-            class="
-              mt-2
-              rounded-md
-              px-3
-              border border-teal-700
-              hover:border-teal-300
-            "
+            class="mt-2 rounded-md px-3 border border-teal-700 hover:border-teal-300"
           >
             C'est bon, je les ai tous
           </button>
@@ -88,13 +60,8 @@
       </div>
     </div>
     <div class="flex flex-row items-center space-x-2 mt-8">
-      <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">
-        Exemples
-      </div>
-      <button
-        @click="goInEditTemplates()"
-        class="hover:text-teal-500 text-gray-700"
-      >
+      <div class="text-sm uppercase text-gray-700 tracking-wider font-semibold">Exemples</div>
+      <button @click="goInEditTemplates()" class="hover:text-teal-500 text-gray-700">
         <IconPencil class="h-3" />
       </button>
     </div>
@@ -106,8 +73,7 @@
           @input="setTemplateText(t.id, $event.target.value)"
           class="mt-2 input w-full"
           rows="5"
-        >
-        </textarea>
+        ></textarea>
       </div>
       <div v-for="(t, index) in addedTemplates" class="mb-2">
         <textarea
@@ -115,60 +81,35 @@
           @input="setAddedTemplateText(index, $event.target.value)"
           class="mt-2 input w-full"
           rows="5"
-        >
-        </textarea>
+        ></textarea>
       </div>
       <div class="flex flex-col md:flex-row md:items-center md:space-x-2 mt-2">
         <button
           @click="addTemplate"
-          class="
-            mt-2
-            rounded-md
-            px-3
-            border border-teal-700
-            hover:border-teal-300
-          "
+          class="mt-2 rounded-md px-3 border border-teal-700 hover:border-teal-300"
         >
           Ajouter un exemple
         </button>
         <button
           @click="saveTemplatesEdit"
-          class="
-            mt-2
-            rounded-md
-            px-3
-            border border-teal-700
-            hover:border-teal-300
-          "
+          class="mt-2 rounded-md px-3 border border-teal-700 hover:border-teal-300"
         >
           Sauvegarder
         </button>
         <button
           @click="editTemplates = false"
-          class="
-            mt-2
-            rounded-md
-            px-3
-            border border-teal-700
-            hover:border-teal-300
-          "
+          class="mt-2 rounded-md px-3 border border-teal-700 hover:border-teal-300"
         >
           Tout annuler
         </button>
       </div>
     </div>
     <div v-else>
-      <div
-        v-for="t in competency.templates"
-        class="flex flex-row items-center space-x-2 mb-2"
-      >
+      <div v-for="t in competency.templates" class="flex flex-row items-center space-x-2 mb-2">
         <div>
           {{ templateById(t.id).text }}
         </div>
-        <button
-          @click="deleteTemplate(t.id)"
-          class="text-gray-300 hover:text-gray-600"
-        >
+        <button @click="deleteTemplate(t.id)" class="text-gray-300 hover:text-gray-600">
           <IconTrash class="h-4" />
         </button>
       </div>
@@ -211,11 +152,7 @@
               <IconX class="w-4 text-teal-500 mr-2" />
               <div class="text-teal-500">{{ subject.title }}</div>
             </button>
-            <button
-              v-else
-              class="group flex flex-row"
-              @click="toggleDeleteSubject(subject.id)"
-            >
+            <button v-else class="group flex flex-row" @click="toggleDeleteSubject(subject.id)">
               <IconX class="w-4 text-gray-300 group-hover:text-teal-500 mr-2" />
               <div class="group-hover:text-teal-500">{{ subject.title }}</div>
             </button>
@@ -275,9 +212,7 @@ const subjects = computed(() => store.getters.subjects);
 
 const nonSelectedSubjects = computed(() => {
   const selected = props.competency.subjects.map((x) => x.subject_id);
-  const nonSelected = store.getters.subjects.filter(
-    (x) => !selected.includes(x.id)
-  );
+  const nonSelected = store.getters.subjects.filter((x) => !selected.includes(x.id));
   return nonSelected;
 });
 
@@ -399,9 +334,7 @@ const setAddedTemplateText = (index, text) => {
 const showCompetencyModal = ref(false);
 const competencyTitle = ref("");
 const goInEditCompetency = () => {
-  competencyTitle.value = store.getters.competencyById(
-    props.competency.id
-  ).text;
+  competencyTitle.value = store.getters.competencyById(props.competency.id).text;
   showCompetencyModal.value = true;
 };
 const confirmCompetency = async () => {
