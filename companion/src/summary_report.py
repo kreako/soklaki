@@ -59,7 +59,13 @@ async def report(gql_client, reports_dir, input: SummaryReportInput):
         )
         e.empty_line()
 
+    y_start_general_info = pdf.get_y()
     output_general_info(pdf, data)
+    y_end_general_info = pdf.get_y()
+
+    pdf.set_y(y_start_general_info)
+    output_legend(pdf)
+    pdf.set_y(y_end_general_info)
 
     output_summary_table(pdf, data)
 
@@ -106,10 +112,15 @@ async def report(gql_client, reports_dir, input: SummaryReportInput):
 def output_legend(pdf):
     with pdf.edit().fill_gray_200().text_sm() as e:
         y = pdf.get_y()
-        e.rect(153, y, 47, e.line_height * 5)
+        e.rect(118, y, 85, e.line_height * 12)
         pdf.set_y(y + e.line_height / 2)
 
+    with pdf.edit().text_sm().font_bold() as e:
+        pdf.set_x(120)
+        pdf.cell(w=0, h=e.line_height, txt="Légende", ln=1, align="L")
+
     with pdf.edit().text_sm() as e:
+        # Color codes
         y = pdf.get_y()
         e.fill_red_600()
         e.rect(188, y, 10, e.line_height)
@@ -129,6 +140,52 @@ def output_legend(pdf):
         e.fill_pink_600()
         e.rect(188, y, 10, e.line_height)
         pdf.cell(w=176, h=e.line_height, txt="Très bonne maîtrise", ln=1, align="R")
+
+        # spacer
+        e.empty_line()
+        e.empty_line()
+
+        # Time diagram legend - fake diagram
+        y = pdf.get_y()
+        e.fill_gray_50()
+        e.rect(150, y - 1, 50, 6)  # basis
+        level_to_fill_color(12, e)
+        e.rect(152, y + 4, 7, 1)
+        level_to_fill_color(24, e)
+        e.rect(162, y + 3, 7, 2)
+        level_to_fill_color(43, e)
+        e.rect(172, y + 2, 7, 3)
+        level_to_fill_color(43, e)
+        e.rect(182, y + 2, 7, 3)
+        level_to_fill_color(76, e)
+        e.rect(192, y, 7, 5)
+
+        # Legend of time diagram
+        pdf.set_y(y + 8)
+        pdf.set_x(120)
+        pdf.cell(
+            w=0,
+            h=e.line_height,
+            txt="Évolution de l'évaluation dans le cycle",
+            ln=1,
+            align="R",
+        )
+
+    with pdf.edit().text_xs() as e:
+        pdf.cell(
+            w=0,
+            h=e.line_height,
+            txt="depuis le début du cycle à l'école",
+            ln=1,
+            align="R",
+        )
+        pdf.cell(
+            w=0,
+            h=e.line_height,
+            txt="jusqu'à la date du rapport",
+            ln=1,
+            align="R",
+        )
 
 
 def output_general_info(pdf, data):
@@ -205,6 +262,22 @@ def output_summary_table(pdf, data):
         pdf.cell(
             w=20,
             h=e.line_height,
+            txt="Début de cycle",
+            align="L",
+            ln=0,
+        )
+        pdf.set_x(180)
+        pdf.cell(
+            w=20,
+            h=e.line_height,
+            txt="Fin de cycle",
+            align="R",
+            ln=1,
+        )
+        pdf.set_x(110)
+        pdf.cell(
+            w=20,
+            h=e.line_height,
             txt=str(data["student"]["cycle"]["start"]),
             align="L",
             ln=0,
@@ -217,7 +290,9 @@ def output_summary_table(pdf, data):
             align="R",
             ln=1,
         )
-    pdf.set_y(pdf.get_y() + 1)
+
+    pdf.set_y(pdf.get_y() + 2)
+
     with pdf.edit().style_normal() as e:
         for subject in data["subjects"]:
             pdf.cell(
@@ -230,34 +305,25 @@ def output_summary_table(pdf, data):
             x = pdf.get_x() + 10
             y = pdf.get_y()
             # Basis
-            height = 10
+            height = 8
             width = 90
             years_3 = 365 * 3
-            e.fill_gray_100()
+            marker_width = width * 4 * 31 / years_3  # 4 months
+            e.fill_gray_50()
             e.rect(x, y - 1, width, height + 2)
-            pdf.set_y(pdf.get_y() + 13)
+            pdf.set_y(pdf.get_y() + 11)
             # Now the line with levels
             start_cycle = data["student"]["cycle"]["start"]
-            # First connecting line
-            previous = None
+            # rect
             e.draw_gray_500()
             for level in subject["levels"]:
                 if level["level"] is None:
                     continue
                 lx = (level["date"] - start_cycle).days * width / years_3
+                h = (level["level"] * height) / 100
                 ly = height - ((level["level"] * height) / 100)
-                if previous:
-                    e.line(previous[0], previous[1], x + lx, y + ly)
-                previous = (x + lx, y + ly)
-            # Now evaluation points
-            e.fill_gray_500()
-            for level in subject["levels"]:
-                if level["level"] is None:
-                    continue
-                lx = (level["date"] - start_cycle).days * width / years_3
-                ly = height - ((level["level"] * height) / 100)
-                # level_to_fill_color(level["level"], e)
-                e.rect(x + lx - 0.25, y + ly - 0.25, 0.5, 0.5)
+                level_to_fill_color(level["level"], e)
+                e.rect(x + lx, y + ly, marker_width, h)
 
 
 def output_subjects_comments(pdf, data):
@@ -381,7 +447,7 @@ query Period($student_id: bigint!, $period_id: Int!) {
     student["cycle"] = {
         "cycle": cycle,
         "start": date(2019, 9, 1),
-        "end": date(2022, 9, 1),
+        "end": date(2022, 8, 31),
     }
     student["firstname"] = "Prénom"
     student["lastname"] = "Nom"
