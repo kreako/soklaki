@@ -114,6 +114,20 @@
         </button>
       </div>
     </div>
+    <div class="flex flex-row items-center space-x-4 mt-8">
+      <button
+        @click="goToPrevCompetency()"
+        class="border border-gray-300 rounded-md shadow-md hover:text-teal-500 hover:border-teal-500"
+      >
+        <IconChevronLeft class="h-8" />
+      </button>
+      <button
+        @click="goToNextCompetency()"
+        class="border border-gray-300 rounded-md shadow-md hover:text-teal-500 hover:border-teal-500"
+      >
+        <IconChevronRight class="h-8" />
+      </button>
+    </div>
     <ModalConfirmCancel
       title="Nouveau tag"
       :show="showNewSubjectModal"
@@ -188,7 +202,6 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, ref, defineProps, defineEmit } from "vue";
-import MillerColumn from "../components/MillerColumn.vue";
 import SubjectSelector from "../components/SubjectSelector.vue";
 import ModalConfirmCancel from "../components/ModalConfirmCancel.vue";
 import IconPencil from "../icons/IconPencil.vue";
@@ -196,11 +209,22 @@ import IconXCircle from "../icons/IconXCircle.vue";
 import IconTrash from "../icons/IconTrash.vue";
 import IconPlus from "../icons/IconPlus.vue";
 import IconX from "../icons/IconX.vue";
-import IconLogout from "../icons/IconLogout.vue";
+import IconChevronRight from "../icons/IconChevronRight.vue";
+import IconChevronLeft from "../icons/IconChevronLeft.vue";
 
 const props = defineProps({
   competency: Object,
 });
+
+const emit = defineEmit(["goToNextCompetency", "goToPrevCompetency"]);
+
+const goToNextCompetency = () => {
+  emit("goToNextCompetency");
+};
+
+const goToPrevCompetency = () => {
+  emit("goToPrevCompetency");
+};
 
 const store = useStore();
 

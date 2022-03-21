@@ -90,7 +90,11 @@
                 {{ competencyById(item.id).text }}
               </MillerColumn>
               <div v-if="selectedCompetency">
-                <SocleEditCompetency :competency="competency" />
+                <SocleEditCompetency
+                  :competency="competency"
+                  @goToNextCompetency="goToNextCompetency"
+                  @goToPrevCompetency="goToPrevCompetency"
+                />
               </div>
             </div>
             <div v-else>
@@ -113,7 +117,11 @@
                 {{ competencyById(item.id).text }}
               </MillerColumn>
               <div v-if="selectedCompetency">
-                <SocleEditCompetency :competency="competency" />
+                <SocleEditCompetency
+                  :competency="competency"
+                  @goToNextCompetency="goToNextCompetency"
+                  @goToPrevCompetency="goToPrevCompetency"
+                />
               </div>
             </div>
           </div>
@@ -321,6 +329,48 @@ const competency = computed(() => {
       .competencies.find((x) => x.id == selectedCompetency.value);
   }
 });
+
+const goToCompetencyOffset = (offset) => {
+  if (selectedCycle.value == null) {
+    return;
+  }
+  if (selectedCompetency.value == null) {
+    return;
+  }
+  // Now find where I am in the competencies array (sorted by alpha rank)
+  const idx = store.state.competenciesSorted[selectedCycle.value].findIndex(
+    (x) => x == selectedCompetency.value
+  );
+  if (idx === -1) {
+    // competency not found ? :(
+    return;
+  }
+  const nextIdx = idx + offset;
+  if (0 > idx || idx >= store.state.competenciesSorted[selectedCycle.value].length) {
+    // do nothing
+    return;
+  }
+  // go to the next competency
+  const competencyId = store.state.competenciesSorted[selectedCycle.value][nextIdx];
+  const fatherId = store.state.socle.competencies[competencyId].container_id;
+  const grandFatherId = store.state.socle.containers[fatherId].container_id;
+  if (grandFatherId == null) {
+    selectedL1.value = fatherId;
+    selectedL2.value = null;
+  } else {
+    selectedL1.value = grandFatherId;
+    selectedL2.value = fatherId;
+  }
+  selectedCompetency.value = competencyId;
+};
+
+const goToNextCompetency = () => {
+  goToCompetencyOffset(1);
+};
+
+const goToPrevCompetency = () => {
+  goToCompetencyOffset(-1);
+};
 
 const showEditContainerModal = ref(false);
 const containerText = ref("");
