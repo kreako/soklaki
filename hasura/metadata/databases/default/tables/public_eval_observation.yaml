@@ -56,6 +56,13 @@ array_relationships:
       remote_table:
         name: eval_observation_student_cycle
         schema: public
+- name: subjects
+  using:
+    foreign_key_constraint_on:
+      column: observation_id
+      table:
+        name: eval_observation_subject
+        schema: public
 insert_permissions:
 - permission:
     backend_only: false

@@ -1,0 +1,70 @@
+table:
+  name: eval_observation_subject
+  schema: public
+object_relationships:
+- name: observation
+  using:
+    foreign_key_constraint_on: observation_id
+- name: subject
+  using:
+    foreign_key_constraint_on: subject_id
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
+    columns:
+    - observation_id
+    - subject_id
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - observation_id
+    - id
+    - subject_id
+    filter:
+      _and:
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - observation_id
+    - subject_id
+    filter:
+      _and:
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user
+delete_permissions:
+- permission:
+    filter:
+      _and:
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - observation:
+          user:
+            group_id:
+              _eq: X-Hasura-User-Group
+  role: user

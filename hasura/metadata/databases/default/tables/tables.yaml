@@ -20,6 +20,7 @@
 - "!include public_eval_observation_period.yaml"
 - "!include public_eval_observation_student.yaml"
 - "!include public_eval_observation_student_cycle.yaml"
+- "!include public_eval_observation_subject.yaml"
 - "!include public_eval_observations_count_period_weeks.yaml"
 - "!include public_eval_period.yaml"
 - "!include public_eval_period_current.yaml"

@@ -1,0 +1,1 @@
+CREATE TABLE "public"."eval_observation_subject" ("id" serial NOT NULL, "observation_id" bigint NOT NULL, "subject_id" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("observation_id") REFERENCES "public"."eval_observation"("id") ON UPDATE restrict ON DELETE restrict, FOREIGN KEY ("subject_id") REFERENCES "public"."socle_subject"("id") ON UPDATE restrict ON DELETE restrict);
