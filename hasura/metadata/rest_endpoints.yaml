@@ -4,7 +4,7 @@
       query_name: boot
   url: boot
   methods:
-  - POST
+    - POST
   name: boot
   comment: All data needed to boot
 - definition:
@@ -13,7 +13,7 @@
       query_name: count-per-weeks
   url: count-per-weeks
   methods:
-  - POST
+    - POST
   name: count-per-weeks
   comment: null
 - definition:
@@ -22,7 +22,7 @@
       query_name: delete-observation-competency
   url: delete-observation-competency
   methods:
-  - POST
+    - POST
   name: delete-observation-competency
   comment: null
 - definition:
@@ -31,7 +31,7 @@
       query_name: delete-observation-student
   url: delete-observation-student
   methods:
-  - POST
+    - POST
   name: delete-observation-student
   comment: Delete observation student
 - definition:
@@ -40,7 +40,7 @@
       query_name: delete-socle-competency-subject
   url: delete-socle-competency-subject
   methods:
-  - POST
+    - POST
   name: delete-socle-competency-subject
   comment: null
 - definition:
@@ -49,7 +49,7 @@
       query_name: evaluation-single
   url: evaluation-single
   methods:
-  - POST
+    - POST
   name: evaluation-single
   comment: null
 - definition:
@@ -58,17 +58,8 @@
       query_name: evaluations
   url: evaluations
   methods:
-  - POST
+    - POST
   name: evaluations
-  comment: null
-- definition:
-    query:
-      collection_name: allowed-queries
-      query_name: evaluations-by-competency
-  url: evaluations-by-competency
-  methods:
-  - POST
-  name: evaluations-by-competency
   comment: null
 - definition:
     query:
@@ -76,7 +67,7 @@
       query_name: generate_report
   url: generate_report
   methods:
-  - POST
+    - POST
   name: generate_report
   comment: null
 - definition:
@@ -85,7 +76,7 @@
       query_name: generate_summary_report
   url: generate_summary_report
   methods:
-  - POST
+    - POST
   name: generate_summary_report
   comment: null
 - definition:
@@ -94,7 +85,7 @@
       query_name: insert-comment
   url: insert-comment
   methods:
-  - POST
+    - POST
   name: insert-comment
   comment: null
 - definition:
@@ -103,7 +94,7 @@
       query_name: insert-evaluation
   url: insert-evaluation
   methods:
-  - POST
+    - POST
   name: insert-evaluation
   comment: insert-evaluation
 - definition:
@@ -112,7 +103,7 @@
       query_name: insert-frontend-store-error
   url: insert-frontend-store-error
   methods:
-  - POST
+    - POST
   name: insert-frontend-store-error
   comment: insert-frontend-store-error
 - definition:
@@ -121,7 +112,7 @@
       query_name: insert-observation
   url: insert-observation
   methods:
-  - POST
+    - POST
   name: insert-observation
   comment: Insert observation with text and user_id params
 - definition:
@@ -130,7 +121,7 @@
       query_name: insert-observation-competency
   url: insert-observation-competency
   methods:
-  - POST
+    - POST
   name: insert-observation-competency
   comment: null
 - definition:
@@ -139,7 +130,7 @@
       query_name: insert-observation-student
   url: insert-observation-student
   methods:
-  - POST
+    - POST
   name: insert-observation-student
   comment: Insert an observation <-> student link
 - definition:
@@ -148,7 +139,7 @@
       query_name: insert-period
   url: insert-period
   methods:
-  - POST
+    - POST
   name: insert-period
   comment: insert-period
 - definition:
@@ -157,7 +148,7 @@
       query_name: insert-socle-competency
   url: insert-socle-competency
   methods:
-  - POST
+    - POST
   name: insert-socle-competency
   comment: null
 - definition:
@@ -166,7 +157,7 @@
       query_name: insert-socle-competency-subject
   url: insert-socle-competency-subject
   methods:
-  - POST
+    - POST
   name: insert-socle-competency-subject
   comment: null
 - definition:
@@ -175,7 +166,7 @@
       query_name: insert-socle-competency-templates
   url: insert-socle-competency-templates
   methods:
-  - POST
+    - POST
   name: insert-socle-competency-templates
   comment: null
 - definition:
@@ -184,7 +175,7 @@
       query_name: insert-socle-container
   url: insert-socle-container
   methods:
-  - POST
+    - POST
   name: insert-socle-container
   comment: null
 - definition:
@@ -193,7 +184,7 @@
       query_name: insert-socle-subject
   url: insert-socle-subject
   methods:
-  - POST
+    - POST
   name: insert-socle-subject
   comment: null
 - definition:
@@ -202,7 +193,7 @@
       query_name: insert-student
   url: insert-student
   methods:
-  - POST
+    - POST
   name: insert-student
   comment: null
 - definition:
@@ -211,7 +202,7 @@
       query_name: invitation-generate-token
   url: invitation-generate-token
   methods:
-  - POST
+    - POST
   name: invitation-generate-token
   comment: null
 - definition:
@@ -220,7 +211,7 @@
       query_name: invitation-signup-token
   url: invitation-signup-token
   methods:
-  - POST
+    - POST
   name: invitation-signup-token
   comment: null
 - definition:
@@ -229,7 +220,7 @@
       query_name: invitation-verify-token
   url: invitation-verify-token
   methods:
-  - POST
+    - POST
   name: invitation-verify-token
   comment: null
 - definition:
@@ -238,7 +229,7 @@
       query_name: load-socle
   url: load-socle
   methods:
-  - POST
+    - POST
   name: load-socle
   comment: null
 - definition:
@@ -247,7 +238,7 @@
       query_name: login
   url: login
   methods:
-  - POST
+    - POST
   name: login
   comment: Login a user with email/password
 - definition:
@@ -256,8 +247,8 @@
       query_name: observation
   url: observation
   methods:
-  - GET
-  - POST
+    - GET
+    - POST
   name: observation
   comment: Get observation by primary key
 - definition:
@@ -266,7 +257,7 @@
       query_name: observations-by-user
   url: observations-by-user
   methods:
-  - POST
+    - POST
   name: observations-by-user
   comment: null
 - definition:
@@ -275,7 +266,7 @@
       query_name: observations-incomplete
   url: observations-incomplete
   methods:
-  - POST
+    - POST
   name: observations-incomplete
   comment: null
 - definition:
@@ -284,7 +275,7 @@
       query_name: observations-sorted-created-at
   url: observations-sorted-created-at
   methods:
-  - POST
+    - POST
   name: observations-sorted-created-at
   comment: null
 - definition:
@@ -293,8 +284,8 @@
       query_name: periods
   url: periods
   methods:
-  - GET
-  - POST
+    - GET
+    - POST
   name: periods
   comment: null
 - definition:
@@ -303,7 +294,7 @@
       query_name: ping
   url: ping
   methods:
-  - POST
+    - POST
   name: ping
   comment: null
 - definition:
@@ -312,7 +303,7 @@
       query_name: report
   url: report
   methods:
-  - POST
+    - POST
   name: report
   comment: null
 - definition:
@@ -321,7 +312,7 @@
       query_name: reports
   url: reports
   methods:
-  - POST
+    - POST
   name: reports
   comment: null
 - definition:
@@ -330,7 +321,7 @@
       query_name: set-user-name
   url: set-user-name
   methods:
-  - POST
+    - POST
   name: set-user-name
   comment: null
 - definition:
@@ -339,7 +330,7 @@
       query_name: signup
   url: signup
   methods:
-  - POST
+    - POST
   name: signup
   comment: Signup one user creating a new group
 - definition:
@@ -348,8 +339,8 @@
       query_name: socle
   url: socle
   methods:
-  - GET
-  - POST
+    - GET
+    - POST
   name: socle
   comment: Get the socle definition
 - definition:
@@ -358,8 +349,8 @@
       query_name: stats
   url: stats
   methods:
-  - GET
-  - POST
+    - GET
+    - POST
   name: stats
   comment: null
 - definition:
@@ -368,8 +359,8 @@
       query_name: stats-summary
   url: stats-summary
   methods:
-  - POST
-  - GET
+    - POST
+    - GET
   name: stats-summary
   comment: null
 - definition:
@@ -378,8 +369,8 @@
       query_name: students
   url: students
   methods:
-  - GET
-  - POST
+    - GET
+    - POST
   name: students
   comment: List of students
 - definition:
@@ -388,7 +379,7 @@
       query_name: update-comment
   url: update-comment
   methods:
-  - POST
+    - POST
   name: update-comment
   comment: null
 - definition:
@@ -397,7 +388,7 @@
       query_name: update-comment-active
   url: update-comment-active
   methods:
-  - POST
+    - POST
   name: update-comment-active
   comment: null
 - definition:
@@ -406,7 +397,7 @@
       query_name: update-comment-date
   url: update-comment-date
   methods:
-  - POST
+    - POST
   name: update-comment-date
   comment: null
 - definition:
@@ -415,7 +406,7 @@
       query_name: update-comment-text
   url: update-comment-text
   methods:
-  - POST
+    - POST
   name: update-comment-text
   comment: null
 - definition:
@@ -424,7 +415,7 @@
       query_name: update-evaluation
   url: update-evaluation
   methods:
-  - POST
+    - POST
   name: update-evaluation
   comment: null
 - definition:
@@ -433,7 +424,7 @@
       query_name: update-evaluation-active
   url: update-evaluation-active
   methods:
-  - POST
+    - POST
   name: update-evaluation-active
   comment: null
 - definition:
@@ -442,7 +433,7 @@
       query_name: update-evaluation-comment
   url: update-evaluation-comment
   methods:
-  - POST
+    - POST
   name: update-evaluation-comment
   comment: null
 - definition:
@@ -451,7 +442,7 @@
       query_name: update-evaluation-date
   url: update-evaluation-date
   methods:
-  - POST
+    - POST
   name: update-evaluation-date
   comment: null
 - definition:
@@ -460,7 +451,7 @@
       query_name: update-evaluation-status
   url: update-evaluation-status
   methods:
-  - POST
+    - POST
   name: update-evaluation-status
   comment: null
 - definition:
@@ -469,7 +460,7 @@
       query_name: update-group-name
   url: update-group-name
   methods:
-  - POST
+    - POST
   name: update-group-name
   comment: update-group-name
 - definition:
@@ -478,7 +469,7 @@
       query_name: update-observation-active
   url: update-observation-active
   methods:
-  - POST
+    - POST
   name: update-observation-active
   comment: null
 - definition:
@@ -487,7 +478,7 @@
       query_name: update-observation-date
   url: update-observation-date
   methods:
-  - POST
+    - POST
   name: update-observation-date
   comment: update-observation-date
 - definition:
@@ -496,7 +487,7 @@
       query_name: update-observation-text
   url: update-observation-text
   methods:
-  - POST
+    - POST
   name: update-observation-text
   comment: Update observation text
 - definition:
@@ -505,7 +496,7 @@
       query_name: update-period
   url: update-period
   methods:
-  - POST
+    - POST
   name: update-period
   comment: null
 - definition:
@@ -514,7 +505,7 @@
       query_name: update-period-active
   url: update-period-active
   methods:
-  - POST
+    - POST
   name: update-period-active
   comment: null
 - definition:
@@ -523,7 +514,7 @@
       query_name: update-report-active
   url: update-report-active
   methods:
-  - POST
+    - POST
   name: update-report-active
   comment: null
 - definition:
@@ -532,7 +523,7 @@
       query_name: update-socle-competency-active
   url: update-socle-competency-active
   methods:
-  - POST
+    - POST
   name: update-socle-competency-active
   comment: null
 - definition:
@@ -541,7 +532,7 @@
       query_name: update-socle-competency-container-id
   url: update-socle-competency-container-id
   methods:
-  - POST
+    - POST
   name: update-socle-competency-container-id
   comment: null
 - definition:
@@ -550,7 +541,7 @@
       query_name: update-socle-competency-rank
   url: update-socle-competency-rank
   methods:
-  - POST
+    - POST
   name: update-socle-competency-rank
   comment: null
 - definition:
@@ -559,7 +550,7 @@
       query_name: update-socle-competency-subject-active
   url: update-socle-competency-subject-active
   methods:
-  - POST
+    - POST
   name: update-socle-competency-subject-active
   comment: null
 - definition:
@@ -568,7 +559,7 @@
       query_name: update-socle-competency-templates-active
   url: update-socle-competency-templates-active
   methods:
-  - POST
+    - POST
   name: update-socle-competency-templates-active
   comment: null
 - definition:
@@ -577,7 +568,7 @@
       query_name: update-socle-competency-templates-text
   url: update-socle-competency-templates-text
   methods:
-  - POST
+    - POST
   name: update-socle-competency-templates-text
   comment: null
 - definition:
@@ -586,7 +577,7 @@
       query_name: update-socle-competency-text
   url: update-socle-competency-text
   methods:
-  - POST
+    - POST
   name: update-socle-competency-text
   comment: null
 - definition:
@@ -595,7 +586,7 @@
       query_name: update-socle-container-active
   url: update-socle-container-active
   methods:
-  - POST
+    - POST
   name: update-socle-container-active
   comment: null
 - definition:
@@ -604,7 +595,7 @@
       query_name: update-socle-container-container-id
   url: update-socle-container-container-id
   methods:
-  - POST
+    - POST
   name: update-socle-container-container-id
   comment: null
 - definition:
@@ -613,7 +604,7 @@
       query_name: update-socle-container-rank
   url: update-socle-container-rank
   methods:
-  - POST
+    - POST
   name: update-socle-container-rank
   comment: null
 - definition:
@@ -622,7 +613,7 @@
       query_name: update-socle-container-text
   url: update-socle-container-text
   methods:
-  - POST
+    - POST
   name: update-socle-container-text
   comment: null
 - definition:
@@ -631,7 +622,7 @@
       query_name: update-socle-subject-active
   url: update-socle-subject-active
   methods:
-  - POST
+    - POST
   name: update-socle-subject-active
   comment: null
 - definition:
@@ -640,7 +631,7 @@
       query_name: update-socle-subject-title
   url: update-socle-subject-title
   methods:
-  - POST
+    - POST
   name: update-socle-subject-title
   comment: null
 - definition:
@@ -649,7 +640,7 @@
       query_name: update-student-birthdate
   url: update-student-birthdate
   methods:
-  - POST
+    - POST
   name: update-student-birthdate
   comment: null
 - definition:
@@ -658,7 +649,7 @@
       query_name: update-student-firstname
   url: update-student-firstname
   methods:
-  - POST
+    - POST
   name: update-student-firstname
   comment: null
 - definition:
@@ -667,7 +658,7 @@
       query_name: update-student-lastname
   url: update-student-lastname
   methods:
-  - POST
+    - POST
   name: update-student-lastname
   comment: null
 - definition:
@@ -676,7 +667,7 @@
       query_name: update-student-school-entry
   url: update-student-school-entry
   methods:
-  - POST
+    - POST
   name: update-student-school-entry
   comment: null
 - definition:
@@ -685,7 +676,7 @@
       query_name: update-student-school-exit
   url: update-student-school-exit
   methods:
-  - POST
+    - POST
   name: update-student-school-exit
   comment: null
 - definition:
@@ -694,7 +685,7 @@
       query_name: update-user-active
   url: update-user-active
   methods:
-  - POST
+    - POST
   name: update-user-active
   comment: null
 - definition:
@@ -703,7 +694,7 @@
       query_name: users
   url: users
   methods:
-  - GET
-  - POST
+    - GET
+    - POST
   name: users
   comment: Get all users

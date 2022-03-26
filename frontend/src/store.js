@@ -1297,15 +1297,6 @@ const actions = {
     commit("setEvalComments", answer.data.comments);
   },
 
-  async evaluationsByCompetency({ commit, state }, { competencyId, cycle }) {
-    const answer = await axios.post("evaluations-by-competency", {
-      competency_id: competencyId,
-      group_id: state.login.groupId,
-      cycle: cycle,
-    });
-    return answer.data;
-  },
-
   async updateCommentActive({ dispatch }, { id, active, periodId }) {
     await axios.post("update-comment-active", { id, active });
     await dispatch("evaluations", { periodId });
