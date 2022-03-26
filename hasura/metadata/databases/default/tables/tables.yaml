@@ -12,6 +12,7 @@
 - "!include public_eval_evaluation.yaml"
 - "!include public_eval_evaluation_period.yaml"
 - "!include public_eval_evaluation_student_cycle.yaml"
+- "!include public_eval_evaluation_subject.yaml"
 - "!include public_eval_evaluations_count_period_weeks.yaml"
 - "!include public_eval_observation.yaml"
 - "!include public_eval_observation_competency.yaml"

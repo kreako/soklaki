@@ -1,0 +1,78 @@
+table:
+  name: eval_evaluation_subject
+  schema: public
+object_relationships:
+- name: student
+  using:
+    foreign_key_constraint_on: student_id
+- name: subject
+  using:
+    foreign_key_constraint_on: subject_id
+- name: user
+  using:
+    foreign_key_constraint_on: user_id
+insert_permissions:
+- permission:
+    backend_only: false
+    check:
+      _and:
+      - user_id:
+          _eq: X-Hasura-User-Id
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+    columns:
+    - active
+    - comment
+    - date
+    - level
+    - student_id
+    - subject_id
+    - user_id
+  role: user
+select_permissions:
+- permission:
+    columns:
+    - student_id
+    - user_id
+    - active
+    - date
+    - id
+    - level
+    - subject_id
+    - comment
+    - created_at
+    - updated_at
+    filter:
+      _and:
+      - user_id:
+          _eq: X-Hasura-User-Id
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
+update_permissions:
+- permission:
+    check: null
+    columns:
+    - active
+    - comment
+    - date
+    - level
+    filter:
+      _and:
+      - user_id:
+          _eq: X-Hasura-User-Id
+      - subject:
+          group_id:
+            _eq: X-Hasura-User-Group
+      - student:
+          group_id:
+            _eq: X-Hasura-User-Group
+  role: user
