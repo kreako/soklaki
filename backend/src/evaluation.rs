@@ -18,6 +18,7 @@ use super::user;
 pub struct RawEvaluation {
     pub user_id: i64,
     pub status: EvaluationStatus,
+    pub level: i32,
     pub comment: Option<String>,
     pub date: NaiveDate,
 }
@@ -31,7 +32,7 @@ pub fn raw_evaluation(
 
     match client.query_opt(
         "
-SELECT user_id, status, comment, date
+SELECT user_id, level, comment, date
     FROM eval_evaluation
     WHERE student_id = $1 AND competency_id = $2
     ORDER BY date DESC, updated_at DESC
@@ -41,12 +42,13 @@ SELECT user_id, status, comment, date
     )? {
         Some(row) => {
             let user_id = row.get(0);
-            let status = row.get(1);
+            let level = row.get(1);
             let comment = row.get(2);
             let date = row.get(3);
             Ok(Some(RawEvaluation {
                 user_id: user_id,
-                status: status,
+                status: EvaluationStatus::from_level(level),
+                level: level,
                 comment: comment,
                 date: date,
             }))
@@ -59,6 +61,7 @@ SELECT user_id, status, comment, date
 pub struct Evaluation {
     pub user: user::User,
     pub status: EvaluationStatus,
+    pub level: i32,
     pub comment: Option<String>,
     pub date: NaiveDate,
     pub from_current_period: bool,
@@ -78,6 +81,7 @@ pub fn evaluation(
             Ok(Some(Evaluation {
                 user: user,
                 status: raw.status,
+                level: raw.level,
                 comment: raw.comment,
                 date: raw.date,
                 from_current_period: from_current_period,
@@ -198,7 +202,7 @@ pub async fn evaluation_multi(
 pub struct NewEvaluation {
     pub student_id: i64,
     pub competency_id: i32,
-    pub status: EvaluationStatus,
+    pub level: i32,
     pub comment: Option<String>,
     pub date: NaiveDate,
 }
@@ -234,15 +238,16 @@ pub async fn new_evaluation(
         client.execute(
             "
 INSERT INTO eval_evaluation
-    (user_id, student_id, competency_id, status, comment, date)
+    (user_id, student_id, competency_id, status, level, comment, date)
     VALUES
-    ($1, $2, $3, $4, $5, $6)
+    ($1, $2, $3, $4, $5, $6, $7)
        ",
             &[
                 &user_id,
                 &new.student_id,
                 &new.competency_id,
-                &new.status,
+                &EvaluationStatus::from_level(new.level),
+                &new.level,
                 &new.comment,
                 &new.date,
             ],
