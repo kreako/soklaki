@@ -136,6 +136,12 @@ pub struct Period {
     pub name: String,
 }
 
+impl Period {
+    pub fn contains(&self, other: &NaiveDate) -> bool {
+        &self.start <= other && other <= &self.end
+    }
+}
+
 pub fn current_period(
     client: &mut postgres::Client,
     group_id: &i64,
