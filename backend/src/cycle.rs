@@ -3,7 +3,7 @@ use postgres_types::{FromSql, ToSql};
 use serde::Serialize;
 
 #[derive(PartialEq, Debug, FromSql, ToSql, Clone, Serialize)]
-#[postgres(name = "eval_status")]
+#[postgres(name = "cycle")]
 pub enum Cycle {
     #[postgres(name = "c1")]
     #[serde(rename = "c1")]
