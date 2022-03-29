@@ -10,6 +10,34 @@ pub struct User {
     pub initials: String,
 }
 
+impl User {
+    pub fn new(
+        id: i64,
+        group_id: i64,
+        email: String,
+        firstname: Option<String>,
+        lastname: Option<String>,
+    ) -> Self {
+        let f_firstname = match firstname {
+            Some(ref s) => s.chars().nth(0).unwrap_or(' '),
+            None => ' ',
+        };
+        let f_lastname = match lastname {
+            Some(ref s) => s.chars().nth(0).unwrap_or(' '),
+            None => ' ',
+        };
+        let initials = format!("{}{}", f_firstname, f_lastname);
+        User {
+            id,
+            email,
+            group_id,
+            firstname,
+            lastname,
+            initials,
+        }
+    }
+}
+
 pub fn user(client: &mut postgres::Client, id: &i64) -> Result<User, postgres::error::Error> {
     let row = client.query_one(
         "
@@ -23,21 +51,5 @@ SELECT email, group_id, firstname, lastname
     let group_id = row.get(1);
     let firstname: Option<String> = row.get(2);
     let lastname: Option<String> = row.get(3);
-    let f_firstname = match firstname {
-        Some(ref s) => s.chars().nth(0).unwrap_or(' '),
-        None => ' ',
-    };
-    let f_lastname = match lastname {
-        Some(ref s) => s.chars().nth(0).unwrap_or(' '),
-        None => ' ',
-    };
-    let initials = format!("{}{}", f_firstname, f_lastname);
-    Ok(User {
-        id: *id,
-        email: email,
-        group_id: group_id,
-        firstname: firstname,
-        lastname: lastname,
-        initials: initials,
-    })
+    Ok(User::new(*id, group_id, email, firstname, lastname))
 }
