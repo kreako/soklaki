@@ -23,4 +23,14 @@ impl EvaluationStatus {
             EvaluationStatus::TipTop
         }
     }
+
+    /* pub fn to_level(&self) -> i32 {
+        match self {
+            EvaluationStatus::Empty => 0,
+            EvaluationStatus::NotAcquired => 13,
+            EvaluationStatus::InProgress => 38,
+            EvaluationStatus::Acquired => 63,
+            EvaluationStatus::TipTop => 88,
+        }
+    } */
 }
