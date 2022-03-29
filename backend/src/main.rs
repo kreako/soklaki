@@ -28,6 +28,7 @@ mod period;
 mod stats;
 mod student;
 mod students;
+mod subject;
 mod user;
 
 #[post("/<path..>", data = "<data>")]
