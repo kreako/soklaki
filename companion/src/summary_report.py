@@ -460,7 +460,8 @@ query Period($student_id: bigint!, $period_id: Int!) {
 SUBJECTS = [
     "Français",
     "Langues étrangères",
-    "Arts et culture" "Maths",
+    "Arts et culture",
+    "Maths",
     "Numérique",
     "Citoyenneté ",
     "Sciences du vivant ",
