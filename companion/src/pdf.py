@@ -43,6 +43,9 @@ class PDF(FPDF, HTMLMixin):
         else:
             self.cell(0, 10, "Page " + str(self.page_no()), 0, 0, "C")
 
+    def vertical_margin(self, amount):
+        self.set_y(self.get_y() + amount)
+
     def edit(self):
         return PdfWriter(self)
 
@@ -79,6 +82,9 @@ class PdfWriter(object):
 
     def empty_line(self):
         self.pdf.cell(w=0, h=self.line_height, txt="", ln=1)
+
+    def vertical_margin(self, amount):
+        self.pdf.vertical_margin(amount)
 
     def rect(self, x, y, w, h):
         self.pdf.rect(x, y, w, h, "F")
