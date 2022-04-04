@@ -59,21 +59,19 @@ async def report(gql_client, reports_dir, input: SummaryReportInput):
         )
         e.empty_line()
 
-    y_start_general_info = pdf.get_y()
+    # y_start_general_info = pdf.get_y()
     output_general_info(pdf, data)
-    y_end_general_info = pdf.get_y()
+    # y_end_general_info = pdf.get_y()
 
-    pdf.set_y(y_start_general_info)
-    output_legend(pdf)
-    pdf.set_y(y_end_general_info)
+    # pdf.set_y(y_start_general_info)
+    # output_legend(pdf)
+    # pdf.set_y(y_end_general_info)
 
-    output_summary_table(pdf, data)
+    output_evolution_boxes(pdf, data)
+    pdf.vertical_margin(16)
+    output_general_comment(pdf, data)
 
-    # Now subjects with comments
-    pdf.add_page()
-    output_subjects_comments(pdf, data)
-
-    # Output
+    # Output file
     prefix = f"{data['period']['group']['name']}_{data['period']['name']}_{data['student']['cycle']['cycle']}_{data['student']['firstname']}_{data['student']['lastname']}"
     prefix = make_safe_filename(prefix)
     pdf_fname = f"{prefix}.pdf"
@@ -255,157 +253,217 @@ def level_to_label(level):
         return "Très bonne maîtrise"
 
 
-def output_summary_table(pdf, data):
-    pdf.set_y(pdf.get_y() + 5)
+# Basis
+EVOL_BOX_LEVELS_WIDTH = 30
+EVOL_BOX_LEVEL_HEIGHT = 6
+EVOL_BOX_HEIGHT = EVOL_BOX_LEVEL_HEIGHT * 4
+EVOL_BOX_WIDTH = 190 - EVOL_BOX_LEVELS_WIDTH
+
+
+def _evolution_box_background(pdf):
+    x = 10
+    y = pdf.get_y()
+    with pdf.edit().text_xs() as e:
+        e.fill_gray_100()
+        e.rect(x, y + e.line_height + 2, EVOL_BOX_WIDTH, EVOL_BOX_HEIGHT)
+
+
+def _evolution_box_levels(pdf):
+    initial_y = pdf.get_y()
+
+    # Horizontal line for level split
+    with pdf.edit().draw_gray_300().text_xs() as e:
+        y = pdf.get_y() + 4
+        pdf.dashed_line(10, y, 10 + EVOL_BOX_WIDTH, y)
+        y = pdf.get_y() + 4 + EVOL_BOX_LEVEL_HEIGHT
+        pdf.dashed_line(10, y, 10 + EVOL_BOX_WIDTH, y)
+        y = pdf.get_y() + 4 + 2 * EVOL_BOX_LEVEL_HEIGHT
+        pdf.dashed_line(10, y, 10 + EVOL_BOX_WIDTH, y)
+        y = pdf.get_y() + 4 + 3 * EVOL_BOX_LEVEL_HEIGHT
+        pdf.dashed_line(10, y, 10 + EVOL_BOX_WIDTH, y)
+        y = pdf.get_y() + 4 + 4 * EVOL_BOX_LEVEL_HEIGHT
+        pdf.dashed_line(10, y, 10 + EVOL_BOX_WIDTH, y)
+
+    def _label(text):
+        e.vertical_margin((EVOL_BOX_LEVEL_HEIGHT / 2) - 1)
+        pdf.set_x(10 + EVOL_BOX_WIDTH)
+        pdf.cell(
+            w=EVOL_BOX_LEVELS_WIDTH,
+            h=e.line_height,
+            txt=text,
+            align="L",
+            ln=0,
+        )
+        e.vertical_margin((EVOL_BOX_LEVEL_HEIGHT / 2) + 1)
+
+    with pdf.edit().text_xs() as e:
+        e.vertical_margin(4)
+        _label("Très bonne maîtrise")
+        _label("Maîtrise satisfaisante")
+        _label("Maîtrise fragile")
+        _label("Maîtrise insuffisante")
+
+    # Reset initial vertical position
+    pdf.set_y(initial_y)
+
+
+def _evolution_box_date(pdf, cycle_start):
+    width_6_months = EVOL_BOX_WIDTH / 6
+
+    def _label(x, text):
+        pdf.set_x(x)
+        pdf.cell(
+            w=20,
+            h=e.line_height,
+            txt=text,
+            align="L",
+            ln=0,
+        )
+
+    # Vertical line for date split
+    y = pdf.get_y()
+    with pdf.edit().draw_gray_300().text_xs() as e:
+        for i in range(1, 6):
+            x = 10 + i * width_6_months  # 10 is left margin
+            pdf.dashed_line(
+                x,
+                y + e.line_height + 2,
+                x,
+                y + EVOL_BOX_HEIGHT + 4,
+            )
+
+    # top cycle date
+    year = cycle_start.year
     with pdf.edit().font_normal().text_xs().text_gray_700() as e:
-        pdf.set_x(110)
-        pdf.cell(
-            w=20,
-            h=e.line_height,
-            txt="Début de cycle",
-            align="L",
-            ln=0,
-        )
-        pdf.set_x(180)
-        pdf.cell(
-            w=20,
-            h=e.line_height,
-            txt="Fin de cycle",
-            align="R",
-            ln=1,
-        )
-        pdf.set_x(110)
-        pdf.cell(
-            w=20,
-            h=e.line_height,
-            txt=str(data["student"]["cycle"]["start"]),
-            align="L",
-            ln=0,
-        )
-        pdf.set_x(180)
-        pdf.cell(
-            w=20,
-            h=e.line_height,
-            txt=str(data["student"]["cycle"]["end"]),
-            align="R",
-            ln=1,
-        )
+        center_correct = 2  # to center date label
+        _label(10, f"{year}-09-01")  # 10 because of the left margin
+        _label(width_6_months + center_correct, f"{year + 1}-03-01")
+        _label(2 * width_6_months + center_correct, f"{year + 1}-09-01")
+        _label(3 * width_6_months + center_correct, f"{year + 2}-03-01")
+        _label(4 * width_6_months + center_correct, f"{year + 2}-09-01")
+        _label(5 * width_6_months + center_correct, f"{year + 3}-03-01")
+        _label(EVOL_BOX_WIDTH - 4, f"{year + 3}-09-01")
 
-    pdf.set_y(pdf.get_y() + 2)
 
+def date_to_x(cycle_start, date):
+    dtX = (date - cycle_start).days
+    x = 10 + (EVOL_BOX_WIDTH * dtX) / (365 * 3)
+    return x
+
+
+def level_to_y(pdf, level):
+    h = EVOL_BOX_HEIGHT - level * EVOL_BOX_HEIGHT / 100
+    y = pdf.get_y() + 4 + h
+    return y
+
+
+def _evolution_box_level_point(pdf, cycle_start, date, level):
+    x = date_to_x(cycle_start, date)
+    y = level_to_y(pdf, level)
+    with pdf.edit() as e:
+        e.fill_gray_900()
+        e.rect(x - 1, y - 1, 2, 2)
+
+
+def _evolution_box_level_lines(pdf, cycle_start, levels):
+    previous = None
+    for level in levels:
+        lvl = level["level"]
+        if lvl is not None:
+            if previous is not None:
+                x1 = date_to_x(cycle_start, level["date"])
+                y1 = level_to_y(pdf, lvl)
+                x2 = date_to_x(cycle_start, previous["date"])
+                y2 = level_to_y(pdf, previous["level"])
+                with pdf.edit() as e:
+                    e.draw_gray_900()
+                    e.line(x1, y1, x2, y2)
+            _evolution_box_level_point(pdf, cycle_start, level["date"], lvl)
+            previous = level
+
+
+def output_evolution_box(pdf, cycle_start, cycle_end, subject, levels):
+    # First let's estimate the height needed for this box
     with pdf.edit().style_normal() as e:
-        for subject in data["subjects"]:
-            pdf.cell(
-                w=90,
-                h=e.line_height,
-                txt=subject["subject"],
-                align="L",
-                ln=0,
-            )
-            x = pdf.get_x() + 10
-            y = pdf.get_y()
-            # Basis
-            height = 8
-            width = 90
-            years_3 = 365 * 3
-            marker_width = width * 4 * 31 / years_3  # 4 months
-            e.fill_gray_50()
-            e.rect(x, y - 1, width, height + 2)
-            pdf.set_y(pdf.get_y() + 11)
-            # Now the line with levels
-            start_cycle = data["student"]["cycle"]["start"]
-            # rect
-            e.draw_gray_500()
-            for level in subject["levels"]:
-                if level["level"] is None:
-                    continue
-                lx = (level["date"] - start_cycle).days * width / years_3
-                h = (level["level"] * height) / 100
-                ly = height - ((level["level"] * height) / 100)
-                level_to_fill_color(level["level"], e)
-                e.rect(x + lx, y + ly, marker_width, h)
-
-
-def output_subjects_comments(pdf, data):
-    for subject in data["subjects"]:
-        with pdf.edit().font_bold().text_base().text_black() as e:
-            pdf.cell(
-                w=90,
-                h=e.line_height,
-                txt=subject["subject"],
-                align="L",
-                ln=0,
-            )
-        with pdf.edit().style_label() as e:
-            pdf.cell(
-                w=90,
-                h=e.line_height,
-                txt=level_to_label(subject["levels"][-1]["level"]),
-                align="L",
-                ln=1,
-            )
-        with pdf.edit().style_normal() as e:
-            e.empty_line()
-            pdf.set_x(20)
+        lines = len(
             pdf.multi_cell(
-                w=180,  # -10 for page right margin
+                w=0,  # -10 -10 for page left and right margins
                 h=e.line_height,
                 txt=subject["comment"],
-                ln=1,
-                align="L",
+                split_only=True,
             )
-            e.empty_line()
-
-
-def output_competency_legend(pdf):
-    ANGLE = 60
+        )
+        comment_height = lines * e.line_height
+    with pdf.edit().text_xs() as e:
+        graph_height = e.line_height + 2 + EVOL_BOX_HEIGHT
+    with pdf.edit().style_label() as e:
+        labels_height = 2 + e.line_height + 1 + e.line_height
+    box_height = comment_height + graph_height + labels_height
     y = pdf.get_y()
-    pdf.set_y(y)
-    pdf.set_x(RIGHT_STOP + 0 * MARKER_WIDTH + 2)
-    with pdf.rotation(angle=ANGLE):
-        with pdf.edit().text_xs() as e:
-            pdf.cell(
-                w=0,
+    if y + box_height >= 297 - 15 - 10:  # 10 margin, 15 footer
+        pdf.add_page()
+
+    with pdf.edit().style_normal().font_bold() as e:
+        e.write(subject["subject"])
+
+    with pdf.edit().style_label() as e:
+        e.vertical_margin(2)
+        e.write("Évolution")
+        e.vertical_margin(1)
+
+    _evolution_box_background(pdf)
+    _evolution_box_date(pdf, cycle_start)
+    _evolution_box_levels(pdf)
+
+    _evolution_box_level_lines(pdf, cycle_start, levels)
+
+    pdf.vertical_margin(EVOL_BOX_HEIGHT + 4 + 2)
+
+    with pdf.edit().style_label() as e:
+        e.write("Commentaire")
+
+    with pdf.edit().style_normal() as e:
+        e.write(subject["comment"])
+
+
+def output_evolution_boxes(pdf, data):
+    pdf.vertical_margin(15)
+    cycle_start = data["student"]["cycle"]["start"]
+    cycle_end = data["student"]["cycle"]["end"]
+    for subject in data["subjects"]:
+        output_evolution_box(pdf, cycle_start, cycle_end, subject, subject["levels"])
+        pdf.vertical_margin(8)
+
+
+def output_general_comment(pdf, data):
+    comment = data["comment"]
+    # First let's estimate the height needed for the comment and its header
+    with pdf.edit().style_normal() as e:
+        lines = len(
+            pdf.multi_cell(
+                w=190,  # -10 -10 for page left and right margins
                 h=e.line_height,
-                txt="Insuffisante",
-                align="L",
-                ln=1,
+                txt=comment,
+                split_only=True,
             )
-    pdf.set_y(y)
-    pdf.set_x(RIGHT_STOP + 1 * MARKER_WIDTH + 2)
-    with pdf.rotation(angle=ANGLE):
-        with pdf.edit().text_xs() as e:
-            pdf.cell(
-                w=0,
-                h=e.line_height,
-                txt="Fragile",
-                align="L",
-                ln=1,
-            )
-    pdf.set_y(y)
-    pdf.set_x(RIGHT_STOP + 2 * MARKER_WIDTH + 2)
-    with pdf.rotation(angle=ANGLE):
-        with pdf.edit().text_xs() as e:
-            pdf.cell(
-                w=0,
-                h=e.line_height,
-                txt="Satisfaisante",
-                align="L",
-                ln=1,
-            )
-    pdf.set_y(y)
-    pdf.set_x(RIGHT_STOP + 3 * MARKER_WIDTH + 2)
-    with pdf.rotation(angle=ANGLE):
-        with pdf.edit().text_xs() as e:
-            pdf.cell(
-                w=0,
-                h=e.line_height,
-                txt="Bonne",
-                align="L",
-                ln=1,
-            )
-    # pdf.set_y(pdf.get_y() + 5)
-    # pdf.set_x(10)
+        )
+        comment_height = lines * e.line_height
+        header_height = e.line_height
+        vertical_margin = 2
+
+    y = pdf.get_y()
+    if (
+        y + comment_height + header_height + vertical_margin >= 297 - 15 - 10
+    ):  # 10 margin, 15 footer
+        pdf.add_page()
+
+    with pdf.edit().style_normal().font_bold() as e:
+        e.write("Commentaire général")
+
+    pdf.vertical_margin(vertical_margin)
+
+    with pdf.edit().style_normal() as e:
+        e.write(comment)
 
 
 async def gql_period(gql_client, period_id, student_id):
@@ -488,6 +546,22 @@ def fake_levels():
     return levels
 
 
+LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+
+def fake_comment():
+    size = randint(0, len(LOREM_IPSUM.split()))
+    return " ".join(LOREM_IPSUM.split()[0:size])
+
+
+def fake_subject_comment(subject):
+    return f"Commentaire/Évaluation sur '{subject}'. " + fake_comment()
+
+
+def fake_general_comment():
+    return f"Commentaire/Évaluation générale. " + fake_comment()
+
+
 async def gql_report(
     gql_client, student_id, period_id, x_hasura_user_id, x_hasura_user_group
 ):
@@ -513,7 +587,7 @@ async def gql_report(
         data["subjects"].append(
             {
                 "subject": subject,
-                "comment": f"Commentaire/Évaluation sur '{subject}'",
+                "comment": fake_subject_comment(subject),
                 "levels": [
                     {"date": date(2019, 9, 1), "level": None},
                     {"date": date(2020, 1, 31), "level": levels[0]},
@@ -526,6 +600,7 @@ async def gql_report(
         )
     data["period"] = period
     data["student"] = student
+    data["comment"] = fake_general_comment()
 
     return data
 
