@@ -195,7 +195,8 @@ fn rocket() -> _ {
             routes![
                 observation::prefill,
                 observation::new_prefill,
-                observation::single
+                observation::single,
+                observation::single_text
             ],
         )
         .mount("/competencies", routes![competencies::sorted])
