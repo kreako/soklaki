@@ -11,7 +11,6 @@ use super::evaluation_status;
 use super::jwt;
 use super::period;
 use super::student;
-use super::students;
 use super::subject;
 use super::user;
 
@@ -236,6 +235,14 @@ pub struct SelectedSubjects {
 }
 
 #[derive(Debug, Serialize)]
+pub struct Student {
+    pub id: i64,
+    pub firstname: Option<String>,
+    pub lastname: Option<String>,
+    pub cycle: String,
+}
+
+#[derive(Debug, Serialize)]
 pub struct CompleteObservation {
     pub id: i64,
     pub text: String,
@@ -243,7 +250,7 @@ pub struct CompleteObservation {
     pub complete: bool,
     pub user: user::User,
     pub period: period::Period,
-    pub students: HashMap<i64, students::Student>,
+    pub students: HashMap<i64, Student>,
     pub cycles: Cycles,
     pub subjects: Vec<SelectedSubjects>,
 }
@@ -282,6 +289,7 @@ SELECT  eval_observation.id,
         &[observation_id],
     )?;
     let id = observation.get(0);
+    let date = observation.get(2);
 
     let user_id = observation.get(4);
     let email = observation.get(5);
@@ -307,7 +315,7 @@ SELECT  eval_observation.id,
 SELECT  eval_observation_student.student_id,                                                                                                                                                                                                 
         student.firstname,                                                                                                                                                                                                                   
         student.lastname,                                                                                                                                                                                                                    
-        student_current_cycle.current_cycle                                                                                                                                                                                                  
+        student.birthdate                                                                                                                                                                                                                
     FROM eval_observation_student                                                                                                                                                                                                              
     JOIN student                                                                                                                                                                                                                               
         ON student.id = eval_observation_student.student_id                                                                                                                                                                                      
@@ -318,11 +326,13 @@ SELECT  eval_observation_student.student_id,
         let student_id = student.get(0);
         let firstname = student.get(1);
         let lastname = student.get(2);
-        let cycle = student.get(3);
-        let obj = students::Student {
+        let birthdate = student.get(3);
+        let cycle = cycle::estimate_cycle(&date, &birthdate).to_str();
+        let obj = Student {
             id: student_id,
             firstname,
             lastname,
+            cycle: String::from(cycle),
         };
         students.insert(student_id, obj);
         match cycle {
@@ -486,7 +496,7 @@ SELECT level, comment, date
     Ok(CompleteObservation {
         id: id,
         text: observation.get(1),
-        date: observation.get(2),
+        date,
         complete: observation.get(3),
         user,
         period,
