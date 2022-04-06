@@ -1,10 +1,4 @@
-import {
-  dateFromString,
-  dateJsObj,
-  dateDiffInDays,
-  today,
-  dateToNiceString,
-} from "./date";
+import { dateFromString, dateJsObj, dateDiffInDays, today, dateToNiceString } from "./date";
 
 test("dateFromString", () => {
   expect(dateFromString("2021-03-30T17:59:16.637699+00:00")).toBe("2021-03-30");
@@ -25,9 +19,9 @@ test("dateJsObj error cases", () => {
   // year not a number
   expect(() => dateJsObj("abcd-03-30T17:59:16.637699+00:00")).toThrow();
   // year too small
-  expect(() => dateJsObj("1874-03-30T17:59:16.637699+00:00")).toThrow();
+  expect(() => dateJsObj("1374-03-30T17:59:16.637699+00:00")).toThrow();
   // year too big
-  expect(() => dateJsObj("2342-03-30T17:59:16.637699+00:00")).toThrow();
+  expect(() => dateJsObj("2642-03-30T17:59:16.637699+00:00")).toThrow();
   // month not a number
   expect(() => dateJsObj("2021-ab-30T17:59:16.637699+00:00")).toThrow();
   // month too small
@@ -67,8 +61,6 @@ test("today", () => {
 });
 
 test("dateToNiceString", () => {
-  expect(dateToNiceString("2021-03-30T17:59:16.637699+00:00")).toBe(
-    "le 2021-03-30 à 17:59"
-  );
+  expect(dateToNiceString("2021-03-30T17:59:16.637699+00:00")).toBe("le 2021-03-30 à 17:59");
   expect(dateToNiceString(null)).toBeNull();
 });

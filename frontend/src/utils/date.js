@@ -52,18 +52,15 @@ Exemple : 2015-02-11 ou 1871-03-18
 
 Ici, le jour '${dt.slice(8, 10)}' ne me semble pas valide (date: ${dt}) !`);
   }
-  if (trailing != "") {
+  if (trailing != "" && trailing[0] != "T") {
+    // Ignore the case where this is an iso datetime with a 'T' as date/hours separation
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
 Exemple : 2015-02-11 ou 1871-03-18
     
 Ici, il y a un caractère supplémentaire '${trailing}' et ce n'est pas valide (date: ${dt}) !`);
   }
   const date = new Date(year, month - 1, day);
-  if (
-    year !== date.getFullYear() ||
-    month !== date.getMonth() + 1 ||
-    day !== date.getDate()
-  ) {
+  if (year !== date.getFullYear() || month !== date.getMonth() + 1 || day !== date.getDate()) {
     throw new Error(`Le format de la date est <année:4 chiffres>-<mois:2 chiffres>-<jour:2 chiffres>.
 Exemple : 2015-02-11 ou 1871-03-18
 
@@ -96,9 +93,7 @@ export const dateToString = (d) => {
   const month = d.getMonth() + 1;
   const day = d.getDate();
 
-  return `${year}-${month.toString().padStart(2, "0")}-${day
-    .toString()
-    .padStart(2, "0")}`;
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
 };
 
 /// Return today date in string format
