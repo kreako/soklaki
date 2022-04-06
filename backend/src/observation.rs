@@ -559,3 +559,43 @@ UPDATE eval_observation
         .map_err(|_err| Status::InternalServerError)?;
     Ok(Json(observation))
 }
+
+#[derive(Debug, Deserialize)]
+pub struct ObservationDate {
+    pub id: i64,
+    pub date: NaiveDate,
+}
+
+#[put("/single/date", data = "<observation>")]
+pub async fn single_date(
+    db: db::Db,
+    token: jwt::JwtToken,
+    observation: Json<ObservationDate>,
+) -> Result<Json<CompleteObservation>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    let observation_date = observation.date.clone();
+    let observation_id = observation.id.clone();
+    db.run(move |client| {
+        client.execute(
+            "
+UPDATE eval_observation
+    SET date = $1
+    FROM public.user
+    WHERE eval_observation.user_id = public.user.id AND
+        eval_observation.id = $2 AND
+        public.user.group_id = $3",
+            &[&observation_date, &observation_id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| {
+        println!("err: {:?}", _err);
+        Status::InternalServerError
+    })?;
+    let observation = db
+        .run(move |client| _complete_observation(client, &observation.id, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(observation))
+}
