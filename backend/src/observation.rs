@@ -251,6 +251,7 @@ pub struct CompleteObservation {
     pub user: user::User,
     pub period: period::Period,
     pub students: HashMap<i64, Student>,
+    pub sorted_students: Vec<i64>,
     pub cycles: Cycles,
     pub subjects: Vec<SelectedSubjects>,
 }
@@ -306,6 +307,7 @@ SELECT  eval_observation.id,
 
     // 02. Now gather all linked students
     let mut students = HashMap::new();
+    let mut sorted_students = Vec::new();
     let mut c1_students = Vec::new();
     let mut c2_students = Vec::new();
     let mut c3_students = Vec::new();
@@ -321,7 +323,8 @@ SELECT  eval_observation_student.student_id,
         ON student.id = eval_observation_student.student_id                                                                                                                                                                                      
     JOIN student_current_cycle                                                                                                                                                                                                                 
         ON student_current_cycle.student_id = student.id                                                                                                                                                                                         
-    WHERE observation_id = $1  
+    WHERE observation_id = $1
+    ORDER BY student.firstname, student.lastname
     ", &[observation_id] )? {
         let student_id = student.get(0);
         let firstname = student.get(1);
@@ -334,6 +337,7 @@ SELECT  eval_observation_student.student_id,
             lastname,
             cycle: String::from(cycle),
         };
+        sorted_students.push(student_id);
         students.insert(student_id, obj);
         match cycle {
             "c1" => c1_students.push(student_id),
@@ -501,6 +505,7 @@ SELECT level, comment, date
         user,
         period,
         students,
+        sorted_students,
         cycles,
         subjects,
     })
