@@ -599,3 +599,127 @@ UPDATE eval_observation
         .map_err(|_err| Status::InternalServerError)?;
     Ok(Json(observation))
 }
+
+#[derive(Debug, Deserialize)]
+pub struct ObservationStudent {
+    pub observation_id: i64,
+    pub student_id: i64,
+}
+
+pub fn permission_observation_student(
+    client: &mut postgres::Client,
+    group_id: &i64,
+    observation_id: &i64,
+    student_id: &i64,
+) -> Result<bool, postgres::error::Error> {
+    let r = client.query_one(
+        "
+SELECT public.user.group_id
+    FROM eval_observation
+    JOIN public.user
+        ON public.user.id = eval_observation.user_id
+    WHERE eval_observation.id = $1
+",
+        &[&observation_id],
+    )?;
+    let user_group: i64 = r.get(0);
+    let r = client.query_one(
+        "
+SELECT student.group_id
+    FROM student
+    WHERE student.id = $1
+",
+        &[&student_id],
+    )?;
+    let student_group: i64 = r.get(0);
+    if *group_id != user_group || *group_id != student_group {
+        Ok(false)
+    } else {
+        Ok(true)
+    }
+}
+
+#[put("/single/add-student", data = "<observation>")]
+pub async fn single_add_student(
+    db: db::Db,
+    token: jwt::JwtToken,
+    observation: Json<ObservationStudent>,
+) -> Result<Json<CompleteObservation>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    // Check permissions
+    {
+        let student_id = observation.student_id.clone();
+        let observation_id = observation.observation_id.clone();
+        let permission_ok = db
+            .run(move |client| {
+                permission_observation_student(client, &group_id, &observation_id, &student_id)
+            })
+            .await
+            .map_err(|_err| {
+                println!("err: {:?}", _err);
+                Status::InternalServerError
+            })?;
+        if !permission_ok {
+            return Err(Status::InternalServerError);
+        }
+    }
+    let student_id = observation.student_id.clone();
+    let observation_id = observation.observation_id.clone();
+    db.run(move |client| {
+        client.execute(
+            "
+    INSERT INTO eval_observation_student
+        (observation_id, student_id)
+        VALUES
+        ($1, $2)
+        ",
+            &[&observation_id, &student_id],
+        )
+    })
+    .await
+    .map_err(|_err| {
+        println!("err: {:?}", _err);
+        Status::InternalServerError
+    })?;
+    let observation = db
+        .run(move |client| _complete_observation(client, &observation.observation_id, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(observation))
+}
+
+#[put("/single/delete-student", data = "<observation>")]
+pub async fn single_delete_student(
+    db: db::Db,
+    token: jwt::JwtToken,
+    observation: Json<ObservationStudent>,
+) -> Result<Json<CompleteObservation>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    let student_id = observation.student_id.clone();
+    let observation_id = observation.observation_id.clone();
+    db.run(move |client| {
+        client.execute(
+            "
+    DELETE FROM eval_observation_student
+        USING student
+        WHERE student.id = eval_observation_student.student_id AND
+            student.group_id = $1 AND
+            eval_observation_student.observation_id = $2 AND
+            eval_observation_student.student_id = $3
+        ",
+            &[&group_id, &observation_id, &student_id],
+        )
+    })
+    .await
+    .map_err(|_err| {
+        println!("err: {:?}", _err);
+        Status::InternalServerError
+    })?;
+    let observation = db
+        .run(move |client| _complete_observation(client, &observation.observation_id, &group_id))
+        .await
+        .map_err(|_err| Status::InternalServerError)?;
+    Ok(Json(observation))
+}
