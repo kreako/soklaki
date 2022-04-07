@@ -199,7 +199,9 @@ fn rocket() -> _ {
                 observation::single_text,
                 observation::single_date,
                 observation::single_add_student,
-                observation::single_delete_student
+                observation::single_delete_student,
+                observation::single_add_competency,
+                observation::single_delete_competency
             ],
         )
         .mount("/competencies", routes![competencies::sorted])
