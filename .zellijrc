@@ -32,7 +32,7 @@ tabs:
     run:
       command:
         cmd: "./.launch.expect"
-        args: ["sleep 10s && pgcli --host 127.0.0.1 --user postgres"]
+        args: ["sleep 55s && pgcli --host 127.0.0.1 --user postgres"]
   - name: "Companion"
     run:
       command:
@@ -52,18 +52,18 @@ tabs:
         cmd: "./.launch.expect"
         args:
           [
-            'cd hasura && sleep 10s && podman run -it --rm --pod soklaki -e HASURA_GRAPHQL_DATABASE_URL=''postgres://postgres:password@localhost:5432/postgres'' -e HASURA_GRAPHQL_ENABLE_CONSOLE=''false'' -e HASURA_GRAPHQL_DEV_MODE=''true'' -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=''startup, http-log, webhook-log, websocket-log, query-log'' -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE=''anonymous'' -e HASURA_GRAPHQL_ADMIN_SECRET=''hasura admin secret - keep in sync with hasura deployment'' -e HASURA_GRAPHQL_JWT_SECRET=''{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}'' --name soklaki-hasura hasura/graphql-engine:v2.0.5',
+            'cd hasura && sleep 40s && podman run -it --rm --pod soklaki -e HASURA_GRAPHQL_DATABASE_URL=''postgres://postgres:password@localhost:5432/postgres'' -e HASURA_GRAPHQL_ENABLE_CONSOLE=''false'' -e HASURA_GRAPHQL_DEV_MODE=''true'' -e HASURA_GRAPHQL_ENABLED_LOG_TYPES=''startup, http-log, webhook-log, websocket-log, query-log'' -e HASURA_GRAPHQL_UNAUTHORIZED_ROLE=''anonymous'' -e HASURA_GRAPHQL_ADMIN_SECRET=''hasura admin secret - keep in sync with hasura deployment'' -e HASURA_GRAPHQL_JWT_SECRET=''{"type": "HS256", "key": "biew5Phiz5uoNg7Oobunee0ahd0ohbao"}'' --name soklaki-hasura hasura/graphql-engine:v2.0.5',
           ]
   - name: "Hasura console"
     run:
       command:
         cmd: "./.launch.expect"
-        args: ["cd hasura && sleep 15s && hasura console --no-browser --skip-update-check"]
+        args: ["cd hasura && sleep 50s && hasura console --no-browser --skip-update-check"]
   - name: "Backend"
     run:
       command:
         cmd: "./.launch.expect"
-        args: ["cd backend && cargo run"]
+        args: ["cd backend && sleep 50s && cargo run"]
   - name: "Frontend"
     run:
       command:
