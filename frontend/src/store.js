@@ -707,93 +707,6 @@ const actions = {
     }
   },
 
-  async updateObservationText({ commit }, { id, text }) {
-    const answer = await axios.post("update-observation-text", {
-      id: id,
-      text: text,
-    });
-    const data = answer.data.update_eval_observation_by_pk;
-    if (data == null) {
-      throw new Error(`Quelque chose s'est mal passé dans la mise à jour du texte de l'observation. :(\n
-        id: ${id}\n
-        text: ${text}`);
-    } else {
-      commit("setObservationText", {
-        id: id,
-        text: text,
-      });
-    }
-  },
-
-  async updateObservationDate({ commit, state, dispatch }, { id, date }) {
-    await searchOrCreatePeriod(date, state, dispatch);
-    const answer = await axios.post("update-observation-date", {
-      id: id,
-      date: date,
-    });
-
-    const data = answer.data.update_eval_observation_by_pk;
-    if (data == null) {
-      throw new Error(`Quelque chose s'est mal passé dans la mise à jour de la date de l'observation. :(\n
-        id: ${id}\n
-        date: ${date}`);
-    } else {
-      commit("setObservation", data);
-    }
-  },
-
-  async updateObservationActive({ commit, state, dispatch }, { id, active }) {
-    const answer = await axios.post("update-observation-active", {
-      id: id,
-      active: active,
-    });
-
-    const data = answer.data.update_eval_observation_by_pk;
-    if (data == null) {
-      throw new Error(`Quelque chose s'est mal passé dans la mise à jour du champ active de l'observation. :(\n
-        id: ${id}\n
-        active: ${active}`);
-    } else {
-      commit("setObservationActive", { id, active });
-    }
-  },
-
-  async insertObservationStudent({ commit }, { observationId, studentId }) {
-    const answer = await axios.post("insert-observation-student", {
-      observation_id: observationId,
-      student_id: studentId,
-    });
-    const data = answer.data.insert_eval_observation_student_one.observation;
-    commit("setObservation", data);
-  },
-
-  async deleteObservationStudent({ commit }, { studentId, observationId }) {
-    const answer = await axios.post("delete-observation-student", {
-      observation_id: observationId,
-      student_id: studentId,
-    });
-    const data = answer.data.delete_eval_observation_student.returning[0].observation;
-    commit("setObservation", data);
-  },
-
-  async insertObservationCompetency({ commit }, { observationId, competencyId }) {
-    const answer = await axios.post("insert-observation-competency", {
-      observation_id: observationId,
-      competency_id: competencyId,
-    });
-    const data = answer.data.insert_eval_observation_competency_one.observation;
-    commit("setObservation", data);
-  },
-
-  async deleteObservationCompetency({ commit }, { observationId, competencyId }) {
-    const answer = await axios.post("delete-observation-competency", {
-      observation_id: observationId,
-      competency_id: competencyId,
-    });
-    const data = answer.data.delete_eval_observation_competency.returning[0].observation;
-    commit("setObservation", data);
-  },
-
   async observations({ commit, state }, { limit, offset }) {
     const answer = await axios.post("observations-sorted-created-at", {
       group_id: state.login.groupId,
@@ -1533,6 +1446,68 @@ const actions = {
 
   async evaluationStatsByCycle({}, { cycle }) {
     const answer = await axios.get(`eval_stats/by_cycle/${cycle}`);
+    return answer.data;
+  },
+
+  async observationSingle({}, { id }) {
+    const answer = await axios.get(`observation/single/${id}`);
+    return answer.data;
+  },
+
+  async updateObservationSingleText({}, { id, text }) {
+    const answer = await axios.put("observation/single/text", {
+      id: Number(id),
+      text: text,
+    });
+    return answer.data;
+  },
+
+  async updateObservationSingleDate({ dispatch }, { id, date }) {
+    await searchOrCreatePeriod(date, state, dispatch);
+    const answer = await axios.put("observation/single/date", {
+      id: Number(id),
+      date: date,
+    });
+    return answer.data;
+  },
+
+  async insertObservationStudent({}, { observationId, studentId }) {
+    const answer = await axios.put("observation/single/add-student", {
+      observation_id: Number(observationId),
+      student_id: studentId,
+    });
+    return answer.data;
+  },
+
+  async deleteObservationStudent({}, { studentId, observationId }) {
+    const answer = await axios.put("observation/single/delete-student", {
+      observation_id: Number(observationId),
+      student_id: studentId,
+    });
+    return answer.data;
+  },
+
+  async insertObservationCompetency({ commit }, { observationId, competencyId }) {
+    const answer = await axios.put("observation/single/add-competency", {
+      observation_id: Number(observationId),
+      competency_id: competencyId,
+    });
+    return answer.data;
+  },
+
+  async deleteObservationCompetency({ commit }, { observationId, competencyId }) {
+    const answer = await axios.put("observation/single/delete-competency", {
+      observation_id: Number(observationId),
+      competency_id: competencyId,
+    });
+    return answer.data;
+  },
+
+  async setObservationActive({}, { id, active }) {
+    const answer = await axios.post("observation/single/set-active", {
+      id: Number(id),
+      active: active,
+    });
     return answer.data;
   },
 };
