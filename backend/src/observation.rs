@@ -385,7 +385,7 @@ SELECT  eval_observation_competency.competency_id,
                 "
 SELECT level, comment, date FROM eval_evaluation
   WHERE student_id = $1 AND competency_id = $2
-  ORDER BY date DESC LIMIT 1;
+  ORDER BY date DESC, created_at DESC LIMIT 1;
             ",
                 &[&student_id, &competency_id],
             )?;
@@ -447,7 +447,7 @@ WHERE observation_id = $1
 SELECT level, comment, date
     FROM eval_evaluation_subject 
     WHERE subject_id = $1 and student_id = $2
-    ORDER BY date DESC LIMIT 1;
+    ORDER BY date DESC, created_at DESC LIMIT 1;
 ",
                 &[&subject_id, student],
             )?;
