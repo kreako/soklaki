@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use super::competency;
 use super::cycle;
 use super::db;
+use super::done;
 use super::evaluation_status;
 use super::jwt;
 use super::period;
@@ -856,4 +857,40 @@ pub async fn single_delete_competency(
         .await
         .map_err(|_err| Status::InternalServerError)?;
     Ok(Json(observation))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ObservationActive {
+    pub id: i64,
+    pub active: bool,
+}
+
+#[post("/single/set-active", data = "<observation>")]
+pub async fn single_set_active(
+    db: db::Db,
+    token: jwt::JwtToken,
+    observation: Json<ObservationActive>,
+) -> Result<Json<done::Done>, Status> {
+    let group_id = token.claim.user_group.parse::<i64>().unwrap();
+
+    db.run(move |client| {
+        client.execute(
+            "
+UPDATE eval_observation
+    SET active = $1
+    FROM public.user
+    WHERE eval_observation.user_id = public.user.id AND
+        eval_observation.id = $2 AND
+        public.user.group_id = $3
+        ",
+            &[&observation.active, &observation.id, &group_id],
+        )
+    })
+    .await
+    .map_err(|_err| {
+        println!("err: {:?}", _err);
+        Status::InternalServerError
+    })?;
+
+    Ok(Json(done::Done::done()))
 }
